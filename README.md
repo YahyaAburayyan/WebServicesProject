@@ -70,12 +70,12 @@ Press **Ctrl + C** in the terminal to stop the server.
 
 | Person | Module | Folder |
 | ------ | ------ | ------ |
-| Student 1 (owner) | Land Application Management + Applicant Portal UI | `app/modules/applications/` |
+| Yahya | Land Application Management + Applicant Portal UI | `app/modules/applications/` |
 | Anas | Applicants, Documents & Objections + Registrar Console UI | `app/modules/applicants/` |
 | Huthaifa | Staff, Surveyors & Assignment + Map/Analytics UI | `app/modules/staff/` |
 | Everyone | Analytics API + map | `app/modules/analytics/` |
 
-### Student 1 — `app/modules/applications/router.py` + `workflow.py`
+### Yahya — `app/modules/applications/router.py` + `workflow.py`
 
 | Method | Path | Purpose |
 | ------ | ---- | ------- |
@@ -112,7 +112,7 @@ Press **Ctrl + C** in the terminal to stop the server.
 
 ---
 
-## F — Daily Git routine (GitHub Desktop)
+## F — Daily Git routine
 
 1. **Before you start:** click **Fetch origin**, then **Pull origin** if it appears. This downloads your teammates' latest changes.
 2. Do your work in VS Code.
@@ -148,16 +148,6 @@ lrmis-backend/
 └── requirements.txt
 ```
 
----
-
-## H — Coding conventions
-
-- Import status/type values from `app/common/enums.py`. Never hard-code strings like `"submitted"`.
-- List endpoints return `{ "data": [...], "total": 0, "page": 1, "limit": 20 }`.
-- Every state change must call `common.audit.log_event(...)`.
-- Search for `# TODO` in your file to find what to implement.
-
----
 
 ## I — Application status flow
 
