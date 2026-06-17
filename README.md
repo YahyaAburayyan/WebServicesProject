@@ -17,17 +17,6 @@ Built as a university group project. All endpoints are stubs — find `# TODO` t
 
 ---
 
-## B — Cloud database setup (MongoDB Atlas)
-
-**The repo owner does steps 1–5 once. Teammates skip to the "Everyone" section below.**
-
-1. Create a free account at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas) and create a free **M0** cluster.
-2. Go to **Security → Database Access → Add New Database User**. Choose Password auth. Write down the username and password.
-3. Go to **Security → Network Access → Add IP Address → Allow Access from Anywhere** (`0.0.0.0/0`). *(Fine for a student project, not for production.)*
-4. Go to **Database → Connect → Drivers**, select Python, and copy the connection string. It looks like:
-   `mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/`
-5. **Send that string to teammates privately** (WhatsApp, DM). Never paste it into GitHub — the `.env` file is gitignored for exactly this reason.
-
 **Everyone (including the owner) — on your own computer:**
 
 1. Copy `.env.example`, rename the copy to `.env`, and fill it in:
@@ -40,15 +29,7 @@ Built as a university group project. All endpoints are stubs — find `# TODO` t
 
 ---
 
-## C — Get the code (GitHub Desktop)
-
-**Owner (once):** open GitHub Desktop → File → Add Local Repository → select this folder → click **Publish repository** → set Private. Send the repo URL to teammates.
-
-**Teammates (once):** open GitHub Desktop → File → Clone Repository → paste the URL → Clone.
-
----
-
-## D — Run the project (everyone, every time)
+## B — Run the project (everyone, every time)
 
 Open the project folder in VS Code, then open **Terminal → New Terminal** and run these commands.
 
