@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LRMIS — Applicant Portal</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #1d4ed8;
+      --blue-dark:  #1e40af;
+      --blue-light: #eff6ff;
+      --blue-mid:   #bfdbfe;
+      --green:      #16a34a;
+      --red:        #dc2626;
+      --orange:     #d97706;
+      --gray-50:    #f8fafc;
+      --gray-100:   #f1f5f9;
+      --gray-200:   #e2e8f0;
+      --gray-400:   #94a3b8;
+      --gray-500:   #64748b;
+      --gray-700:   #334155;
+      --gray-900:   #0f172a;
+      --text:       #1e293b;
+      --radius:     10px;
+      --shadow:     0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-md:  0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--gray-100);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── pages ─────────────────────────────────────────────── */
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: flex; flex-direction: column; }
+
+    /* ── top bar ─────────────────────────────────────────────*/
+    .topbar {
+      background: var(--blue-dark);
+      color: #fff;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo {
+      width: 32px; height: 32px;
+      background: #fff;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 900; color: var(--blue-dark);
+    }
+    .topbar h1 { font-size: 15px; font-weight: 700; letter-spacing: .01em; }
+    .topbar-sub { font-size: 11px; opacity: .7; }
+    .topbar-user {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; opacity: .9;
+    }
+    .avatar {
+      width: 30px; height: 30px;
+      background: rgba(255,255,255,.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+    }
+    .btn-link {
+      background: none; border: none; color: #fff;
+      font-size: 12px; cursor: pointer; opacity: .8;
+      text-decoration: underline; padding: 0;
+    }
+    .btn-link:hover { opacity: 1; }
+
+    /* ── welcome page ────────────────────────────────────────*/
+    .welcome-wrap {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 16px;
+      background: linear-gradient(135deg, var(--blue-dark) 0%, #1d4ed8 50%, #2563eb 100%);
+    }
+    .welcome-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+    .welcome-icon {
+      width: 56px; height: 56px;
+      background: var(--blue-light);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    .welcome-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .welcome-card p  { font-size: 14px; color: var(--gray-500); margin-bottom: 28px; }
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 0;
+      font-size: 12px; color: var(--gray-400);
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--gray-200);
+    }
+    .tabs-welcome {
+      display: flex; background: var(--gray-100);
+      border-radius: 8px; padding: 3px; margin-bottom: 20px;
+    }
+    .tab-welcome {
+      flex: 1; padding: 8px; font-size: 13px; font-weight: 600;
+      border: none; background: none; border-radius: 6px; cursor: pointer;
+      color: var(--gray-500); transition: all .15s;
+    }
+    .tab-welcome.active { background: #fff; color: var(--blue); box-shadow: var(--shadow); }
+
+    /* ── form elements ───────────────────────────────────────*/
+    label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--gray-700); margin-bottom: 5px; margin-top: 14px;
+    }
+    label:first-of-type { margin-top: 0; }
+    input, select, textarea {
+      width: 100%;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border .15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29,78,216,.1);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px;
+      padding: 10px 20px;
+      font-size: 14px; font-weight: 600;
+      border: none; border-radius: 8px;
+      cursor: pointer; transition: all .15s;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-secondary {
+      background: #fff; color: var(--gray-700);
+      border: 1.5px solid var(--gray-200);
+    }
+    .btn-secondary:hover { background: var(--gray-50); border-color: var(--gray-400); }
+    .btn-danger  { background: var(--red);   color: #fff; }
+    .btn-danger:hover  { background: #b91c1c; }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-success:hover { background: #15803d; }
+    .btn-full { width: 100%; }
+    .btn-sm   { padding: 6px 14px; font-size: 12px; }
+
+    /* ── content layout ──────────────────────────────────────*/
+    .content { flex: 1; padding: 28px 24px; max-width: 900px; width: 100%; margin: 0 auto; }
+
+    /* ── cards ───────────────────────────────────────────────*/
+    .card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 15px; font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    /* ── stat cards row ──────────────────────────────────────*/
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+    .stat-card {
+      background: #fff; border: 1px solid var(--gray-200);
+      border-radius: var(--radius); padding: 16px 20px;
+      box-shadow: var(--shadow);
+    }
+    .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--gray-500); margin-bottom: 6px; }
+    .stat-value { font-size: 28px; font-weight: 800; }
+    .stat-card.blue   .stat-value { color: var(--blue); }
+    .stat-card.green  .stat-value { color: var(--green); }
+    .stat-card.orange .stat-value { color: var(--orange); }
+    .stat-card.red    .stat-value { color: var(--red); }
+
+    /* ── status badge ────────────────────────────────────────*/
+    .badge {
+      display: inline-flex; align-items: center;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 999px;
+    }
+    .badge::before { content:''; width:6px; height:6px; border-radius:50%; margin-right:5px; background: currentColor; }
+    .badge.submitted          { background:#dbeafe; color:#1e40af; }
+    .badge.pre_checked        { background:#e0e7ff; color:#3730a3; }
+    .badge.survey_required    { background:#fef9c3; color:#854d0e; }
+    .badge.surveyed           { background:#fde68a; color:#92400e; }
+    .badge.legal_review       { background:#fed7aa; color:#9a3412; }
+    .badge.approved           { background:#dcfce7; color:#166534; }
+    .badge.certificate_issued { background:#bbf7d0; color:#14532d; }
+    .badge.closed             { background:#f1f5f9; color:#64748b; }
+    .badge.rejected           { background:#fee2e2; color:#991b1b; }
+    .badge.on_hold            { background:#fce7f3; color:#9d174d; }
+    .badge.missing_documents  { background:#fef3c7; color:#78350f; }
+    .badge.under_objection    { background:#fde68a; color:#92400e; }
+
+    /* ── application table ───────────────────────────────────*/
+    .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--gray-200); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      padding: 10px 14px; background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .05em; color: var(--gray-500);
+      text-align: left; white-space: nowrap;
+    }
+    td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--gray-50); }
+    .app-link { color: var(--blue); cursor: pointer; font-weight: 600; font-size: 12px; font-family: monospace; }
+    .app-link:hover { text-decoration: underline; }
+    .empty-row td { text-align: center; padding: 40px; color: var(--gray-400); font-size: 14px; }
+
+    /* ── page header ─────────────────────────────────────────*/
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-header h2 { font-size: 20px; font-weight: 800; }
+    .page-header p  { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+    .breadcrumb { font-size: 12px; color: var(--gray-500); margin-bottom: 8px; }
+    .breadcrumb span { color: var(--blue); cursor: pointer; }
+    .breadcrumb span:hover { text-decoration: underline; }
+
+    /* ── status tracker ──────────────────────────────────────*/
+    .tracker {
+      display: flex; align-items: center;
+      padding: 20px 24px;
+      overflow-x: auto;
+      gap: 0;
+    }
+    .tracker-step {
+      display: flex; flex-direction: column; align-items: center;
+      flex: 1; min-width: 70px; position: relative;
+    }
+    .tracker-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px; left: calc(50% + 14px);
+      right: calc(-50% + 14px);
+      height: 2px;
+      background: var(--gray-200);
+      z-index: 0;
+    }
+    .tracker-step.done:not(:last-child)::after  { background: var(--blue); }
+    .tracker-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--gray-200);
+      border: 2px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--gray-400);
+      z-index: 1; position: relative;
+      transition: all .2s;
+    }
+    .tracker-step.done .tracker-dot   { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .tracker-step.active .tracker-dot { background: #fff; border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 3px var(--blue-mid); }
+    .tracker-step.rejected .tracker-dot { background: var(--red); border-color: var(--red); color: #fff; }
+    .tracker-label {
+      margin-top: 6px; font-size: 10px; font-weight: 600;
+      color: var(--gray-400); text-align: center; line-height: 1.3;
+      white-space: nowrap;
+    }
+    .tracker-step.done .tracker-label   { color: var(--blue); }
+    .tracker-step.active .tracker-label { color: var(--blue-dark); font-weight: 700; }
+
+    /* ── tabs ────────────────────────────────────────────────*/
+    .tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 20px; }
+    .tab-btn {
+      padding: 10px 18px; font-size: 13px; font-weight: 600;
+      border: none; background: none; cursor: pointer;
+      color: var(--gray-500); border-bottom: 2px solid transparent;
+      margin-bottom: -2px; transition: all .15s;
+    }
+    .tab-btn:hover { color: var(--blue); }
+    .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── detail fields ───────────────────────────────────────*/
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { }
+    .field-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--gray-500); margin-bottom: 3px; }
+    .field-value { font-size: 14px; font-weight: 600; color: var(--text); }
+    .field-value.mono { font-family: monospace; font-size: 13px; }
+
+    /* ── alert / toast ───────────────────────────────────────*/
+    .alert {
+      padding: 12px 16px; border-radius: 8px;
+      font-size: 13px; margin-bottom: 16px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .alert.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .alert.error   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .alert.info    { background: var(--blue-light); border: 1px solid var(--blue-mid); color: var(--blue-dark); }
+    .alert.warn    { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+
+    /* ── comment / timeline items ────────────────────────────*/
+    .timeline-item {
+      display: flex; gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .timeline-item:last-child { border-bottom: none; }
+    .timeline-dot {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: var(--blue-light); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+    .timeline-content { flex: 1; }
+    .timeline-event { font-size: 13px; font-weight: 600; }
+    .timeline-meta  { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+    /* ── doc item ────────────────────────────────────────────*/
+    .doc-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+    }
+    .doc-item:last-child { border-bottom: none; }
+    .doc-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: var(--gray-100); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    /* ── step form ───────────────────────────────────────────*/
+    .step-indicator {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
+    }
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%; background: var(--blue-light);
+      color: var(--blue); font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-num.active { background: var(--blue); color: #fff; }
+    .step-text { font-size: 13px; font-weight: 600; color: var(--gray-500); }
+    .step-text.active { color: var(--text); }
+    .step-divider { flex: 1; height: 1px; background: var(--gray-200); }
+
+    .section-hint {
+      font-size: 12px; color: var(--gray-500);
+      background: var(--gray-50); border-radius: 6px;
+      padding: 8px 12px; margin-bottom: 12px;
+    }
+
+    /* ── coming soon ─────────────────────────────────────────*/
+    .coming-soon {
+      text-align: center; padding: 32px;
+      color: var(--gray-400); font-size: 13px;
+    }
+    .coming-soon .cs-icon { font-size: 36px; margin-bottom: 10px; }
+    .coming-soon h4 { font-size: 15px; font-weight: 700; color: var(--gray-500); margin-bottom: 4px; }
+
+    /* ── spinner ─────────────────────────────────────────────*/
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .field-grid { grid-template-columns: 1fr; }
+      .content { padding: 16px; }
+      .topbar h1 { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PAGE 1 — WELCOME / LOGIN
+════════════════════════════════════════════ -->
+<div id="page-welcome" class="page active">
+  <div class="welcome-wrap">
+    <div class="welcome-card">
+      <div class="welcome-icon">🏛️</div>
+      <h2>Applicant Portal</h2>
+      <p>Land Registration Management Information System — apply for land registration, track your applications, and receive your certificate online.</p>
+
+      <div class="tabs-welcome">
+        <button class="tab-welcome active" onclick="switchWelcomeTab('login', this)">Track Application</button>
+        <button class="tab-welcome"        onclick="switchWelcomeTab('register', this)">New Registration</button>
+      </div>
+
+      <!-- Login tab -->
+      <div id="wtab-login">
+        <div id="login-alert"></div>
+        <label>Your Applicant ID</label>
+        <input id="login-id" placeholder="e.g. APP-001" />
+        <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="doLogin()">
+          View My Applications
+        </button>
+      </div>
+
+      <!-- Register tab -->
+      <div id="wtab-register" style="display:none">
+        <div id="register-alert"></div>
+        <label>Full Name</label>
+        <input id="reg-name" placeholder="e.g. Ahmed Al-Rashid" />
+        <label>Applicant ID <small style="font-weight:400;color:var(--gray-400)">(choose a unique ID)</small></label>
+        <input id="reg-id" placeholder="e.g. APP-001" />
+        <label>Applicant Type</label>
+        <select id="reg-type">
+          <option value="citizen">Citizen</option>
+          <option value="lawyer">Lawyer</option>
+          <option value="company">Company</option>
+          <option value="representative">Representative</option>
+        </select>
+        <label>National ID</label>
+        <input id="reg-national" placeholder="e.g. 1234567890" />
+        <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="doRegister()">
+          Create Account
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 2 — DASHBOARD
+════════════════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">LR</div>
+      <div>
+        <div class="topbar h1" style="font-size:15px;font-weight:700">LRMIS Applicant Portal</div>
+        <div class="topbar-sub">Land Registration Management Information System</div>
+      </div>
+    </div>
+    <div class="topbar-user">
+      <div class="avatar" id="dash-avatar">A</div>
+      <span id="dash-applicant-id">—</span>
+      <button class="btn-link" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <div>
+        <h2>My Applications</h2>
+        <p>Track and manage all your land registration applications.</p>
+      </div>
+      <button class="btn btn-primary" onclick="goTo('apply')">+ New Application</button>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card blue">
+        <div class="stat-label">Total</div>
+        <div class="stat-value" id="stat-total">—</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value" id="stat-progress">—</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Approved</div>
+        <div class="stat-value" id="stat-approved">—</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value" id="stat-rejected">—</div>
+      </div>
+    </div>
+
+    <!-- Applications table -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="card-title" style="padding:16px 20px;margin:0;border-bottom:1px solid var(--gray-100)">
+        <span>Applications</span>
+        <button class="btn btn-secondary btn-sm" onclick="loadDashboard()">Refresh</button>
+      </div>
+      <div class="table-wrap" style="border:none;border-radius:0">
+        <table>
+          <thead>
+            <tr>
+              <th>Application ID</th>
+              <th>Type</th>
+              <th>Parcel</th>
+              <th>Zone</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="dash-table-body">
+            <tr class="empty-row"><td colspan="7">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 3 — NEW APPLICATION
+════════════════════════════════════════════ -->
+<div id="page-apply" class="page">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">LR</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff">LRMIS Applicant Portal</div>
+        <div class="topbar-sub">Land Registration Management Information System</div>
+      </div>
+    </div>
+    <div class="topbar-user">
+      <div class="avatar" id="apply-avatar">A</div>
+      <span id="apply-applicant-id">—</span>
+      <button class="btn-link" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="breadcrumb">
+      <span onclick="goTo('dashboard')">My Applications</span> &rsaquo; New Application
+    </div>
+    <div class="page-header">
+      <div>
+        <h2>Submit New Application</h2>
+        <p>Fill in the details below to register a land application.</p>
+      </div>
+    </div>
+
+    <div class="step-indicator">
+      <div class="step-num active">1</div>
+      <div class="step-text active">Application Details</div>
+      <div class="step-divider"></div>
+      <div class="step-num">2</div>
+      <div class="step-text">Parcel Information</div>
+      <div class="step-divider"></div>
+      <div class="step-num">3</div>
+      <div class="step-text">Submit</div>
+    </div>
+
+    <div id="apply-alert"></div>
+
+    <div class="card">
+      <div class="card-title">Application Details</div>
+
+      <label>Application Type</label>
+      <select id="a-type">
+        <option value="first_registration">First Registration</option>
+        <option value="ownership_transfer" selected>Ownership Transfer</option>
+        <option value="parcel_subdivision">Parcel Subdivision</option>
+        <option value="parcel_merge">Parcel Merge</option>
+        <option value="boundary_correction">Boundary Correction</option>
+        <option value="certificate_request">Certificate Request</option>
+      </select>
+
+      <label>Description <small style="font-weight:400;color:var(--gray-400)">(optional)</small></label>
+      <textarea id="a-desc" placeholder="Briefly describe the purpose of this application..."></textarea>
+
+      <label>Priority</label>
+      <select id="a-priority">
+        <option value="normal" selected>Normal</option>
+        <option value="urgent">Urgent</option>
+      </select>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">Parcel Information</div>
+      <div class="section-hint">
+        Enter the details of the land parcel you are registering. The parcel must already exist in the system database.
+      </div>
+
+      <div class="field-grid">
+        <div>
+          <label>Parcel Number</label>
+          <input id="a-parcel-num" value="PARCEL-001" />
+        </div>
+        <div>
+          <label>Zone ID</label>
+          <input id="a-zone" value="ZONE-A" />
+        </div>
+        <div>
+          <label>Block Number</label>
+          <input id="a-block" value="12" />
+        </div>
+        <div>
+          <label>Basin Number</label>
+          <input id="a-basin" value="3" />
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:16px">
+      <button class="btn btn-secondary" onclick="goTo('dashboard')">Cancel</button>
+      <button class="btn btn-primary" id="submit-btn" onclick="submitApplication()">
+        Submit Application
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 4 — APPLICATION DETAIL
+════════════════════════════════════════════ -->
+<div id="page-detail" class="page">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">LR</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff">LRMIS Applicant Portal</div>
+        <div class="topbar-sub">Land Registration Management Information System</div>
+      </div>
+    </div>
+    <div class="topbar-user">
+      <div class="avatar" id="detail-avatar">A</div>
+      <span id="detail-applicant-id">—</span>
+      <button class="btn-link" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="breadcrumb">
+      <span onclick="goTo('dashboard')">My Applications</span>
+      &rsaquo; <span id="detail-breadcrumb-id">—</span>
+    </div>
+
+    <div class="page-header" style="margin-bottom:16px">
+      <div>
+        <h2 id="detail-title">Application Details</h2>
+        <p id="detail-subtitle" style="margin-top:4px">—</p>
+      </div>
+      <div id="detail-status-badge"></div>
+    </div>
+
+    <!-- Status Tracker -->
+    <div class="card" style="padding:0;margin-bottom:20px">
+      <div style="padding:14px 20px 0;font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em">
+        Application Progress
+      </div>
+      <div class="tracker" id="detail-tracker"></div>
+      <div id="detail-side-state" style="padding:0 20px 14px"></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('overview', this)">Overview</button>
+      <button class="tab-btn"        onclick="switchTab('documents', this)">Documents</button>
+      <button class="tab-btn"        onclick="switchTab('comments', this)">Comments</button>
+      <button class="tab-btn"        onclick="switchTab('timeline', this)">Timeline</button>
+    </div>
+
+    <!-- Overview tab -->
+    <div id="tab-overview" class="tab-panel active">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Application Information</div>
+        <div class="field-grid" id="detail-fields"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Parcel Details</div>
+        <div class="field-grid" id="detail-parcel-fields"></div>
+      </div>
+    </div>
+
+    <!-- Documents tab -->
+    <div id="tab-documents" class="tab-panel">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">
+          <span>Uploaded Documents</span>
+        </div>
+        <div id="docs-list">
+          <div class="coming-soon">
+            <div class="cs-icon">📂</div>
+            <h4>No documents yet</h4>
+            <p>Upload your supporting documents below.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Upload Document</div>
+        <div id="doc-upload-alert"></div>
+        <label>Document Type</label>
+        <select id="doc-type">
+          <option value="ownership_deed">Ownership Deed</option>
+          <option value="sale_contract">Sale Contract</option>
+          <option value="id_copy">ID Copy</option>
+          <option value="survey_sketch">Survey Sketch</option>
+          <option value="other">Other</option>
+        </select>
+        <label>Document Name</label>
+        <input id="doc-name" placeholder="e.g. Title Deed — Plot 145" />
+        <div class="section-hint" style="margin-top:12px">
+          File upload will be available once the documents module is implemented. For now this records the document metadata.
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="uploadDocument()">
+          Submit Document Record
+        </button>
+      </div>
+    </div>
+
+    <!-- Comments tab -->
+    <div id="tab-comments" class="tab-panel">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">Comments</div>
+        <div id="comments-list">
+          <div class="coming-soon">
+            <div class="cs-icon">💬</div>
+            <h4>No comments yet</h4>
+            <p>Add a comment or question below.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Add a Comment</div>
+        <div id="comment-alert"></div>
+        <label>Your Comment</label>
+        <textarea id="comment-text" placeholder="Ask a question or add a note about your application..."></textarea>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="addComment()">
+          Post Comment
+        </button>
+      </div>
+
+      <div class="card" style="margin-top:16px;border-color:#fde68a">
+        <div class="card-title" style="color:var(--orange)">Raise Objection</div>
+        <div class="alert warn" style="margin-bottom:12px">
+          Only raise an objection if you believe there is an error in the processing of your application.
+        </div>
+        <div id="objection-alert"></div>
+        <label>Objection Reason</label>
+        <textarea id="objection-text" placeholder="Describe the grounds for your objection..."></textarea>
+        <button class="btn btn-danger btn-sm" style="margin-top:12px" onclick="raiseObjection()">
+          Submit Objection
+        </button>
+      </div>
+    </div>
+
+    <!-- Timeline tab -->
+    <div id="tab-timeline" class="tab-panel">
+      <div class="card">
+        <div class="card-title">Application Timeline</div>
+        <div id="timeline-list">
+          <div class="coming-soon">
+            <div class="cs-icon">📋</div>
+            <h4>Timeline loading...</h4>
+            <p>Full event history will appear here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════ -->
+<script>
+  const BASE = "http://127.0.0.1:8000";
+
+  const WORKFLOW_STEPS = [
+    { key: "submitted",          label: "Submitted" },
+    { key: "pre_checked",        label: "Pre-Checked" },
+    { key: "survey_required",    label: "Survey\nRequired" },
+    { key: "surveyed",           label: "Surveyed" },
+    { key: "legal_review",       label: "Legal\nReview" },
+    { key: "approved",           label: "Approved" },
+    { key: "certificate_issued", label: "Certificate\nIssued" },
+    { key: "closed",             label: "Closed" },
+  ];
+
+  const SIDE_STATES = ["on_hold", "rejected", "missing_documents", "under_objection"];
+
+  const TYPE_LABELS = {
+    first_registration:  "First Registration",
+    ownership_transfer:  "Ownership Transfer",
+    parcel_subdivision:  "Parcel Subdivision",
+    parcel_merge:        "Parcel Merge",
+    boundary_correction: "Boundary Correction",
+    certificate_request: "Certificate Request",
+  };
+
+  const TIMELINE_ICONS = {
+    submitted: "📝", pre_checked: "✅", survey_required: "🗺️",
+    surveyed: "📐", legal_review: "⚖️", approved: "🎉",
+    certificate_issued: "📜", closed: "🔒",
+    on_hold: "⏸️", rejected: "❌", missing_documents: "📂",
+    under_objection: "⚠️", default: "🔔",
+  };
+
+  // ── State ─────────────────────────────────────────────────────
+  const state = { applicantId: null, currentApp: null };
+
+  // ── API ───────────────────────────────────────────────────────
+  async function api(method, path, body) {
+    const opts = { method, headers: { "Content-Type": "application/json" } };
+    if (body) opts.body = JSON.stringify(body);
+    try {
+      const r = await fetch(BASE + path, opts);
+      const data = await r.json().catch(() => ({}));
+      return { ok: r.ok, status: r.status, data };
+    } catch {
+      return { ok: false, status: 0, data: { detail: "Cannot reach the server. Is it running?" } };
+    }
+  }
+
+  // ── Navigation ────────────────────────────────────────────────
+  function goTo(pageId) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("page-" + pageId).classList.add("active");
+    if (pageId === "dashboard") loadDashboard();
+  }
+
+  function logout() {
+    state.applicantId = null;
+    state.currentApp  = null;
+    goTo("welcome");
+  }
+
+  function setUserUI(id) {
+    const initial = (id || "A")[0].toUpperCase();
+    ["dash", "apply", "detail"].forEach(prefix => {
+      const av = document.getElementById(prefix + "-avatar");
+      const nm = document.getElementById(prefix + "-applicant-id");
+      if (av) av.textContent = initial;
+      if (nm) nm.textContent = id;
+    });
+  }
+
+  // ── Welcome tabs ──────────────────────────────────────────────
+  function switchWelcomeTab(tab, btn) {
+    document.querySelectorAll(".tab-welcome").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("wtab-login").style.display    = tab === "login"    ? "" : "none";
+    document.getElementById("wtab-register").style.display = tab === "register" ? "" : "none";
+  }
+
+  // ── Alert helpers ─────────────────────────────────────────────
+  function showAlert(id, type, msg) {
+    document.getElementById(id).innerHTML =
+      `<div class="alert ${type}">${msg}</div>`;
+  }
+  function clearAlert(id) {
+    document.getElementById(id).innerHTML = "";
+  }
+
+  // ── Login ─────────────────────────────────────────────────────
+  async function doLogin() {
+    const id = document.getElementById("login-id").value.trim();
+    if (!id) { showAlert("login-alert", "error", "Please enter your Applicant ID."); return; }
+    state.applicantId = id;
+    setUserUI(id);
+    goTo("dashboard");
+  }
+
+  // ── Register ──────────────────────────────────────────────────
+  async function doRegister() {
+    const id   = document.getElementById("reg-id").value.trim();
+    const name = document.getElementById("reg-name").value.trim();
+    if (!id || !name) { showAlert("register-alert", "error", "Name and Applicant ID are required."); return; }
+
+    const { ok, data } = await api("POST", "/applicants/", {
+      applicant_id:  id,
+      full_name:     name,
+      applicant_type: document.getElementById("reg-type").value,
+      identity: { national_id: document.getElementById("reg-national").value.trim() },
+    });
+
+    if (data?.message?.startsWith("TODO")) {
+      // Stub response — still let the user continue
+      showAlert("register-alert", "info",
+        "Registration recorded. (The applicants module is still in development — your ID has been saved locally.)");
+      setTimeout(() => {
+        state.applicantId = id;
+        setUserUI(id);
+        goTo("dashboard");
+      }, 1500);
+    } else if (ok) {
+      showAlert("register-alert", "success", "Account created! Redirecting...");
+      setTimeout(() => {
+        state.applicantId = id;
+        setUserUI(id);
+        goTo("dashboard");
+      }, 1000);
+    } else {
+      showAlert("register-alert", "error", data?.detail || "Registration failed.");
+    }
+  }
+
+  // ── Dashboard ─────────────────────────────────────────────────
+  async function loadDashboard() {
+    document.getElementById("dash-table-body").innerHTML =
+      '<tr class="empty-row"><td colspan="7">Loading...</td></tr>';
+
+    const { ok, data } = await api("GET", "/applications/?limit=100");
+    if (!ok) {
+      document.getElementById("dash-table-body").innerHTML =
+        `<tr class="empty-row"><td colspan="7">Could not load applications. Is the server running?</td></tr>`;
+      return;
+    }
+
+    // Filter client-side by this applicant's ID
+    const all  = data.data || [];
+    const mine = all.filter(a =>
+      (a.applicant_ref?.applicant_id || "") === state.applicantId
+    );
+
+    // Stats
+    const inProgress = ["submitted","pre_checked","survey_required","surveyed","legal_review"];
+    document.getElementById("stat-total").textContent    = mine.length;
+    document.getElementById("stat-progress").textContent = mine.filter(a => inProgress.includes(a.status)).length;
+    document.getElementById("stat-approved").textContent = mine.filter(a => a.status === "approved" || a.status === "certificate_issued" || a.status === "closed").length;
+    document.getElementById("stat-rejected").textContent = mine.filter(a => a.status === "rejected").length;
+
+    if (!mine.length) {
+      document.getElementById("dash-table-body").innerHTML =
+        '<tr class="empty-row"><td colspan="7">You have no applications yet. Click "+ New Application" to get started.</td></tr>';
+      return;
+    }
+
+    document.getElementById("dash-table-body").innerHTML = mine.map(a => {
+      const submitted = a.timestamps?.submitted_at
+        ? new Date(a.timestamps.submitted_at).toLocaleDateString() : "—";
+      return `<tr>
+        <td><span class="app-link" onclick="openDetail('${a.application_id}')">${a.application_id}</span></td>
+        <td style="font-size:12px">${TYPE_LABELS[a.application_type] || a.application_type}</td>
+        <td style="font-size:12px;font-family:monospace">${a.parcel_ref?.parcel_number || "—"}</td>
+        <td style="font-size:12px">${a.parcel_ref?.zone_id || "—"}</td>
+        <td><span class="badge ${a.status}">${a.status.replace(/_/g," ")}</span></td>
+        <td style="font-size:12px;color:var(--gray-500)">${submitted}</td>
+        <td><button class="btn btn-secondary btn-sm" onclick="openDetail('${a.application_id}')">View</button></td>
+      </tr>`;
+    }).join("");
+  }
+
+  // ── Submit Application ────────────────────────────────────────
+  async function submitApplication() {
+    clearAlert("apply-alert");
+    const btn = document.getElementById("submit-btn");
+    btn.innerHTML = '<div class="spinner"></div> Submitting...';
+    btn.disabled  = true;
+
+    const { ok, status, data } = await api("POST", "/applications/", {
+      application_type: document.getElementById("a-type").value,
+      applicant_ref: {
+        applicant_id:   state.applicantId,
+        applicant_type: "citizen",
+      },
+      parcel_ref: {
+        parcel_number: document.getElementById("a-parcel-num").value.trim(),
+        zone_id:       document.getElementById("a-zone").value.trim(),
+        block_number:  document.getElementById("a-block").value.trim(),
+        basin_number:  document.getElementById("a-basin").value.trim(),
+      },
+      description: document.getElementById("a-desc").value.trim() || null,
+      priority:    document.getElementById("a-priority").value,
+    });
+
+    btn.innerHTML = "Submit Application";
+    btn.disabled  = false;
+
+    if (status === 201 && data.application_id) {
+      showAlert("apply-alert", "success",
+        `Application <strong>${data.application_id}</strong> submitted successfully! Redirecting to your dashboard...`);
+      setTimeout(() => goTo("dashboard"), 1800);
+    } else {
+      const msg = data?.detail || JSON.stringify(data);
+      showAlert("apply-alert", "error", `Submission failed: ${msg}`);
+    }
+  }
+
+  // ── Application Detail ────────────────────────────────────────
+  async function openDetail(appId) {
+    goTo("detail");
+    document.getElementById("detail-title").textContent       = appId;
+    document.getElementById("detail-subtitle").textContent    = "Loading...";
+    document.getElementById("detail-breadcrumb-id").textContent = appId;
+    document.getElementById("detail-status-badge").innerHTML  = "";
+    document.getElementById("detail-fields").innerHTML        = "";
+    document.getElementById("detail-parcel-fields").innerHTML = "";
+    document.getElementById("detail-tracker").innerHTML       = "";
+    document.getElementById("detail-side-state").innerHTML    = "";
+
+    // Reset to overview tab
+    switchTab("overview", document.querySelector(".tab-btn"));
+
+    const { ok, data } = await api("GET", `/applications/${appId}`);
+    if (!ok) {
+      document.getElementById("detail-subtitle").textContent = "Could not load application.";
+      return;
+    }
+
+    state.currentApp = data;
+    renderDetail(data);
+    loadTimeline(appId);
+  }
+
+  function renderDetail(a) {
+    document.getElementById("detail-title").textContent =
+      `${TYPE_LABELS[a.application_type] || a.application_type}`;
+    document.getElementById("detail-subtitle").textContent = a.application_id;
+    document.getElementById("detail-status-badge").innerHTML =
+      `<span class="badge ${a.status}">${a.status.replace(/_/g," ")}</span>`;
+
+    // Status tracker
+    renderTracker(a.status);
+
+    // Overview fields
+    const fmt = v => v ? new Date(v).toLocaleString() : "—";
+    document.getElementById("detail-fields").innerHTML = `
+      <div class="field"><div class="field-label">Application ID</div><div class="field-value mono">${a.application_id}</div></div>
+      <div class="field"><div class="field-label">Status</div><div class="field-value"><span class="badge ${a.status}">${a.status.replace(/_/g," ")}</span></div></div>
+      <div class="field"><div class="field-label">Application Type</div><div class="field-value">${TYPE_LABELS[a.application_type] || a.application_type}</div></div>
+      <div class="field"><div class="field-label">Priority</div><div class="field-value">${a.priority || "normal"}</div></div>
+      <div class="field"><div class="field-label">Submitted At</div><div class="field-value">${fmt(a.timestamps?.submitted_at)}</div></div>
+      <div class="field"><div class="field-label">Last Updated</div><div class="field-value">${fmt(a.timestamps?.updated_at)}</div></div>
+    `;
+
+    const p = a.parcel_ref || {};
+    document.getElementById("detail-parcel-fields").innerHTML = `
+      <div class="field"><div class="field-label">Parcel Number</div><div class="field-value mono">${p.parcel_number || "—"}</div></div>
+      <div class="field"><div class="field-label">Zone ID</div><div class="field-value">${p.zone_id || "—"}</div></div>
+      <div class="field"><div class="field-label">Block Number</div><div class="field-value">${p.block_number || "—"}</div></div>
+      <div class="field"><div class="field-label">Basin Number</div><div class="field-value">${p.basin_number || "—"}</div></div>
+    `;
+  }
+
+  function renderTracker(currentStatus) {
+    const isSideState = SIDE_STATES.includes(currentStatus);
+    const mainIdx     = WORKFLOW_STEPS.findIndex(s => s.key === currentStatus);
+
+    const tracker = document.getElementById("detail-tracker");
+    tracker.innerHTML = WORKFLOW_STEPS.map((step, i) => {
+      let cls = "";
+      if (isSideState) {
+        cls = i < WORKFLOW_STEPS.findIndex(s => s.key === "pre_checked") ? "done" : "";
+      } else {
+        if (i < mainIdx)  cls = "done";
+        if (i === mainIdx) cls = "active";
+      }
+      const label = step.label.replace("\n", "<br>");
+      return `<div class="tracker-step ${cls}">
+        <div class="tracker-dot">${cls === "done" ? "✓" : i + 1}</div>
+        <div class="tracker-label">${label}</div>
+      </div>`;
+    }).join("");
+
+    const sideDiv = document.getElementById("detail-side-state");
+    if (isSideState) {
+      const msgs = {
+        on_hold:           "Your application is currently on hold. A staff member will contact you.",
+        rejected:          "This application has been rejected. Please contact the office for details.",
+        missing_documents: "Additional documents are required. Please check the Documents tab.",
+        under_objection:   "An objection has been raised on this application. It is under review.",
+      };
+      const types = { on_hold: "warn", rejected: "error", missing_documents: "warn", under_objection: "warn" };
+      sideDiv.innerHTML = `<div class="alert ${types[currentStatus] || 'info'}" style="margin:0">
+        <span class="badge ${currentStatus}" style="margin-right:4px">${currentStatus.replace(/_/g," ")}</span>
+        ${msgs[currentStatus] || currentStatus}
+      </div>`;
+    } else {
+      sideDiv.innerHTML = "";
+    }
+  }
+
+  // ── Timeline ──────────────────────────────────────────────────
+  async function loadTimeline(appId) {
+    const { ok, data } = await api("GET", `/applications/${appId}/timeline`);
+    const list = document.getElementById("timeline-list");
+
+    // Handle stub (returns empty envelope)
+    if (ok && Array.isArray(data.data)) {
+      if (!data.data.length) {
+        list.innerHTML = `<div class="coming-soon">
+          <div class="cs-icon">📋</div>
+          <h4>No events yet</h4>
+          <p>Timeline will populate as your application progresses.</p>
+        </div>`;
+      } else {
+        list.innerHTML = data.data.map(ev => {
+          const icon = TIMELINE_ICONS[ev.event_type] || TIMELINE_ICONS.default;
+          return `<div class="timeline-item">
+            <div class="timeline-dot">${icon}</div>
+            <div class="timeline-content">
+              <div class="timeline-event">${ev.event_type?.replace(/_/g," ") || "Event"}</div>
+              <div class="timeline-meta">${ev.actor_type || ""} · ${ev.actor_id || ""}</div>
+            </div>
+          </div>`;
+        }).join("");
+      }
+    } else {
+      list.innerHTML = `<div class="coming-soon">
+        <div class="cs-icon">🚧</div>
+        <h4>Timeline module coming soon</h4>
+        <p>This feature is being built by the team.</p>
+      </div>`;
+    }
+  }
+
+  // ── Upload document ───────────────────────────────────────────
+  async function uploadDocument() {
+    const appId = state.currentApp?.application_id;
+    if (!appId) return;
+    clearAlert("doc-upload-alert");
+
+    const { ok, data } = await api("POST", `/applications/${appId}/documents`, {
+      document_type: document.getElementById("doc-type").value,
+      document_name: document.getElementById("doc-name").value.trim(),
+      applicant_id:  state.applicantId,
+    });
+
+    if (data?.message?.startsWith("TODO")) {
+      showAlert("doc-upload-alert", "info",
+        "Document record submitted. (The documents module is still in development — your entry has been noted.)");
+    } else if (ok) {
+      showAlert("doc-upload-alert", "success", "Document submitted successfully.");
+    } else {
+      showAlert("doc-upload-alert", "error", data?.detail || "Submission failed.");
+    }
+  }
+
+  // ── Add comment ───────────────────────────────────────────────
+  async function addComment() {
+    const appId = state.currentApp?.application_id;
+    if (!appId) return;
+    clearAlert("comment-alert");
+
+    const text = document.getElementById("comment-text").value.trim();
+    if (!text) { showAlert("comment-alert", "error", "Comment cannot be empty."); return; }
+
+    const { ok, data } = await api("POST", `/applications/${appId}/comments`, {
+      applicant_id: state.applicantId,
+      comment:      text,
+    });
+
+    if (data?.message?.startsWith("TODO")) {
+      showAlert("comment-alert", "info",
+        "Comment submitted. (The comments module is still in development.)");
+      document.getElementById("comment-text").value = "";
+    } else if (ok) {
+      showAlert("comment-alert", "success", "Comment posted.");
+      document.getElementById("comment-text").value = "";
+    } else {
+      showAlert("comment-alert", "error", data?.detail || "Failed to post comment.");
+    }
+  }
+
+  // ── Raise objection ───────────────────────────────────────────
+  async function raiseObjection() {
+    const appId = state.currentApp?.application_id;
+    if (!appId) return;
+    clearAlert("objection-alert");
+
+    const text = document.getElementById("objection-text").value.trim();
+    if (text.length < 10) {
+      showAlert("objection-alert", "error", "Please provide a detailed reason (min 10 characters).");
+      return;
+    }
+
+    const { ok, data } = await api("POST", `/applications/${appId}/objections`, {
+      applicant_id: state.applicantId,
+      reason:       text,
+    });
+
+    if (data?.message?.startsWith("TODO")) {
+      showAlert("objection-alert", "info",
+        "Objection submitted. (The objections module is still in development.)");
+      document.getElementById("objection-text").value = "";
+    } else if (ok) {
+      showAlert("objection-alert", "success", "Objection raised. Your application will be reviewed.");
+      document.getElementById("objection-text").value = "";
+    } else {
+      showAlert("objection-alert", "error", data?.detail || "Failed to submit objection.");
+    }
+  }
+
+  // ── Tab switching ─────────────────────────────────────────────
+  function switchTab(tab, btn) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+    document.getElementById("tab-" + tab).classList.add("active");
+  }
+
+  // ── Enter on login input ──────────────────────────────────────
+  document.getElementById("login-id").addEventListener("keydown", e => {
+    if (e.key === "Enter") doLogin();
+  });
+</script>
+</body>
+</html>

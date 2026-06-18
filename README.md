@@ -142,6 +142,11 @@ lrmis-backend/
 ├── scripts/
 │   ├── create_indexes.py
 │   └── seed_data.py
+├── tests/
+│   └── test_applications.py  # automated end-to-end tests (Student 1)
+├── ui/
+│   ├── index.html            # staff / developer test panel
+│   └── portal.html           # citizen-facing Applicant Portal
 ├── .env.example
 ├── .gitignore
 ├── README.md

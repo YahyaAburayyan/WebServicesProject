@@ -16,6 +16,7 @@ def create_indexes() -> None:
     db = get_db()
 
     # land_applications
+    db.land_applications.create_index("idempotency_key", unique=True, sparse=True)
     db["land_applications"].create_index("application_id", unique=True)
     db["land_applications"].create_index("status")
     db["land_applications"].create_index("application_type")

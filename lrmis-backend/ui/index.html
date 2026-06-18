@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LRMIS — Test UI</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── sidebar ─────────────────────────────────────────────── */
+    nav {
+      width: 220px;
+      min-width: 220px;
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    nav h1 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 0 16px 12px;
+      border-bottom: 1px solid #1e293b;
+      margin-bottom: 8px;
+    }
+    nav .group-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #475569;
+      padding: 12px 16px 4px;
+    }
+    nav button {
+      width: 100%;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      text-align: left;
+      padding: 7px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      border-radius: 0;
+      transition: background .15s, color .15s;
+    }
+    nav button:hover  { background: #1e293b; color: #e2e8f0; }
+    nav button.active { background: #1d4ed8; color: #fff; }
+
+    /* ── main panel ──────────────────────────────────────────── */
+    main {
+      flex: 1;
+      padding: 32px;
+      max-width: 860px;
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .POST   { background: #dcfce7; color: #166534; }
+    .GET    { background: #dbeafe; color: #1e40af; }
+    .PATCH  { background: #fef9c3; color: #854d0e; }
+
+    /* ── form ────────────────────────────────────────────────── */
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 4px;
+      margin-top: 12px;
+    }
+    label:first-of-type { margin-top: 0; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      background: #f8fafc;
+      color: #1e293b;
+      outline: none;
+      transition: border .15s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #3b82f6;
+      background: #fff;
+    }
+    textarea { resize: vertical; min-height: 80px; font-family: monospace; font-size: 12px; }
+
+    .btn {
+      margin-top: 16px;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #1d4ed8;
+      color: #fff;
+      transition: background .15s;
+    }
+    .btn:hover { background: #1e40af; }
+    .btn:active { background: #1d4ed8; }
+
+    /* ── response box ────────────────────────────────────────── */
+    .response-box {
+      margin-top: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    .response-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #94a3b8;
+      flex-shrink: 0;
+    }
+    .status-dot.ok  { background: #22c55e; }
+    .status-dot.err { background: #ef4444; }
+    pre {
+      margin: 0;
+      padding: 14px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    /* ── status badge in list ────────────────────────────────── */
+    .status-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #475569;
+    }
+    .status-tag.submitted         { background:#dbeafe; color:#1e40af; }
+    .status-tag.pre_checked       { background:#e0e7ff; color:#3730a3; }
+    .status-tag.survey_required   { background:#fef9c3; color:#854d0e; }
+    .status-tag.surveyed          { background:#fde68a; color:#92400e; }
+    .status-tag.legal_review      { background:#fed7aa; color:#9a3412; }
+    .status-tag.approved          { background:#dcfce7; color:#166534; }
+    .status-tag.certificate_issued{ background:#bbf7d0; color:#14532d; }
+    .status-tag.closed            { background:#f1f5f9; color:#64748b; }
+    .status-tag.rejected          { background:#fee2e2; color:#991b1b; }
+    .status-tag.on_hold           { background:#fce7f3; color:#9d174d; }
+    .status-tag.missing_documents { background:#fef3c7; color:#78350f; }
+    .status-tag.under_objection   { background:#fde68a; color:#92400e; }
+
+    /* ── app list table ──────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #475569;
+    }
+    td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+    .app-id-link {
+      font-family: monospace;
+      font-size: 12px;
+      color: #1d4ed8;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ── allowed next states ─────────────────────────────────── */
+    .next-states { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .next-btn {
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #f8fafc;
+      color: #334155;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .next-btn:hover { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+
+    hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
+
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #1e40af;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav>
+  <h1>LRMIS</h1>
+
+  <span class="group-label">Applications</span>
+  <button onclick="show('create')"     class="active">Create Application</button>
+  <button onclick="show('list')">      List / Search</button>
+  <button onclick="show('get')">       Get by ID</button>
+  <button onclick="show('transition')">Transition Status</button>
+  <button onclick="show('hold')">      Put on Hold</button>
+  <button onclick="show('reject')">    Reject</button>
+  <button onclick="show('certificate')">Issue Certificate</button>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main>
+
+  <!-- ── CREATE ──────────────────────────────── -->
+  <div id="panel-create" class="panel active">
+    <h2><span class="badge POST">POST</span> Create Application</h2>
+    <p class="subtitle">Submits a new land registration application. Returns a unique LRMIS-2026-XXXX id.</p>
+
+    <div class="card">
+      <label>Application Type</label>
+      <select id="c-type">
+        <option value="first_registration">first_registration</option>
+        <option value="ownership_transfer" selected>ownership_transfer</option>
+        <option value="parcel_subdivision">parcel_subdivision</option>
+        <option value="parcel_merge">parcel_merge</option>
+        <option value="boundary_correction">boundary_correction</option>
+        <option value="certificate_request">certificate_request</option>
+      </select>
+
+      <label>Applicant ID</label>
+      <input id="c-applicant-id" value="APP-001" />
+
+      <label>Applicant Type</label>
+      <select id="c-applicant-type">
+        <option value="citizen" selected>citizen</option>
+        <option value="lawyer">lawyer</option>
+        <option value="company">company</option>
+        <option value="representative">representative</option>
+      </select>
+
+      <label>Parcel Number <small style="font-weight:400;color:#94a3b8">(must match a parcel in the database)</small></label>
+      <input id="c-parcel-number" value="PARCEL-001" />
+
+      <label>Block Number</label>
+      <input id="c-block" value="12" />
+
+      <label>Basin Number</label>
+      <input id="c-basin" value="3" />
+
+      <label>Zone ID</label>
+      <input id="c-zone" value="ZONE-A" />
+
+      <label>Description (optional)</label>
+      <input id="c-desc" placeholder="e.g. Transfer of ownership after sale" />
+
+      <label>Idempotency Key (optional) <small style="font-weight:400;color:#94a3b8">— send the same key twice to get the same application back</small></label>
+      <input id="c-idem" placeholder="leave blank for a fresh application each time" />
+
+      <button class="btn" onclick="createApp()">Submit Application</button>
+    </div>
+    <div id="create-response"></div>
+  </div>
+
+  <!-- ── LIST ────────────────────────────────── -->
+  <div id="panel-list" class="panel">
+    <h2><span class="badge GET">GET</span> List Applications</h2>
+    <p class="subtitle">Returns a paginated, filterable list of all applications.</p>
+
+    <div class="card">
+      <label>Filter by Status (leave blank for all)</label>
+      <select id="l-status">
+        <option value="">— all statuses —</option>
+        <option>submitted</option><option>pre_checked</option>
+        <option>survey_required</option><option>surveyed</option>
+        <option>legal_review</option><option>approved</option>
+        <option>certificate_issued</option><option>closed</option>
+        <option>rejected</option><option>on_hold</option>
+        <option>missing_documents</option><option>under_objection</option>
+      </select>
+
+      <label>Filter by Zone ID (leave blank for all)</label>
+      <input id="l-zone" placeholder="e.g. ZONE-A" />
+
+      <label>Page</label>
+      <input id="l-page" type="number" value="1" min="1" />
+
+      <button class="btn" onclick="listApps()">Fetch List</button>
+    </div>
+
+    <div id="list-table"></div>
+    <div id="list-response"></div>
+  </div>
+
+  <!-- ── GET ONE ──────────────────────────────── -->
+  <div id="panel-get" class="panel">
+    <h2><span class="badge GET">GET</span> Get Application by ID</h2>
+    <p class="subtitle">Fetches the full record for a single application.</p>
+
+    <div class="card">
+      <label>Application ID</label>
+      <input id="g-id" placeholder="LRMIS-2026-0001" />
+      <button class="btn" onclick="getApp()">Fetch</button>
+    </div>
+
+    <div id="get-current-status"></div>
+    <div id="get-response"></div>
+  </div>
+
+  <!-- ── TRANSITION ──────────────────────────── -->
+  <div id="panel-transition" class="panel">
+    <h2><span class="badge PATCH">PATCH</span> Transition Status</h2>
+    <p class="subtitle">Moves an application to a new status. Only legal transitions are allowed.</p>
+
+    <div class="info-box">
+      Tip: use <strong>Get by ID</strong> first to see which transitions are currently allowed for your application.
+    </div>
+
+    <div class="card">
+      <label>Application ID</label>
+      <input id="t-id" placeholder="LRMIS-2026-0001" />
+
+      <label>Target Status</label>
+      <select id="t-target">
+        <option value="pre_checked">pre_checked</option>
+        <option value="survey_required">survey_required</option>
+        <option value="surveyed">surveyed</option>
+        <option value="legal_review">legal_review</option>
+        <option value="approved">approved</option>
+        <option value="certificate_issued">certificate_issued</option>
+        <option value="closed">closed</option>
+        <option value="missing_documents">missing_documents</option>
+        <option value="under_objection">under_objection</option>
+      </select>
+
+      <label>Note (optional)</label>
+      <input id="t-note" placeholder="e.g. Documents verified by registrar A" />
+
+      <label>Actor Type</label>
+      <select id="t-actor-type">
+        <option value="registrar">registrar</option>
+        <option value="staff">staff</option>
+        <option value="system">system</option>
+      </select>
+
+      <label>Actor ID</label>
+      <input id="t-actor-id" value="staff_001" />
+
+      <button class="btn" onclick="transition()">Apply Transition</button>
+    </div>
+    <div id="transition-response"></div>
+  </div>
+
+  <!-- ── HOLD ────────────────────────────────── -->
+  <div id="panel-hold" class="panel">
+    <h2><span class="badge POST">POST</span> Put on Hold</h2>
+    <p class="subtitle">Pauses processing of an application. A reason is required.</p>
+
+    <div class="card">
+      <label>Application ID</label>
+      <input id="h-id" placeholder="LRMIS-2026-0001" />
+
+      <label>Reason <small style="color:#ef4444">*required</small></label>
+      <input id="h-reason" placeholder="e.g. Waiting for supporting documents from applicant" />
+
+      <label>Actor ID</label>
+      <input id="h-actor" value="registrar_001" />
+
+      <button class="btn" onclick="holdApp()">Put on Hold</button>
+    </div>
+    <div id="hold-response"></div>
+  </div>
+
+  <!-- ── REJECT ──────────────────────────────── -->
+  <div id="panel-reject" class="panel">
+    <h2><span class="badge POST">POST</span> Reject Application</h2>
+    <p class="subtitle">Permanently rejects an application. A reason is mandatory. This is a terminal state.</p>
+
+    <div class="card">
+      <label>Application ID</label>
+      <input id="r-id" placeholder="LRMIS-2026-0001" />
+
+      <label>Rejection Reason <small style="color:#ef4444">*required (min 3 chars)</small></label>
+      <input id="r-reason" placeholder="e.g. Duplicate application already exists" />
+
+      <label>Actor ID</label>
+      <input id="r-actor" value="registrar_001" />
+
+      <button class="btn" style="background:#dc2626" onclick="rejectApp()">Reject Application</button>
+    </div>
+    <div id="reject-response"></div>
+  </div>
+
+  <!-- ── CERTIFICATE ─────────────────────────── -->
+  <div id="panel-certificate" class="panel">
+    <h2><span class="badge POST">POST</span> Issue Certificate</h2>
+    <p class="subtitle">Issues a land certificate. The application must be in <strong>approved</strong> status first.</p>
+
+    <div class="card">
+      <label>Application ID</label>
+      <input id="cert-id" placeholder="LRMIS-2026-0001" />
+
+      <label>Certificate Type</label>
+      <select id="cert-type">
+        <option value="ownership_certificate">ownership_certificate</option>
+        <option value="lease_certificate">lease_certificate</option>
+      </select>
+
+      <label>Issued By (Registrar ID)</label>
+      <input id="cert-by" value="registrar_001" />
+
+      <button class="btn" style="background:#16a34a" onclick="issueCert()">Issue Certificate</button>
+    </div>
+    <div id="cert-response"></div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════ SCRIPT ═══════════════════ -->
+<script>
+  const BASE = "http://127.0.0.1:8000";
+
+  // ── Navigation ──────────────────────────────────────────────
+  function show(panel) {
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    document.getElementById("panel-" + panel).classList.add("active");
+    event.currentTarget.classList.add("active");
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────
+  function statusClass(s) {
+    return `<span class="status-tag ${s}">${s}</span>`;
+  }
+
+  function renderResponse(containerId, statusCode, data) {
+    const ok = statusCode >= 200 && statusCode < 300;
+    const dotClass = ok ? "ok" : "err";
+    document.getElementById(containerId).innerHTML = `
+      <div class="response-box">
+        <div class="response-header">
+          <div class="status-dot ${dotClass}"></div>
+          <span>HTTP ${statusCode}</span>
+        </div>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      </div>`;
+  }
+
+  async function apiFetch(method, path, body, headers = {}) {
+    const opts = {
+      method,
+      headers: { "Content-Type": "application/json", ...headers },
+    };
+    if (body !== undefined) opts.body = JSON.stringify(body);
+    const r = await fetch(BASE + path, opts);
+    let data;
+    try { data = await r.json(); } catch { data = { raw: await r.text() }; }
+    return { status: r.status, data };
+  }
+
+  function val(id) { return document.getElementById(id).value.trim(); }
+
+  // ── Fill an ID field in another panel and navigate to it ────
+  function fillAndGo(targetPanel, targetInputId, appId) {
+    document.getElementById(targetInputId).value = appId;
+    const btn = document.querySelector(`nav button[onclick="show('${targetPanel}')"]`);
+    btn.click();
+  }
+
+  // ── CREATE ──────────────────────────────────────────────────
+  async function createApp() {
+    const idem = val("c-idem");
+    const hdrs = idem ? { "idempotency-key": idem } : {};
+    const { status, data } = await apiFetch("POST", "/applications/", {
+      application_type: val("c-type"),
+      applicant_ref: {
+        applicant_id:   val("c-applicant-id"),
+        applicant_type: val("c-applicant-type"),
+      },
+      parcel_ref: {
+        parcel_number: val("c-parcel-number"),
+        block_number:  val("c-block"),
+        basin_number:  val("c-basin"),
+        zone_id:       val("c-zone"),
+      },
+      description: val("c-desc") || undefined,
+    }, hdrs);
+    renderResponse("create-response", status, data);
+    if (status === 201 && data.application_id) {
+      document.getElementById("create-response").insertAdjacentHTML("beforeend",
+        `<p style="margin-top:10px;font-size:13px;color:#166534;">
+          Created <strong>${data.application_id}</strong> —
+          <a style="cursor:pointer;color:#1d4ed8;text-decoration:underline"
+             onclick="fillAndGo('get','g-id','${data.application_id}')">View record</a> |
+          <a style="cursor:pointer;color:#1d4ed8;text-decoration:underline"
+             onclick="fillAndGo('transition','t-id','${data.application_id}')">Transition status</a>
+        </p>`);
+    }
+  }
+
+  // ── LIST ────────────────────────────────────────────────────
+  async function listApps() {
+    const params = new URLSearchParams();
+    const s = val("l-status"); if (s) params.set("status", s);
+    const z = val("l-zone");   if (z) params.set("zone_id", z);
+    params.set("page",  val("l-page") || "1");
+    params.set("limit", "20");
+
+    const { status, data } = await apiFetch("GET", "/applications/?" + params);
+    renderResponse("list-response", status, data);
+
+    if (status === 200 && Array.isArray(data.data)) {
+      const rows = data.data.map(a => `
+        <tr>
+          <td>
+            <span class="app-id-link"
+                  onclick="fillAndGo('get','g-id','${a.application_id}')"
+                  title="Click to view full record">
+              ${a.application_id}
+            </span>
+          </td>
+          <td>${statusClass(a.status)}</td>
+          <td style="font-size:12px;color:#64748b">${a.application_type || ''}</td>
+          <td style="font-size:12px;color:#64748b">${a.parcel_ref?.zone_id || ''}</td>
+          <td>
+            <span style="font-size:12px;color:#1d4ed8;cursor:pointer;text-decoration:underline"
+                  onclick="fillAndGo('transition','t-id','${a.application_id}')">transition</span>
+          </td>
+        </tr>`).join("");
+      document.getElementById("list-table").innerHTML = `
+        <div class="card" style="padding:0;overflow:hidden">
+          <table>
+            <thead><tr>
+              <th>Application ID</th><th>Status</th>
+              <th>Type</th><th>Zone</th><th>Actions</th>
+            </tr></thead>
+            <tbody>${rows || '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px">No applications found</td></tr>'}</tbody>
+          </table>
+          <div style="padding:10px 16px;font-size:12px;color:#64748b;border-top:1px solid #f1f5f9">
+            ${data.total} total &nbsp;·&nbsp; page ${data.page} &nbsp;·&nbsp; limit ${data.limit}
+          </div>
+        </div>`;
+    } else {
+      document.getElementById("list-table").innerHTML = "";
+    }
+  }
+
+  // ── GET ONE ─────────────────────────────────────────────────
+  async function getApp() {
+    const id = val("g-id");
+    if (!id) return alert("Enter an Application ID");
+    const { status, data } = await apiFetch("GET", `/applications/${id}`);
+    renderResponse("get-response", status, data);
+
+    if (status === 200) {
+      const next = (data.workflow?.allowed_next || []);
+      const nextBtns = next.length
+        ? next.map(s => `<button class="next-btn"
+            onclick="fillAndGo('transition','t-id','${id}');
+                     document.getElementById('t-target').value='${s}'"
+          >${s}</button>`).join("")
+        : "<span style='font-size:12px;color:#94a3b8'>No further transitions (terminal state)</span>";
+
+      document.getElementById("get-current-status").innerHTML = `
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px">Current Status</div>
+              ${statusClass(data.status)}
+            </div>
+            <div style="flex:1">
+              <div style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px">Allowed Next States</div>
+              <div class="next-states">${nextBtns}</div>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      document.getElementById("get-current-status").innerHTML = "";
+    }
+  }
+
+  // ── TRANSITION ──────────────────────────────────────────────
+  async function transition() {
+    const id = val("t-id");
+    if (!id) return alert("Enter an Application ID");
+    const { status, data } = await apiFetch("PATCH", `/applications/${id}/transition`, {
+      target_state: val("t-target"),
+      note:         val("t-note") || undefined,
+      actor_type:   val("t-actor-type"),
+      actor_id:     val("t-actor-id"),
+    });
+    renderResponse("transition-response", status, data);
+    if (status === 200) {
+      document.getElementById("transition-response").insertAdjacentHTML("beforeend",
+        `<p style="margin-top:10px;font-size:13px;color:#166534;">
+          Status is now ${statusClass(data.status)}
+        </p>`);
+    }
+  }
+
+  // ── HOLD ────────────────────────────────────────────────────
+  async function holdApp() {
+    const id = val("h-id");
+    if (!id) return alert("Enter an Application ID");
+    const { status, data } = await apiFetch("POST", `/applications/${id}/hold`, {
+      reason:     val("h-reason"),
+      actor_type: "registrar",
+      actor_id:   val("h-actor"),
+    });
+    renderResponse("hold-response", status, data);
+  }
+
+  // ── REJECT ──────────────────────────────────────────────────
+  async function rejectApp() {
+    const id = val("r-id");
+    if (!id) return alert("Enter an Application ID");
+    const { status, data } = await apiFetch("POST", `/applications/${id}/reject`, {
+      reason:     val("r-reason"),
+      actor_type: "registrar",
+      actor_id:   val("r-actor"),
+    });
+    renderResponse("reject-response", status, data);
+  }
+
+  // ── CERTIFICATE ─────────────────────────────────────────────
+  async function issueCert() {
+    const id = val("cert-id");
+    if (!id) return alert("Enter an Application ID");
+    const { status, data } = await apiFetch("POST", `/applications/${id}/certificate`, {
+      certificate_type: val("cert-type"),
+      issued_by:        val("cert-by"),
+    });
+    renderResponse("cert-response", status, data);
+  }
+</script>
+</body>
+</html>
