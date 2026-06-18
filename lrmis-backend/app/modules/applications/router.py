@@ -1,4 +1,3 @@
-"""STUDENT 1 -- Land Application Management endpoints."""
 from fastapi import APIRouter, Header, HTTPException, Query
 
 from app.common.audit import log_event
@@ -6,15 +5,17 @@ from app.common.enums import ApplicationStatus as S
 from app.database import get_db
 from app.modules.applications import service as svc
 from app.modules.applications.models import (
-    ApplicationCreate, CertificateRequest, HoldRequest,
-    RejectRequest, TransitionRequest,
+    ApplicationCreate,
+    CertificateRequest,
+    HoldRequest,
+    RejectRequest,
+    TransitionRequest,
 )
 from app.modules.applications.workflow import allowed_next, can_transition, guard
 
 router = APIRouter(prefix="/applications", tags=["Applications (Student 1)"])
 
-
-# ---------- CREATE (with idempotency) ---------------------------------------
+# POST /applications/
 @router.post("/", status_code=201)
 def create_application(
     body: ApplicationCreate,
@@ -22,13 +23,14 @@ def create_application(
 ):
     apps = get_db()["land_applications"]
 
-    # Idempotency: same key -> return the original, never create a duplicate.
+    # if the client sends the same idempotency key twice, return the original instead of creating a duplicate
     if idempotency_key:
         existing = apps.find_one({"idempotency_key": idempotency_key})
         if existing:
             return svc.to_public(existing)
 
     app_id = svc.make_application_id()
+
     doc = {
         "application_id": app_id,
         "application_type": body.application_type.value,
@@ -46,33 +48,47 @@ def create_application(
         "required_documents": [],
         "timestamps": {
             "submitted_at": svc.now(),
-            "pre_checked_at": None, "survey_required_at": None,
-            "surveyed_at": None, "legal_review_at": None,
-            "approved_at": None, "certificate_issued_at": None,
-            "closed_at": None, "updated_at": svc.now(),
+            "pre_checked_at": None,
+            "survey_required_at": None,
+            "surveyed_at": None,
+            "legal_review_at": None,
+            "approved_at": None,
+            "certificate_issued_at": None,
+            "closed_at": None,
+            "updated_at": svc.now(),
         },
-        "assignment": {"assigned_surveyor_id": None, "assigned_registrar_id": None},
-        "objection": {"has_objection": False, "objection_ids": []},
-        "internal": {"notes": [], "visibility": "staff_only"},
+        "assignment": {
+            "assigned_surveyor_id": None,
+            "assigned_registrar_id": None,
+        },
+        "objection": {
+            "has_objection": False,
+            "objection_ids": [],
+        },
+        "internal": {
+            "notes": [],
+            "visibility": "staff_only",
+        },
     }
-    # Only store idempotency_key when one was provided.
-    # A sparse-unique index treats null as a real value, so storing None would
-    # cause a DuplicateKeyError on the second request without a key.
+
+    # only save the key to the document if one was actually sent
+    # we can't store null here because the sparse-unique index on idempotency_key
+    # would treat null as a real value and block future inserts
     if idempotency_key:
         doc["idempotency_key"] = idempotency_key
+
     apps.insert_one(doc)
     log_event(app_id, "submitted", body.applicant_ref.applicant_type,
               body.applicant_ref.applicant_id, {"channel": "web"})
+
     return svc.to_public(doc)
 
-
-# ---------- READ ONE --------------------------------------------------------
+# GET /applications/{id}
 @router.get("/{application_id}")
 def get_application(application_id: str):
     return svc.to_public(svc.get_application_or_404(application_id))
 
-
-# ---------- LIST (filter + pagination + sort + envelope) --------------------
+# GET /applications/
 @router.get("/")
 def list_applications(
     status: str | None = None,
@@ -83,6 +99,7 @@ def list_applications(
 ):
     apps = get_db()["land_applications"]
     query: dict = {}
+
     if status:
         query["status"] = status
     if application_type:
@@ -91,15 +108,21 @@ def list_applications(
         query["parcel_ref.zone_id"] = zone_id
 
     total = apps.count_documents(query)
-    cursor = (apps.find(query)
-                  .sort("timestamps.submitted_at", -1)
-                  .skip((page - 1) * limit)
-                  .limit(limit))
-    return {"data": [svc.to_public(d) for d in cursor],
-            "total": total, "page": page, "limit": limit}
+    cursor = (
+        apps.find(query)
+        .sort("timestamps.submitted_at", -1)
+        .skip((page - 1) * limit)
+        .limit(limit)
+    )
 
+    return {
+        "data": [svc.to_public(d) for d in cursor],
+        "total": total,
+        "page": page,
+        "limit": limit,
+    }
 
-# ---------- TRANSITION (the core) -------------------------------------------
+# PATCH /applications/{id}/transition
 @router.patch("/{application_id}/transition")
 def transition(application_id: str, body: TransitionRequest):
     app_doc = svc.get_application_or_404(application_id)
@@ -109,54 +132,63 @@ def transition(application_id: str, body: TransitionRequest):
     if not can_transition(current, target):
         raise HTTPException(
             status_code=409,
-            detail=f"Illegal transition: {current} -> {target}")
+            detail=f"Illegal transition: {current} -> {target}"
+        )
 
     ok, reason = guard(app_doc, target)
     if not ok:
         raise HTTPException(status_code=400, detail=reason)
 
     svc.set_state(application_id, target)
-    log_event(application_id, target, body.actor_type, body.actor_id,
-              {"note": body.note})
+    log_event(application_id, target, body.actor_type, body.actor_id, {"note": body.note})
+
     return svc.to_public(svc.get_application_or_404(application_id))
 
-
-# ---------- HOLD ------------------------------------------------------------
+# POST /applications/{id}/hold
 @router.post("/{application_id}/hold")
 def hold(application_id: str, body: HoldRequest):
     app_doc = svc.get_application_or_404(application_id)
+
     if not can_transition(app_doc["status"], S.on_hold):
-        raise HTTPException(status_code=409,
-                            detail=f"Cannot hold from state {app_doc['status']}")
+        raise HTTPException(
+            status_code=409,
+            detail=f"Cannot hold from state {app_doc['status']}"
+        )
+
     svc.set_state(application_id, S.on_hold, {"internal.hold_reason": body.reason})
-    log_event(application_id, "on_hold", body.actor_type, body.actor_id,
-              {"reason": body.reason})
+    log_event(application_id, "on_hold", body.actor_type, body.actor_id, {"reason": body.reason})
+
     return svc.to_public(svc.get_application_or_404(application_id))
 
-
-# ---------- REJECT (mandatory reason via Pydantic) --------------------------
+# POST /applications/{id}/reject
 @router.post("/{application_id}/reject")
 def reject(application_id: str, body: RejectRequest):
     app_doc = svc.get_application_or_404(application_id)
+
     if not can_transition(app_doc["status"], S.rejected):
-        raise HTTPException(status_code=409,
-                            detail=f"Cannot reject from state {app_doc['status']}")
+        raise HTTPException(
+            status_code=409,
+            detail=f"Cannot reject from state {app_doc['status']}"
+        )
+
     svc.set_state(application_id, S.rejected, {"internal.rejection_reason": body.reason})
-    log_event(application_id, "rejected", body.actor_type, body.actor_id,
-              {"reason": body.reason})
+    log_event(application_id, "rejected", body.actor_type, body.actor_id, {"reason": body.reason})
+
     return svc.to_public(svc.get_application_or_404(application_id))
 
-
-# ---------- CERTIFICATE (only after approval) -------------------------------
+# POST /applications/{id}/certificate	
 @router.post("/{application_id}/certificate", status_code=201)
 def issue_certificate(application_id: str, body: CertificateRequest):
     app_doc = svc.get_application_or_404(application_id)
+
     if app_doc["status"] != S.approved:
         raise HTTPException(
             status_code=409,
-            detail="Certificate cannot be issued unless the application is approved")
+            detail="Certificate cannot be issued unless the application is approved"
+        )
 
     cert_id = svc.make_certificate_id()
+
     cert = {
         "certificate_id": cert_id,
         "application_id": application_id,
@@ -171,8 +203,10 @@ def issue_certificate(application_id: str, body: CertificateRequest):
             "digital_signature_stub": "signed_hash_example",
         },
     }
+
     get_db()["certificates"].insert_one(cert)
     svc.set_state(application_id, S.certificate_issued)
     log_event(application_id, "certificate_issued", "registrar", body.issued_by,
               {"certificate_id": cert_id})
+
     return svc.to_public(cert)

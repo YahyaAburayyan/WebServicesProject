@@ -1,10 +1,9 @@
-"""Pydantic request models for the Land Application module (Student 1).
-Typed with the shared enums so FastAPI auto-rejects bad values with 422."""
 from pydantic import BaseModel, Field
 
+# using the shared enums means FastAPI will auto-reject any invalid value with 422
 from app.common.enums import ApplicationType, ApplicationStatus
 
-
+# a one shared place the contains all the request body shapes for the posible applications in our system
 class ApplicantRef(BaseModel):
     applicant_id: str
     applicant_type: str
@@ -42,7 +41,8 @@ class HoldRequest(BaseModel):
 
 
 class RejectRequest(BaseModel):
-    reason: str = Field(min_length=3)   # mandatory rejection reason
+    # reason is required, you can't reject without giving a reason
+    reason: str = Field(min_length=3)
     actor_type: str = "registrar"
     actor_id: str = "staff_unknown"
 

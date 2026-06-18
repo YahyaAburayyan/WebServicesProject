@@ -1,12 +1,8 @@
-"""Workflow state machine for land applications (STUDENT 1 core).
-- ALLOWED_TRANSITIONS: which next states are legal from each state.
-- guard(): the precondition rules from the project documentation.
-Guards that depend on teammates' collections degrade gracefully: if the
-evidence collection is empty/missing they return (False, reason) instead
-of crashing, so this module is fully testable on its own."""
 from app.common.enums import ApplicationStatus as S
 from app.database import get_db
 
+
+# defines which states you can go to from each state
 ALLOWED_TRANSITIONS: dict[str, set[str]] = {
     S.submitted:          {S.pre_checked, S.missing_documents, S.rejected, S.on_hold},
     S.pre_checked:        {S.survey_required, S.legal_review, S.missing_documents, S.rejected, S.on_hold},
@@ -22,9 +18,8 @@ ALLOWED_TRANSITIONS: dict[str, set[str]] = {
     S.rejected:           set(),
 }
 
-
+# check if a vaild transition
 def can_transition(current: str, target: str) -> bool:
-    """True if `target` is a legal next state from `current`."""
     return target in ALLOWED_TRANSITIONS.get(current, set())
 
 
@@ -32,14 +27,15 @@ def allowed_next(current: str) -> list[str]:
     return sorted(s.value for s in ALLOWED_TRANSITIONS.get(current, set()))
 
 
-# ---------- precondition guards (project documentation rules) ---------------
 def guard(app_doc: dict, target: str) -> tuple[bool, str]:
-    """Return (allowed, reason_if_blocked) for moving app_doc to `target`."""
+    """
+    Check if the application meets the preconditions for moving to target state.
+    Returns (True, "") if allowed, or (False, reason) if blocked.
+    """
     db = get_db()
     app_id = app_doc.get("application_id")
 
     if target == S.pre_checked:
-        # applicant AND parcel information must be complete
         applicant = app_doc.get("applicant_ref") or {}
         parcel = app_doc.get("parcel_ref") or {}
         if not applicant.get("applicant_id"):
@@ -49,28 +45,27 @@ def guard(app_doc: dict, target: str) -> tuple[bool, str]:
         return True, ""
 
     if target == S.survey_required:
-        # parcel location must be valid GeoJSON
-        # seed_data.py stores the parcel identifier as parcel_code (not parcel_number),
-        # so map the application's parcel_number to the parcels collection's parcel_code.
         parcel = app_doc.get("parcel_ref") or {}
-        pdoc = db["parcels"].find_one({
+        # seed_data stores the parcel as parcel_code, but the application
+        # saves it as parcel_number, so we match on that
+        parcel_doc = db["parcels"].find_one({
             "parcel_code": parcel.get("parcel_number"),
             "zone_id": parcel.get("zone_id"),
         })
-        geom = (pdoc or {}).get("geometry") or {}
+        geom = (parcel_doc or {}).get("geometry") or {}
         if geom.get("type") != "Polygon" or not geom.get("coordinates"):
             return False, "Parcel has no valid GeoJSON location"
         return True, ""
 
     if target == S.surveyed:
-        # a survey report must exist (Student 3's collection)
+        # survey report needs to exist before we can mark as surveyed (Student 3's part)
         report = db["survey_reports"].find_one({"application_id": app_id})
         if not report:
             return False, "No survey report found for this application"
         return True, ""
 
     if target == S.legal_review:
-        # ownership documents must be uploaded (Student 2's collection)
+        # need at least one ownership document uploaded (Student 2's part)
         doc = db["application_documents"].find_one({
             "application_id": app_id,
             "document_type": {"$in": ["ownership_deed", "sale_contract"]},
@@ -81,7 +76,6 @@ def guard(app_doc: dict, target: str) -> tuple[bool, str]:
         return True, ""
 
     if target == S.approved:
-        # legal review must have been completed
         if app_doc.get("status") != S.legal_review:
             return False, "Application must be in legal_review before approval"
         return True, ""
@@ -91,5 +85,5 @@ def guard(app_doc: dict, target: str) -> tuple[bool, str]:
             return False, "Application must be approved before issuing a certificate"
         return True, ""
 
-    # on_hold, missing_documents, under_objection, rejected, closed: no extra precondition
+    # on_hold, missing_documents, under_objection, rejected — no extra checks needed
     return True, ""

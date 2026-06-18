@@ -1,6 +1,6 @@
 from enum import Enum
 
-
+# usage of one shared enums values accross the whole project so there will be no errors in thhe naming 
 class ApplicationStatus(str, Enum):
     submitted = "submitted"
     pre_checked = "pre_checked"
