@@ -30,7 +30,16 @@ def create_indexes() -> None:
     db["parcels"].create_index("zone_id")
 
     # applicants
+    db["applicants"].create_index("applicant_id", unique=True)
     db["applicants"].create_index("identity.national_id", unique=True)
+
+    # application_documents
+    db["application_documents"].create_index("application_id")
+    db["application_documents"].create_index("document_id", unique=True)
+
+    # objections
+    db["objections"].create_index("application_id")
+    db["objections"].create_index("objection_id", unique=True)
 
     # staff_members
     db["staff_members"].create_index("staff_code", unique=True)
