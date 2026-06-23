@@ -717,11 +717,8 @@
         </select>
         <label>Document Name</label>
         <input id="doc-name" placeholder="e.g. Title Deed — Plot 145" />
-        <div class="section-hint" style="margin-top:12px">
-          File upload will be available once the documents module is implemented. For now this records the document metadata.
-        </div>
         <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="uploadDocument()">
-          Submit Document Record
+          Upload Document
         </button>
       </div>
     </div>
@@ -783,7 +780,7 @@
      SCRIPT
 ════════════════════════════════════════════ -->
 <script>
-  const BASE = "http://127.0.0.1:8080";
+  const BASE = "http://127.0.0.1:8000";
 
   const WORKFLOW_STEPS = [
     { key: "submitted",          label: "Submitted" },
@@ -893,16 +890,7 @@
       identity: { national_id: document.getElementById("reg-national").value.trim() },
     });
 
-    if (data?.message?.startsWith("TODO")) {
-      // Stub response — still let the user continue
-      showAlert("register-alert", "info",
-        "Registration recorded. (The applicants module is still in development — your ID has been saved locally.)");
-      setTimeout(() => {
-        state.applicantId = id;
-        setUserUI(id);
-        goTo("dashboard");
-      }, 1500);
-    } else if (ok) {
+    if (ok) {
       showAlert("register-alert", "success", "Account created! Redirecting...");
       setTimeout(() => {
         state.applicantId = id;
@@ -910,7 +898,7 @@
         goTo("dashboard");
       }, 1000);
     } else {
-      showAlert("register-alert", "error", data?.detail || "Registration failed.");
+      showAlert("register-alert", "error", data?.detail || "Registration failed. " + (data?.detail || ""));
     }
   }
 
@@ -919,18 +907,14 @@
     document.getElementById("dash-table-body").innerHTML =
       '<tr class="empty-row"><td colspan="7">Loading...</td></tr>';
 
-    const { ok, data } = await api("GET", "/applications/?limit=100");
+    const { ok, data } = await api("GET", `/applicants/${state.applicantId}/applications?limit=100`);
     if (!ok) {
       document.getElementById("dash-table-body").innerHTML =
         `<tr class="empty-row"><td colspan="7">Could not load applications. Is the server running?</td></tr>`;
       return;
     }
 
-    // Filter client-side by this applicant's ID
-    const all  = data.data || [];
-    const mine = all.filter(a =>
-      (a.applicant_ref?.applicant_id || "") === state.applicantId
-    );
+    const mine = data.data || [];
 
     // Stats
     const inProgress = ["submitted","pre_checked","survey_required","surveyed","legal_review"];
@@ -1136,11 +1120,9 @@
       applicant_id:  state.applicantId,
     });
 
-    if (data?.message?.startsWith("TODO")) {
-      showAlert("doc-upload-alert", "info",
-        "Document record submitted. (The documents module is still in development — your entry has been noted.)");
-    } else if (ok) {
-      showAlert("doc-upload-alert", "success", "Document submitted successfully.");
+    if (ok) {
+      showAlert("doc-upload-alert", "success", `Document <strong>${data.document_id}</strong> uploaded. Status: pending review.`);
+      document.getElementById("doc-name").value = "";
     } else {
       showAlert("doc-upload-alert", "error", data?.detail || "Submission failed.");
     }
@@ -1160,11 +1142,7 @@
       comment:      text,
     });
 
-    if (data?.message?.startsWith("TODO")) {
-      showAlert("comment-alert", "info",
-        "Comment submitted. (The comments module is still in development.)");
-      document.getElementById("comment-text").value = "";
-    } else if (ok) {
+    if (ok) {
       showAlert("comment-alert", "success", "Comment posted.");
       document.getElementById("comment-text").value = "";
     } else {
@@ -1189,11 +1167,7 @@
       reason:       text,
     });
 
-    if (data?.message?.startsWith("TODO")) {
-      showAlert("objection-alert", "info",
-        "Objection submitted. (The objections module is still in development.)");
-      document.getElementById("objection-text").value = "";
-    } else if (ok) {
+    if (ok) {
       showAlert("objection-alert", "success", "Objection raised. Your application will be reviewed.");
       document.getElementById("objection-text").value = "";
     } else {

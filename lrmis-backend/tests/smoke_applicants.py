@@ -5,7 +5,7 @@ Server must be running on port 8080.
 """
 import sys, json, urllib.request, urllib.error, uuid
 
-BASE = "http://127.0.0.1:8080"
+BASE = "http://127.0.0.1:8000"
 RUN  = uuid.uuid4().hex[:6]
 GREEN = "\033[32m"; RED = "\033[31m"; RESET = "\033[0m"
 results = []
