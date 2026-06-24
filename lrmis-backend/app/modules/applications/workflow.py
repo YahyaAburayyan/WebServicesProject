@@ -46,15 +46,16 @@ def guard(app_doc: dict, target: str) -> tuple[bool, str]:
 
     if target == S.survey_required:
         parcel = app_doc.get("parcel_ref") or {}
-        # seed_data stores the parcel as parcel_code, but the application
-        # saves it as parcel_number, so we match on that
+        pnum = parcel.get("parcel_number", "")
+        zone = parcel.get("zone_id", "")
+        # Match on parcel_code OR parcel_number (citizens may store either)
         parcel_doc = db["parcels"].find_one({
-            "parcel_code": parcel.get("parcel_number"),
-            "zone_id": parcel.get("zone_id"),
-        })
+            "$or": [{"parcel_code": pnum}, {"parcel_number": pnum}],
+            "zone_id": zone,
+        }) if pnum else None
         geom = (parcel_doc or {}).get("geometry") or {}
         if geom.get("type") != "Polygon" or not geom.get("coordinates"):
-            return False, "Parcel has no valid GeoJSON location"
+            return False, "Parcel has no valid GeoJSON location. Ensure the parcel exists in the land records."
         return True, ""
 
     if target == S.surveyed:
@@ -78,6 +79,24 @@ def guard(app_doc: dict, target: str) -> tuple[bool, str]:
     if target == S.approved:
         if app_doc.get("status") != S.legal_review:
             return False, "Application must be in legal_review before approval"
+        # All uploaded documents must be reviewed (none left pending)
+        pending = db["application_documents"].find_one({
+            "application_id": app_id,
+            "status": "pending_review",
+        })
+        if pending:
+            return False, (
+                f"Document '{pending.get('document_name', pending.get('document_type'))}' "
+                "is still pending review. All documents must be verified or rejected before approval."
+            )
+        # At least one ownership document must be verified
+        verified_ownership = db["application_documents"].find_one({
+            "application_id": app_id,
+            "document_type": {"$in": ["ownership_deed", "sale_contract"]},
+            "status": "verified",
+        })
+        if not verified_ownership:
+            return False, "At least one ownership document (ownership deed or sale contract) must be verified before approval."
         return True, ""
 
     if target == S.certificate_issued:

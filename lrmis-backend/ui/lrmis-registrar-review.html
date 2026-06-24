@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LRMIS — Application Review</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-error-container":"#93000a","outline":"#6f7a6f","background":"#f8faf3","on-background":"#191c18","on-surface":"#191c18","primary-container":"#007a3d","on-primary-container":"#a1ffb7","on-primary":"#ffffff","primary":"#005f2e","surface":"#f8faf3","surface-container-lowest":"#ffffff","surface-container":"#edefe8","surface-container-high":"#e7e9e2","surface-bright":"#f8faf3","outline-variant":"#becabc","on-surface-variant":"#3f493f","secondary":"#bb001e","inverse-surface":"#2e312d","primary-fixed":"#94f8ad","error":"#ba1a1a","error-container":"#ffdad6","surface-container-low":"#f2f4ed"}}}}
+</script>
+<style>
+  .keffiyeh-pattern{background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,95,46,.03) 10px,rgba(0,95,46,.03) 20px)}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;color:#d4e6d4;font-size:14px;font-weight:600;transition:background .15s}
+  .nav-item:hover{background:rgba(255,255,255,.08)}
+  .status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+  .doc-card{border:1px solid #becabc;border-radius:10px;padding:14px;background:#fff;margin-bottom:10px}
+  .doc-card.pending-review{border-color:#005f2e;border-left:4px solid #005f2e}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center}
+  .modal-box{background:#fff;border-radius:14px;padding:24px;width:440px;max-width:95vw;box-shadow:0 16px 48px rgba(0,0,0,.22)}
+  .state-btn{padding:7px 13px;border:2px solid #d1fae5;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;background:#f0fdf4;color:#065f46;transition:all .15s}
+  .state-btn:hover,.state-btn.selected{background:#d1fae5;border-color:#005f2e;outline:2px solid #005f2e}
+  .state-btn.danger{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+  .state-btn.danger:hover,.state-btn.danger.selected{background:#fecaca;outline-color:#991b1b}
+  .state-btn.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+  .tl-event{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #e7e9e2}
+  .tl-event:last-child{border-bottom:none}
+</style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+
+<!-- Session guard -->
+<script>
+  const _appId  = localStorage.getItem('lrmis_app_id');
+  const _staffId = localStorage.getItem('lrmis_staff_id');
+  const _role   = localStorage.getItem('lrmis_role');
+  if (!_appId || _role !== 'registrar' || !_staffId) {
+    window.location.replace('lrmis-registrar-center.html');
+  }
+</script>
+
+<!-- Sidebar -->
+<nav class="w-56 bg-inverse-surface fixed left-0 top-0 bottom-0 flex flex-col py-5 z-40">
+  <div class="px-5 mb-6 flex items-center gap-2">
+    <span class="material-symbols-outlined text-primary-fixed">account_balance</span>
+    <span class="text-primary-fixed font-bold text-sm">LRMIS</span>
+  </div>
+  <div class="flex-1 px-2 space-y-0.5">
+    <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+      <span class="material-symbols-outlined text-[17px]">arrow_back</span>All Applications
+    </div>
+    <div class="nav-item" onclick="window.location.href='lrmis-registrar-analytics.html'">
+      <span class="material-symbols-outlined text-[17px]">analytics</span>Analytics
+    </div>
+    <div class="nav-item" onclick="window.location.href='lrmis-certificate.html'">
+      <span class="material-symbols-outlined text-[17px]">verified</span>Certificates
+    </div>
+    <div class="nav-item" onclick="window.location.href='lrmis-create-staff.html'">
+      <span class="material-symbols-outlined text-[17px]">person_add</span>Create Staff
+    </div>
+  </div>
+  <div class="px-2 pt-4 border-t border-white/10">
+    <div class="nav-item" onclick="doLogout()">
+      <span class="material-symbols-outlined text-[17px]">logout</span>Logout
+    </div>
+  </div>
+</nav>
+
+<!-- Main -->
+<main class="flex-1 ml-56 bg-surface-bright keffiyeh-pattern min-h-screen">
+  <div class="px-8 py-6 max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <a onclick="window.location.href='lrmis-registrar-center.html'" class="flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary cursor-pointer mb-1">
+          <span class="material-symbols-outlined text-[16px]">arrow_back</span>Back to Applications
+        </a>
+        <h1 class="text-2xl font-bold text-on-surface">Application <span id="h-app-id">—</span></h1>
+        <div class="flex items-center gap-3 mt-1">
+          <span id="h-status-wrap"><span class="status-pill bg-gray-100 text-gray-700">—</span></span>
+          <span id="h-type" class="text-sm text-on-surface-variant">—</span>
+          <span id="h-date" class="text-sm text-on-surface-variant">—</span>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="openTransitionModal()" class="flex items-center gap-1.5 px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:bg-primary/90">
+          <span class="material-symbols-outlined text-[16px]">swap_horiz</span>Change Status
+        </button>
+        <button onclick="assignSurveyor()" class="flex items-center gap-1.5 px-4 py-2 border border-outline-variant text-on-surface rounded-lg text-sm font-semibold hover:bg-surface-container">
+          <span class="material-symbols-outlined text-[16px]">person_add</span>Assign Surveyor
+        </button>
+        <button onclick="openReassignModal()" class="flex items-center gap-1.5 px-4 py-2 border border-outline-variant text-on-surface rounded-lg text-sm font-semibold hover:bg-surface-container">
+          <span class="material-symbols-outlined text-[16px]">swap_horiz</span>Reassign
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="bg-white border border-outline-variant rounded-xl p-5 mb-6 shadow-sm">
+      <div class="flex items-center justify-between relative">
+        <div id="progress-line" class="absolute left-0 top-4 h-0.5 bg-primary transition-all" style="width:0%"></div>
+        <div class="absolute left-0 top-4 h-0.5 bg-outline-variant w-full -z-0"></div>
+        <!-- Steps rendered by JS -->
+      </div>
+      <div id="progress-steps" class="flex justify-between mt-0"></div>
+    </div>
+
+    <!-- 3-col grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      <!-- Col 1: App info + parcel -->
+      <div class="flex flex-col gap-5">
+
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+          <div class="h-1 bg-primary"></div>
+          <div class="p-5">
+            <h3 class="font-semibold text-on-surface flex items-center gap-2 mb-4">
+              <span class="material-symbols-outlined text-primary text-[18px]">person</span>Applicant
+            </h3>
+            <dl class="space-y-3" id="applicant-info">
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Applicant ID</dt><dd class="font-medium text-on-surface" id="ai-id">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Application Type</dt><dd class="font-medium text-on-surface" id="ai-type">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Priority</dt><dd class="font-medium text-on-surface" id="ai-priority">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Description</dt><dd class="text-sm text-on-surface-variant" id="ai-desc">—</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm">
+          <div class="p-5">
+            <h3 class="font-semibold text-on-surface flex items-center gap-2 mb-4">
+              <span class="material-symbols-outlined text-primary text-[18px]">landscape</span>Parcel Information
+            </h3>
+            <dl class="space-y-3">
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Parcel Number</dt><dd class="font-medium text-on-surface" id="pi-num">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Zone</dt><dd class="font-medium text-on-surface" id="pi-zone">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Block / Basin</dt><dd class="font-medium text-on-surface" id="pi-block">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Area (m²)</dt><dd class="font-medium text-on-surface" id="pi-area">—</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Survey Assignment (shown when a task exists) -->
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm" id="task-section" style="display:none">
+          <div class="p-5">
+            <h3 class="font-semibold text-on-surface flex items-center gap-2 mb-4">
+              <span class="material-symbols-outlined text-primary text-[18px]">engineering</span>Survey Assignment
+            </h3>
+            <dl class="space-y-3">
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Assigned Surveyor</dt><dd class="font-medium text-on-surface" id="st-name">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Staff ID</dt><dd class="font-mono text-sm text-on-surface" id="st-id">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Task ID</dt><dd class="font-mono text-sm text-on-surface" id="st-task">—</dd></div>
+              <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Milestone</dt><dd id="st-milestone">—</dd></div>
+              <div id="st-date-row" style="display:none"><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Visit Scheduled</dt><dd class="font-medium text-on-surface" id="st-date">—</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Registrar Comment -->
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm">
+          <div class="p-5">
+            <h3 class="font-semibold text-on-surface flex items-center gap-2 mb-3">
+              <span class="material-symbols-outlined text-primary text-[18px]">rate_review</span>Add Note
+            </h3>
+            <textarea id="reg-comment" rows="3" placeholder="Write a registrar note or internal comment…"
+              class="w-full text-sm border border-outline-variant rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-none mb-2"></textarea>
+            <button onclick="addComment()" class="w-full py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:bg-primary/90">
+              Post Note
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 2: Documents -->
+      <div class="bg-white border border-outline-variant rounded-xl shadow-sm flex flex-col">
+        <div class="p-5 border-b border-outline-variant flex justify-between items-center">
+          <h3 class="font-semibold text-on-surface flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[18px]">folder</span>Documents
+          </h3>
+          <span id="doc-count" class="text-xs bg-surface-container px-2 py-1 rounded-full text-on-surface-variant">—</span>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4" id="docs-list">
+          <p class="text-sm text-on-surface-variant text-center py-6">Loading…</p>
+        </div>
+      </div>
+
+      <!-- Col 3: Timeline + Decision -->
+      <div class="flex flex-col gap-5">
+
+        <!-- Timeline -->
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm">
+          <div class="p-5 border-b border-outline-variant">
+            <h3 class="font-semibold text-on-surface flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[18px]">timeline</span>Activity Timeline
+            </h3>
+          </div>
+          <div class="p-4 max-h-72 overflow-y-auto" id="timeline-list">
+            <p class="text-sm text-on-surface-variant text-center py-4">Loading…</p>
+          </div>
+        </div>
+
+        <!-- Survey Report (shown if exists) -->
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm" id="survey-section" style="display:none">
+          <div class="p-5">
+            <h3 class="font-semibold text-on-surface flex items-center gap-2 mb-3">
+              <span class="material-symbols-outlined text-primary text-[18px]">architecture</span>Survey Report
+            </h3>
+            <div id="survey-content" class="text-sm text-on-surface-variant">—</div>
+          </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="bg-white border border-outline-variant rounded-xl shadow-sm">
+          <div class="p-5 border-b border-outline-variant">
+            <h3 class="font-semibold text-on-surface flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[18px]">chat</span>Comments
+            </h3>
+          </div>
+          <div class="p-4 max-h-56 overflow-y-auto" id="comments-list">
+            <p class="text-sm text-on-surface-variant text-center py-4">No comments yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Reassign Surveyor Modal -->
+<div id="reassign-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="flex justify-between items-start mb-4">
+      <h3 class="text-base font-bold text-on-surface">Reassign Surveyor</h3>
+      <button onclick="closeReassignModal()" class="text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+    <div class="mb-4">
+      <label class="text-xs font-semibold text-on-surface-variant uppercase block mb-1">Select New Surveyor</label>
+      <select id="reassign-select"
+        class="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary">
+        <option value="">— Loading surveyors… —</option>
+      </select>
+    </div>
+    <textarea id="reassign-reason" rows="2" placeholder="Reason for reassignment (optional)…"
+      class="w-full text-sm border border-outline-variant rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-none mb-2"></textarea>
+    <div id="reassign-err" class="text-sm text-red-600 mb-2 hidden"></div>
+    <div class="flex gap-2 justify-end">
+      <button onclick="closeReassignModal()" class="px-4 py-2 border border-outline-variant rounded-lg text-sm font-semibold text-on-surface-variant">Cancel</button>
+      <button onclick="confirmReassign()" class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold">Reassign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Status Transition Modal -->
+<div id="transition-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="flex justify-between items-start mb-4">
+      <h3 class="text-base font-bold text-on-surface">Change Status</h3>
+      <button onclick="closeModal()" class="text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+    <div class="mb-3">
+      <span class="text-xs font-semibold text-on-surface-variant uppercase">Current Status</span>
+      <div class="mt-1" id="modal-current"></div>
+    </div>
+    <div class="mb-4">
+      <span class="text-xs font-semibold text-on-surface-variant uppercase">Move To</span>
+      <div class="grid grid-cols-2 gap-2 mt-2" id="modal-next"></div>
+    </div>
+    <textarea id="modal-note" rows="2" placeholder="Note (optional)…"
+      class="w-full text-sm border border-outline-variant rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-none mb-2"></textarea>
+    <div id="modal-err" class="text-sm text-red-600 mb-2 hidden"></div>
+    <div class="flex gap-2 justify-end">
+      <button onclick="closeModal()" class="px-4 py-2 border border-outline-variant rounded-lg text-sm font-semibold text-on-surface-variant">Cancel</button>
+      <button id="modal-confirm" onclick="confirmTransition()" disabled
+        class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold opacity-50 cursor-not-allowed">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE     = 'http://127.0.0.1:8000';
+const appId    = localStorage.getItem('lrmis_app_id');
+const staffId  = localStorage.getItem('lrmis_staff_id');
+
+let _currentStatus = '';
+let _selectedTarget = null;
+
+const STATUS_CFG = {
+  submitted:          { label:'Submitted',          cls:'bg-gray-100 text-gray-700',     dot:'bg-gray-400' },
+  pre_checked:        { label:'Pre-Checked',        cls:'bg-blue-100 text-blue-700',     dot:'bg-blue-500' },
+  survey_required:    { label:'Survey Required',    cls:'bg-orange-100 text-orange-700', dot:'bg-orange-500' },
+  surveyed:           { label:'Surveyed',           cls:'bg-sky-100 text-sky-700',       dot:'bg-sky-500' },
+  legal_review:       { label:'Legal Review',       cls:'bg-purple-100 text-purple-700', dot:'bg-purple-500' },
+  approved:           { label:'Approved',           cls:'bg-green-100 text-green-700',   dot:'bg-green-500' },
+  certificate_issued: { label:'Certificate Issued', cls:'bg-emerald-100 text-emerald-700',dot:'bg-emerald-600' },
+  closed:             { label:'Closed',             cls:'bg-gray-200 text-gray-500',     dot:'bg-gray-400' },
+  on_hold:            { label:'On Hold',            cls:'bg-yellow-100 text-yellow-700', dot:'bg-yellow-500' },
+  rejected:           { label:'Rejected',           cls:'bg-red-100 text-red-700',       dot:'bg-red-500' },
+  missing_documents:  { label:'Missing Docs',       cls:'bg-orange-100 text-orange-700', dot:'bg-orange-400' },
+  under_objection:    { label:'Under Objection',    cls:'bg-amber-100 text-amber-700',   dot:'bg-amber-500' },
+};
+const TYPE_LABELS = {
+  first_registration:'First Registration',  ownership_transfer:'Ownership Transfer',
+  parcel_subdivision:'Parcel Subdivision',  parcel_merge:'Parcel Merge',
+  boundary_correction:'Boundary Correction',certificate_request:'Certificate Request',
+};
+const ALLOWED_NEXT = {
+  submitted:          ['pre_checked','missing_documents','on_hold','rejected'],
+  pre_checked:        ['survey_required','legal_review','missing_documents','on_hold','rejected'],
+  survey_required:    ['surveyed','on_hold','rejected'],
+  surveyed:           ['legal_review','under_objection','on_hold','rejected'],
+  legal_review:       ['approved','under_objection','on_hold','rejected'],
+  approved:           ['certificate_issued','rejected'],
+  certificate_issued: ['closed'],
+  under_objection:    ['legal_review','on_hold','rejected'],
+  missing_documents:  ['submitted','pre_checked','rejected'],
+  on_hold:            ['submitted','pre_checked','survey_required','legal_review','rejected'],
+  closed:[],rejected:[],
+};
+const STEPS = ['submitted','pre_checked','survey_required','surveyed','legal_review','approved','certificate_issued','closed'];
+const STEP_LABELS = ['Submitted','Pre-Checked','Survey Req.','Surveyed','Legal Review','Approved','Cert. Issued','Closed'];
+
+function statusBadge(s) {
+  const c = STATUS_CFG[s] || { label:s, cls:'bg-gray-100 text-gray-600', dot:'bg-gray-400' };
+  return `<span class="status-pill ${c.cls}"><span class="w-1.5 h-1.5 rounded-full ${c.dot} inline-block"></span>${c.label}</span>`;
+}
+
+function renderProgress(status) {
+  const idx = STEPS.indexOf(status);
+  const pct  = idx >= 0 ? Math.round(idx / (STEPS.length - 1) * 100) : 0;
+  const container = document.getElementById('progress-steps');
+  container.innerHTML = STEPS.map((s, i) => {
+    const done   = i <= idx;
+    const active = i === idx;
+    const dotCls = active ? 'bg-primary ring-4 ring-primary/20' : done ? 'bg-primary' : 'bg-outline-variant';
+    const txtCls = active ? 'text-primary font-bold' : done ? 'text-on-surface' : 'text-on-surface-variant';
+    return `<div class="flex flex-col items-center gap-1 z-10">
+      <div class="w-5 h-5 rounded-full ${dotCls} flex items-center justify-center">
+        ${done && !active ? '<span class="material-symbols-outlined text-on-primary text-[12px]">check</span>' : ''}
+      </div>
+      <span class="text-[10px] ${txtCls} text-center leading-tight">${STEP_LABELS[i]}</span>
+    </div>`;
+  }).join('');
+  const line = document.getElementById('progress-line');
+  if (line) line.style.width = pct + '%';
+}
+
+// ── Load application ──────────────────────────────────────────
+async function loadApp() {
+  const r = await fetch(`${BASE}/applications/${appId}`).then(x => x.json()).catch(() => null);
+  if (!r) { alert('Failed to load application.'); return; }
+
+  _currentStatus = r.status || 'submitted';
+
+  document.getElementById('h-app-id').textContent        = r.application_id;
+  document.getElementById('h-status-wrap').innerHTML     = statusBadge(_currentStatus);
+  document.getElementById('h-type').textContent          = TYPE_LABELS[r.application_type] || r.application_type || '—';
+  const submitted = r.timestamps?.submitted_at ? new Date(r.timestamps.submitted_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '';
+  document.getElementById('h-date').textContent = submitted ? 'Submitted ' + submitted : '';
+
+  // Applicant col
+  document.getElementById('ai-id').textContent       = r.applicant_ref?.applicant_id || '—';
+  document.getElementById('ai-type').textContent     = TYPE_LABELS[r.application_type] || r.application_type || '—';
+  document.getElementById('ai-priority').textContent = r.priority || 'normal';
+  document.getElementById('ai-desc').textContent     = r.description || '—';
+
+  // Parcel col
+  const p = r.parcel_ref || {};
+  document.getElementById('pi-num').textContent   = p.parcel_number || '—';
+  document.getElementById('pi-zone').textContent  = p.zone_id || '—';
+  document.getElementById('pi-block').textContent = [p.block_number && 'Block '+p.block_number, p.basin_number && 'Basin '+p.basin_number].filter(Boolean).join(' / ') || '—';
+  document.getElementById('pi-area').textContent  = p.area_sqm || '—';
+
+  renderProgress(_currentStatus);
+
+  // Comments from application doc
+  const comments = r.comments || [];
+  renderComments(comments);
+
+  // Check for survey report
+  const rpt = await fetch(`${BASE}/applications/${appId}/survey-report`).then(x => x.json()).catch(() => null);
+  if (rpt?.report_id) {
+    document.getElementById('survey-section').style.display = '';
+    // fetch surveyor name if possible
+    const sv = await fetch(`${BASE}/staff/${rpt.surveyor_id}`).then(x => x.json()).catch(() => null);
+    const svName = sv?.full_name ? `${sv.full_name} (${rpt.surveyor_id})` : (rpt.surveyor_id || '—');
+    document.getElementById('survey-content').innerHTML = `
+      <dl class="space-y-2 text-sm">
+        <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Report ID</dt><dd class="font-mono text-xs">${rpt.report_id}</dd></div>
+        <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Surveyor</dt><dd class="font-medium">${svName}</dd></div>
+        <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Findings</dt><dd>${rpt.findings || '—'}</dd></div>
+        ${rpt.parcel_area_sqm != null ? `<div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Area Measured</dt><dd>${rpt.parcel_area_sqm} m²</dd></div>` : ''}
+        <div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Boundary Confirmed</dt><dd>${rpt.boundary_confirmed ? '✓ Yes' : '✗ No'}</dd></div>
+        ${rpt.field_notes ? `<div><dt class="text-xs text-on-surface-variant uppercase tracking-wide">Field Notes</dt><dd class="text-on-surface-variant">${rpt.field_notes}</dd></div>` : ''}
+        <div class="pt-1 text-xs text-on-surface-variant">${rpt.submitted_at ? 'Submitted ' + new Date(rpt.submitted_at).toLocaleString() : ''}</div>
+      </dl>`;
+  }
+}
+
+function renderComments(comments) {
+  const el = document.getElementById('comments-list');
+  if (!comments.length) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-4">No comments yet.</p>'; return; }
+  el.innerHTML = comments.map(c => `
+    <div class="border-b border-outline-variant py-3 last:border-0">
+      <div class="flex justify-between text-xs text-on-surface-variant mb-0.5">
+        <span class="font-semibold capitalize">${c.actor_type || 'Unknown'}</span>
+        <span>${c.posted_at ? new Date(c.posted_at).toLocaleString() : ''}</span>
+      </div>
+      <p class="text-sm text-on-surface">${c.comment || ''}</p>
+    </div>`).join('');
+}
+
+// ── Documents ─────────────────────────────────────────────────
+async function loadDocs() {
+  const r = await fetch(`${BASE}/applications/${appId}/documents`).then(x => x.json()).catch(() => null);
+  const docs = r?.data || [];
+  document.getElementById('doc-count').textContent = docs.length + ' docs';
+  const el = document.getElementById('docs-list');
+  if (!docs.length) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-6">No documents uploaded yet.</p>'; return; }
+
+  const DOC_ICONS = { ownership_deed:'gavel', sale_contract:'receipt_long', national_id:'badge', survey_sketch:'map', title_deed:'description' };
+  el.innerHTML = docs.map(d => {
+    const icon = DOC_ICONS[d.document_type] || 'description';
+    const statusCls = d.status==='verified'?'text-green-600':d.status==='rejected'?'text-red-600':'text-amber-600';
+    const statusLabel = d.status==='verified'?'Verified':d.status==='rejected'?'Rejected':'Pending Review';
+    const reviewDate = d.reviewed_at ? new Date(d.reviewed_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : '';
+    return `<div class="doc-card ${d.status==='pending_review'||!d.status?'pending-review':''}">
+      <div class="flex justify-between items-start mb-2">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-surface-container-high rounded flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary text-[16px]">${icon}</span>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-on-surface">${(d.document_name||d.document_type||'Document').replace(/_/g,' ')}</p>
+            <p class="text-xs text-on-surface-variant">${d.document_id} · ${d.uploaded_at?new Date(d.uploaded_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):'—'}</p>
+          </div>
+        </div>
+        <span class="text-xs font-bold ${statusCls}">${statusLabel}${reviewDate?' ('+reviewDate+')':''}</span>
+      </div>
+      ${d.status==='pending_review'?`
+      <div class="flex gap-2 mt-2">
+        <button onclick="reviewDoc('${d.document_id}','verified')" class="flex-1 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded text-xs font-semibold hover:bg-green-100">Verify</button>
+        <button onclick="reviewDoc('${d.document_id}','rejected')" class="flex-1 py-1.5 bg-red-50 text-red-700 border border-red-200 rounded text-xs font-semibold hover:bg-red-100">Reject</button>
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+async function reviewDoc(docId, status) {
+  const notes = prompt(`Add review note (${status}):`)||'';
+  const res = await fetch(`${BASE}/applications/${appId}/documents/${docId}/review`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ status, reviewer_id: staffId, review_notes: notes }),
+  }).then(r => r.json()).catch(() => null);
+  if (res?.document_id) loadDocs();
+  else alert('Review failed: ' + (res?.detail || 'Unknown error'));
+}
+
+// ── Timeline ──────────────────────────────────────────────────
+const TL_ICONS = {
+  submitted:'send',pre_checked:'task_alt',survey_required:'map',surveyed:'my_location',
+  legal_review:'gavel',approved:'check_circle',certificate_issued:'verified',closed:'lock',
+  document_uploaded:'upload_file',document_accepted:'check_circle',document_rejected:'cancel',
+  comment_added:'chat',objection_raised:'report',on_hold:'pause_circle',
+  rejected:'cancel',missing_documents:'folder_off',under_objection:'warning',
+};
+const TL_COLORS = {
+  approved:'text-green-600',rejected:'text-red-600',on_hold:'text-yellow-600',
+  certificate_issued:'text-emerald-600',legal_review:'text-purple-600',
+  document_uploaded:'text-blue-600',comment_added:'text-gray-600',
+};
+
+async function loadTimeline() {
+  const r = await fetch(`${BASE}/applications/${appId}/timeline`).then(x => x.json()).catch(() => null);
+  const events = r?.data || [];
+  const el = document.getElementById('timeline-list');
+  if (!events.length) { el.innerHTML = '<p class="text-sm text-on-surface-variant text-center py-4">No activity yet.</p>'; return; }
+  const sorted = [...events].sort((a,b) => new Date(b.timestamp||0) - new Date(a.timestamp||0));
+  el.innerHTML = sorted.map(ev => {
+    const icon  = TL_ICONS[ev.event_type] || 'fiber_manual_record';
+    const color = TL_COLORS[ev.event_type] || 'text-primary';
+    const ts = ev.timestamp ? new Date(ev.timestamp).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    const label = (ev.event_type||'').replace(/_/g,' ');
+    const actor = ev.actor_type ? `${ev.actor_type} · ` : '';
+    const note  = ev.meta?.note || ev.meta?.reason || ev.meta?.snippet || '';
+    return `<div class="tl-event">
+      <span class="material-symbols-outlined ${color} text-[18px] mt-0.5 flex-shrink-0">${icon}</span>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-on-surface capitalize">${label}</p>
+        <p class="text-xs text-on-surface-variant">${actor}${ts}</p>
+        ${note ? `<p class="text-xs text-on-surface-variant mt-0.5 italic">${note}</p>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Add comment ───────────────────────────────────────────────
+async function addComment() {
+  const text = document.getElementById('reg-comment').value.trim();
+  if (!text) return;
+  const res = await fetch(`${BASE}/applications/${appId}/comments`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ applicant_id: staffId, actor_type: 'registrar', comment: text }),
+  }).then(r => r.json()).catch(() => null);
+  if (res?.comment) {
+    document.getElementById('reg-comment').value = '';
+    // Reload the full app to get updated comments array
+    const app = await fetch(`${BASE}/applications/${appId}`).then(r => r.json()).catch(() => null);
+    renderComments(app?.comments || []);
+    loadTimeline();
+  } else {
+    alert('Failed to post: ' + (res?.detail || 'Unknown error'));
+  }
+}
+
+// ── Survey Task ───────────────────────────────────────────────
+const MS_LABELS = {
+  assigned:'Assigned', visit_scheduled:'Visit Scheduled', arrived_on_site:'On Site',
+  survey_started:'Survey Started', survey_completed:'Survey Done',
+  report_uploaded:'Report Uploaded', registrar_reviewed:'Reviewed',
+};
+const MS_CLS = {
+  assigned:'bg-gray-100 text-gray-600',
+  visit_scheduled:'bg-blue-100 text-blue-700',
+  arrived_on_site:'bg-indigo-100 text-indigo-700',
+  survey_started:'bg-orange-100 text-orange-700',
+  survey_completed:'bg-amber-100 text-amber-700',
+  report_uploaded:'bg-sky-100 text-sky-700',
+  registrar_reviewed:'bg-green-100 text-green-700',
+};
+
+async function loadSurveyTask() {
+  const t = await fetch(`${BASE}/applications/${appId}/survey-task`).then(x => x.json()).catch(() => null);
+  if (!t?.task_id) return;
+  document.getElementById('task-section').style.display = '';
+  document.getElementById('st-name').textContent  = t.surveyor_name || '—';
+  document.getElementById('st-id').textContent    = t.assigned_to || '—';
+  document.getElementById('st-task').textContent  = t.task_id || '—';
+  const ms = t.milestone || 'assigned';
+  document.getElementById('st-milestone').innerHTML =
+    `<span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${MS_CLS[ms]||'bg-gray-100 text-gray-600'}">${MS_LABELS[ms]||ms}</span>`;
+  if (t.scheduled_date) {
+    document.getElementById('st-date-row').style.display = '';
+    document.getElementById('st-date').textContent = new Date(t.scheduled_date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  }
+}
+
+// ── Assign Surveyor ───────────────────────────────────────────
+async function assignSurveyor() {
+  const res = await fetch(`${BASE}/applications/${appId}/auto-assign-surveyor`, { method:'POST' }).then(r => r.json()).catch(() => null);
+  if (res?.task_id) {
+    await loadSurveyTask();
+    loadTimeline();
+  } else {
+    alert('Could not auto-assign: ' + (res?.detail || 'No available surveyors.'));
+  }
+}
+
+// ── Status Transition Modal ───────────────────────────────────
+function openTransitionModal() {
+  _selectedTarget = null;
+  document.getElementById('modal-current').innerHTML = statusBadge(_currentStatus);
+  document.getElementById('modal-note').value = '';
+  document.getElementById('modal-err').classList.add('hidden');
+  const confirmBtn = document.getElementById('modal-confirm');
+  confirmBtn.disabled = true;
+  confirmBtn.classList.add('opacity-50','cursor-not-allowed');
+
+  const next = ALLOWED_NEXT[_currentStatus] || [];
+  const container = document.getElementById('modal-next');
+  if (!next.length) {
+    container.innerHTML = '<p class="text-sm text-on-surface-variant col-span-2">No transitions available from this state.</p>';
+  } else {
+    container.innerHTML = next.map(s => {
+      const cfg  = STATUS_CFG[s] || { label: s };
+      const cls  = s==='rejected' ? 'danger' : ['on_hold','missing_documents','under_objection'].includes(s) ? 'warn' : '';
+      return `<button class="state-btn ${cls}" onclick="selectTarget('${s}')" id="sb-${s}">${cfg.label}</button>`;
+    }).join('');
+  }
+  document.getElementById('transition-modal').style.display = 'flex';
+}
+
+function selectTarget(state) {
+  _selectedTarget = state;
+  document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('sb-'+state)?.classList.add('selected');
+  const btn = document.getElementById('modal-confirm');
+  btn.disabled = false;
+  btn.classList.remove('opacity-50','cursor-not-allowed');
+}
+
+async function confirmTransition() {
+  if (!_selectedTarget) return;
+  const note = document.getElementById('modal-note').value.trim();
+  const errEl = document.getElementById('modal-err');
+  errEl.classList.add('hidden');
+
+  const res = await fetch(`${BASE}/applications/${appId}/transition`, {
+    method:'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ target_state: _selectedTarget, actor_type:'registrar', actor_id: staffId, note: note||null }),
+  }).then(r => r.json()).catch(() => null);
+
+  if (res?.application_id) {
+    closeModal();
+    _currentStatus = res.status;
+    renderProgress(_currentStatus);
+    document.getElementById('h-status-wrap').innerHTML = statusBadge(_currentStatus);
+    loadTimeline();
+  } else {
+    errEl.textContent = res?.detail || 'Transition failed. Check preconditions.';
+    errEl.classList.remove('hidden');
+  }
+}
+
+function closeModal() {
+  document.getElementById('transition-modal').style.display = 'none';
+  _selectedTarget = null;
+}
+document.getElementById('transition-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('transition-modal')) closeModal();
+});
+
+function doLogout() {
+  ['lrmis_role','lrmis_staff_id','lrmis_name'].forEach(k => localStorage.removeItem(k));
+  window.location.href = 'lrmis.html';
+}
+
+// ── Reassign Surveyor Modal ───────────────────────────────────
+async function openReassignModal() {
+  document.getElementById('reassign-err').classList.add('hidden');
+  document.getElementById('reassign-reason').value = '';
+  const sel = document.getElementById('reassign-select');
+  sel.innerHTML = '<option value="">— Loading… —</option>';
+  document.getElementById('reassign-modal').style.display = 'flex';
+  try {
+    const res = await fetch(`${BASE}/staff/?role=surveyor&limit=100`).then(r => r.json()).catch(() => null);
+    const list = res?.items || [];
+    if (!list.length) { sel.innerHTML = '<option value="">No surveyors found</option>'; return; }
+    sel.innerHTML = '<option value="">— Select surveyor —</option>' +
+      list.map(s => `<option value="${s.staff_id}">${s.full_name || s.staff_id} (${s.staff_id})</option>`).join('');
+  } catch {
+    sel.innerHTML = '<option value="">⚠ Server unreachable</option>';
+  }
+}
+
+function closeReassignModal() {
+  document.getElementById('reassign-modal').style.display = 'none';
+}
+
+async function confirmReassign() {
+  const surveyorId = document.getElementById('reassign-select').value;
+  const reason = document.getElementById('reassign-reason').value.trim();
+  const errEl = document.getElementById('reassign-err');
+  errEl.classList.add('hidden');
+  if (!surveyorId) { errEl.textContent = 'Please select a surveyor.'; errEl.classList.remove('hidden'); return; }
+  const res = await fetch(`${BASE}/applications/${appId}/reassign-surveyor`, {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ surveyor_id: surveyorId, reason: reason || null }),
+  }).then(r => r.json()).catch(() => null);
+  if (res?.task_id) {
+    closeReassignModal();
+    await loadSurveyTask();
+    loadTimeline();
+  } else {
+    errEl.textContent = res?.detail || 'Reassignment failed.';
+    errEl.classList.remove('hidden');
+  }
+}
+
+document.getElementById('reassign-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('reassign-modal')) closeReassignModal();
+});
+
+// ── Init ─────────────────────────────────────────────────────
+Promise.all([loadApp(), loadDocs(), loadTimeline(), loadSurveyTask()]);
+</script>
+</body>
+</html>

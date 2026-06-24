@@ -139,6 +139,15 @@ def create_applicant(body: ApplicantCreate):
     return _to_public(doc)
 
 
+# ── GET /applicants/ ──────────────────────────────────────────────────────────
+
+@router.get("/applicants/")
+def list_applicants(limit: int = 100):
+    db = get_db()
+    docs = list(db["applicants"].find({}, {"_id": 0}).limit(limit))
+    return {"items": docs, "total": len(docs)}
+
+
 # ── GET /applicants/{applicant_id} ────────────────────────────────────────────
 
 @router.get("/applicants/{applicant_id}")
@@ -189,6 +198,18 @@ def get_applicant_applications(
         "page": page,
         "limit": limit,
     }
+
+
+# ── GET /applications/{application_id}/documents ──────────────────────────────
+
+@router.get("/applications/{application_id}/documents")
+def list_documents(application_id: str):
+    _get_application_or_404(application_id)
+    db = get_db()
+    docs = list(db["application_documents"].find(
+        {"application_id": application_id}, {"_id": 0}
+    ).sort("uploaded_at", -1))
+    return {"data": docs, "total": len(docs)}
 
 
 # ── POST /applications/{application_id}/documents ─────────────────────────────
@@ -384,6 +405,24 @@ def review_document(
 
     updated = db["application_documents"].find_one({"document_id": document_id})
     return _to_public(updated)
+
+
+# ── GET /parcels/ ─────────────────────────────────────────────────────────────
+# List all parcels with computed centroid (used by citizen parcel picker).
+
+@router.get("/parcels/")
+def list_parcels(limit: int = 200):
+    db = get_db()
+    docs = list(db["parcels"].find({}, {"_id": 0}).limit(limit))
+    for doc in docs:
+        geom = doc.get("geometry", {})
+        if geom.get("type") == "Polygon":
+            coords = geom["coordinates"][0]
+            doc["centroid"] = {
+                "lat": round(sum(c[1] for c in coords) / len(coords), 6),
+                "lng": round(sum(c[0] for c in coords) / len(coords), 6),
+            }
+    return {"items": docs, "total": len(docs)}
 
 
 # ── GET /parcels/{parcel_code} ────────────────────────────────────────────────

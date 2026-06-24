@@ -41,11 +41,14 @@ def create_indexes() -> None:
     db["objections"].create_index("application_id")
     db["objections"].create_index("objection_id", unique=True)
 
-    # staff_members
-    db["staff_members"].create_index("staff_code", unique=True)
+    # staff_members — staff_id is our generated key; staff_code is the spec-required field
+    db["staff_members"].create_index("staff_id", unique=True)
+    db["staff_members"].create_index("staff_code", unique=True, sparse=True)
+    db["staff_members"].create_index("role")
 
     # survey_tasks
     db["survey_tasks"].create_index("application_id")
+    db["survey_tasks"].create_index("assigned_to")
 
     # certificates
     db["certificates"].create_index("certificate_id", unique=True)

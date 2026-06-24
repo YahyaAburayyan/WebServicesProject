@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LRMIS - Palestine Land Registry Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#6f7a6f",
+                        "secondary-container": "#e12531",
+                        "on-background": "#191c18",
+                        "on-secondary-fixed": "#410004",
+                        "on-error": "#ffffff",
+                        "background": "#f8faf3",
+                        "inverse-primary": "#78db92",
+                        "surface-container-high": "#e7e9e2",
+                        "surface-bright": "#f8faf3",
+                        "on-primary-fixed-variant": "#005227",
+                        "on-tertiary-container": "#eae7ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c18",
+                        "on-secondary-fixed-variant": "#930015",
+                        "primary-container": "#007a3d",
+                        "on-primary-container": "#a1ffb7",
+                        "primary-fixed": "#94f8ad",
+                        "tertiary-fixed": "#e2e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#68677f",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf3",
+                        "tertiary": "#504f66",
+                        "surface-tint": "#006d36",
+                        "outline-variant": "#becabc",
+                        "surface-container-highest": "#e1e3dc",
+                        "secondary": "#bb001e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-fixed-dim": "#78db92",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "secondary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "surface-dim": "#d9dbd4",
+                        "surface-variant": "#e1e3dc",
+                        "surface-container": "#edefe8",
+                        "on-primary-fixed": "#00210c",
+                        "primary": "#005f2e",
+                        "inverse-surface": "#2e312d",
+                        "surface-container-low": "#f2f4ed",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .keffiyeh-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(0, 122, 61, 0.05) 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex flex-col font-body-md text-on-surface">
+<!-- Transactional Page - No TopNav/SideNav/BottomNav per Semantic Shell Mandate -->
+<main class="flex-grow flex w-full relative overflow-hidden">
+<!-- Left Side: Olive Branch Decorative Area -->
+<div class="hidden lg:flex w-1/3 bg-surface-container-low relative flex-col justify-between border-r border-outline-variant">
+<div class="p-margin-desktop z-10">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">flag</span>
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">LRMIS</h1>
+</div>
+<p class="mt-4 font-body-lg text-body-lg text-on-surface-variant max-w-sm">
+                    State of Palestine Land Registry Management Information System. Ensuring transparent, secure, and accessible land administration.
+                </p>
+</div>
+<div class="absolute inset-0 z-0 opacity-10 flex items-center justify-center">
+<div class="w-full h-full bg-cover bg-center bg-no-repeat opacity-40 mix-blend-multiply" data-alt="A highly detailed, sophisticated vector-style illustration of an elegant olive tree branch, rendered in a crisp, modern light-mode style using shades of deep green and warm silver. The lines are smooth and flowing, symbolizing peace, heritage, and rootedness in Palestinian culture, creating a serene and authoritative institutional backdrop." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAa5wxogGdRbvdL36iT-x8rc_D3W-4W1X_vRmLp-hx3xrFeQMrA5o4I-EPROj5s7ZqRRFt0d9vdk0qV7ku_DwqXouGWCWGIW3Z8tYaOkxdO0g3doi2tRIYzIsdluo8i0Mc6XevJs57C0BYsqFPIG9YC91nq7DUr8doYu9s0v8GPzJWKuRiWsETat0aAWx084KamG067bS9aZTMYVnfWiRCmlJkuPx1zMIsoYKM-t3tfCrAOx-q-OBR9RsTTB0JGWnRUnXSSi3z6NxQ')"></div>
+</div>
+<div class="p-margin-desktop z-10 text-on-surface-variant text-sm">
+                © 2024 State of Palestine. All Rights Reserved.
+            </div>
+</div>
+<!-- Right Side: Login Area -->
+<div class="w-full lg:w-2/3 flex flex-col relative">
+<!-- Mobile Header -->
+<div class="lg:hidden p-margin-mobile flex items-center gap-3 text-primary keffiyeh-pattern pb-6 border-b border-outline-variant">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">flag</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">LRMIS</h1>
+</div>
+<div class="flex-grow flex flex-col justify-center px-margin-mobile lg:px-margin-desktop max-w-3xl mx-auto w-full py-12 relative z-10">
+<div class="mb-10 text-center lg:text-left">
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2">Welcome</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Select your portal to continue.</p>
+</div>
+<!-- Role Cards (Bento/Glassmorphism inspired) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<!-- Citizen Card -->
+<button class="group relative bg-surface border border-outline-variant rounded-xl p-6 text-left transition-all duration-300 hover:shadow-md hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex flex-col items-center md:items-start" onclick="showLoginForm('citizen')">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl text-on-surface-variant group-hover:text-on-primary-container transition-colors duration-300" data-icon="person">person</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Citizen</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center md:text-left text-sm">Access public registry services and track your applications.</p>
+<div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/20 rounded-xl transition-all duration-300 pointer-events-none"></div>
+</button>
+<!-- Surveyor Card -->
+<button class="group relative bg-surface border border-outline-variant rounded-xl p-6 text-left transition-all duration-300 hover:shadow-md hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex flex-col items-center md:items-start" onclick="showLoginForm('surveyor')">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl text-on-surface-variant group-hover:text-on-primary-container transition-colors duration-300" data-icon="directions_transit">directions_transit</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Surveyor</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center md:text-left text-sm">Submit technical reports and spatial data for review.</p>
+<div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/20 rounded-xl transition-all duration-300 pointer-events-none"></div>
+</button>
+<!-- Registrar Card -->
+<button class="group relative bg-surface border border-outline-variant rounded-xl p-6 text-left transition-all duration-300 hover:shadow-md hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 flex flex-col items-center md:items-start" onclick="showLoginForm('registrar')">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-on-primary-container transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl text-on-surface-variant group-hover:text-on-primary-container transition-colors duration-300" data-icon="gavel">gavel</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Registrar</h3>
+<p class="font-body-md text-body-md text-on-surface-variant text-center md:text-left text-sm">Administer legal reviews, approvals, and registry maintenance.</p>
+<div class="absolute inset-0 border-2 border-transparent group-hover:border-primary/20 rounded-xl transition-all duration-300 pointer-events-none"></div>
+</button>
+</div>
+<!-- Login Forms Container -->
+<div class="bg-surface border border-outline-variant rounded-xl p-8 shadow-sm hidden transition-opacity duration-300 opacity-0 relative overflow-hidden" id="login-forms-container">
+<!-- Subtle top accent line -->
+<div class="absolute top-0 left-0 w-full h-1 bg-primary-container"></div>
+<div class="mb-6 pb-4 border-b border-outline-variant flex items-center justify-between" id="login-header">
+<h3 class="font-headline-md text-headline-md text-on-surface" id="form-title">Sign In</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors focus:outline-none" onclick="hideLoginForm()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Citizen Form -->
+<form class="hidden flex-col gap-5" id="form-citizen">
+  <div>
+    <label class="block font-label-md text-label-md text-on-surface mb-2">Select your account</label>
+    <div class="relative">
+      <select id="citizen-select"
+        class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-body-md text-body-md appearance-none pr-10">
+        <option value="">— Loading citizens… —</option>
+      </select>
+      <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[20px]">expand_more</span>
+    </div>
+  </div>
+  <!-- Selected user preview -->
+  <div id="citizen-preview" class="hidden bg-surface-container rounded-lg px-4 py-3 flex items-center gap-3">
+    <span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings:'FILL' 1;">account_circle</span>
+    <div>
+      <p id="citizen-preview-name" class="font-label-md text-label-md text-on-surface"></p>
+      <p id="citizen-preview-id" class="text-xs text-on-surface-variant mt-0.5"></p>
+    </div>
+  </div>
+  <button id="citizen-btn" class="w-full bg-primary-container text-on-primary hover:bg-primary transition-colors duration-200 py-3 px-6 rounded-lg font-label-md text-label-md shadow-sm flex items-center justify-center gap-2" type="button">
+    <span class="material-symbols-outlined text-[20px]">login</span> Sign In as Citizen
+  </button>
+  <div class="text-center border-t border-outline-variant pt-4">
+    <p class="font-body-md text-body-md text-on-surface-variant text-sm">New citizen? <a class="font-label-md text-label-md text-primary hover:underline" href="lrmis-citizen-register.html">Register here</a></p>
+  </div>
+</form>
+<!-- Staff Form (Surveyor / Registrar — shared, filtered by role) -->
+<form class="hidden flex-col gap-5" id="form-staff">
+  <div>
+    <label class="block font-label-md text-label-md text-on-surface mb-2">Select your account</label>
+    <div class="relative">
+      <select id="staff-select"
+        class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-body-md text-body-md appearance-none pr-10">
+        <option value="">— Loading staff… —</option>
+      </select>
+      <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[20px]">expand_more</span>
+    </div>
+  </div>
+  <!-- Selected user preview -->
+  <div id="staff-preview" class="hidden bg-surface-container rounded-lg px-4 py-3 flex items-center gap-3">
+    <span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings:'FILL' 1;">badge</span>
+    <div>
+      <p id="staff-preview-name" class="font-label-md text-label-md text-on-surface"></p>
+      <p id="staff-preview-id" class="text-xs text-on-surface-variant mt-0.5"></p>
+    </div>
+  </div>
+  <button id="staff-btn" class="w-full bg-primary-container text-on-primary hover:bg-primary transition-colors duration-200 py-3 px-6 rounded-lg font-label-md text-label-md shadow-sm flex items-center justify-center gap-2" type="button">
+    <span class="material-symbols-outlined text-[20px]">login</span> Sign In
+  </button>
+</form>
+</div>
+</div>
+<!-- Keiffiyeh subtle pattern in background of right side -->
+<div class="absolute inset-0 z-0 keffiyeh-pattern opacity-30 pointer-events-none"></div>
+</div>
+</main>
+<script>
+const BASE = 'http://127.0.0.1:8000';
+let _currentRole = null; // 'citizen' | 'surveyor' | 'registrar'
+
+// ── Show / hide the login panel ───────────────────────────────────────────────
+function showLoginForm(role) {
+  _currentRole = role;
+  const container = document.getElementById('login-forms-container');
+  const citizenForm = document.getElementById('form-citizen');
+  const staffForm   = document.getElementById('form-staff');
+  const title       = document.getElementById('form-title');
+
+  citizenForm.classList.add('hidden'); citizenForm.classList.remove('flex');
+  staffForm.classList.add('hidden');   staffForm.classList.remove('flex');
+
+  container.classList.remove('hidden');
+  setTimeout(() => container.classList.remove('opacity-0'), 10);
+
+  if (role === 'citizen') {
+    citizenForm.classList.remove('hidden'); citizenForm.classList.add('flex');
+    title.textContent = 'Citizen Portal';
+    loadCitizens();
+  } else {
+    staffForm.classList.remove('hidden'); staffForm.classList.add('flex');
+    title.textContent = role === 'surveyor' ? 'Surveyor Portal' : 'Registrar Portal';
+    loadStaff(role);
+  }
+
+  if (window.innerWidth < 768) container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function hideLoginForm() {
+  const c = document.getElementById('login-forms-container');
+  c.classList.add('opacity-0');
+  setTimeout(() => c.classList.add('hidden'), 300);
+}
+
+// ── Error helper ──────────────────────────────────────────────────────────────
+function setErr(msg) {
+  let el = document.getElementById('login-error');
+  if (!el) {
+    el = Object.assign(document.createElement('p'), {
+      id: 'login-error',
+      className: 'text-red-600 text-sm mt-1 text-center font-label-md',
+    });
+    document.getElementById('login-forms-container').appendChild(el);
+  }
+  el.textContent = msg;
+}
+
+// ── Populate citizen dropdown ─────────────────────────────────────────────────
+async function loadCitizens() {
+  const sel = document.getElementById('citizen-select');
+  sel.innerHTML = '<option value="">— Loading… —</option>';
+  document.getElementById('citizen-preview').classList.add('hidden');
+  try {
+    const res  = await fetch(`${BASE}/applicants/?limit=100`);
+    const data = res.ok ? await res.json() : {};
+    const list = data.items || data.data || (Array.isArray(data) ? data : []);
+    if (!list.length) {
+      sel.innerHTML = '<option value="">No registered citizens found</option>';
+      return;
+    }
+    sel.innerHTML = '<option value="">— Select your account —</option>' +
+      list.map(a => `<option value="${a.applicant_id}" data-name="${a.full_name||''}">${a.full_name || a.applicant_id} — ${a.applicant_id}</option>`).join('');
+  } catch {
+    sel.innerHTML = '<option value="">⚠ Server unreachable</option>';
+  }
+}
+
+// ── Populate staff dropdown filtered by role ──────────────────────────────────
+async function loadStaff(role) {
+  const sel = document.getElementById('staff-select');
+  sel.innerHTML = '<option value="">— Loading… —</option>';
+  document.getElementById('staff-preview').classList.add('hidden');
+  try {
+    const res  = await fetch(`${BASE}/staff/?role=${role}&limit=100`);
+    const data = res.ok ? await res.json() : {};
+    const list = data.items || data.data || (Array.isArray(data) ? data : []);
+    if (!list.length) {
+      sel.innerHTML = `<option value="">No ${role}s found</option>`;
+      return;
+    }
+    sel.innerHTML = `<option value="">— Select your account —</option>` +
+      list.map(s => `<option value="${s.staff_id}" data-name="${s.full_name||''}" data-role="${s.role||role}">${s.full_name || s.staff_id} — ${s.staff_id}</option>`).join('');
+  } catch {
+    sel.innerHTML = '<option value="">⚠ Server unreachable</option>';
+  }
+}
+
+// ── Preview on selection ──────────────────────────────────────────────────────
+function onCitizenChange() {
+  const sel = document.getElementById('citizen-select');
+  const opt = sel.options[sel.selectedIndex];
+  const preview = document.getElementById('citizen-preview');
+  if (!sel.value) { preview.classList.add('hidden'); return; }
+  document.getElementById('citizen-preview-name').textContent = opt.dataset.name || sel.value;
+  document.getElementById('citizen-preview-id').textContent   = sel.value;
+  preview.classList.remove('hidden');
+}
+
+function onStaffChange() {
+  const sel = document.getElementById('staff-select');
+  const opt = sel.options[sel.selectedIndex];
+  const preview = document.getElementById('staff-preview');
+  if (!sel.value) { preview.classList.add('hidden'); return; }
+  document.getElementById('staff-preview-name').textContent = opt.dataset.name || sel.value;
+  document.getElementById('staff-preview-id').textContent   = `${sel.value} · ${(opt.dataset.role||_currentRole)}`;
+  preview.classList.remove('hidden');
+}
+
+// ── Sign-in handlers ──────────────────────────────────────────────────────────
+async function citizenSignIn() {
+  setErr('');
+  const applicantId = document.getElementById('citizen-select').value;
+  if (!applicantId) { setErr('Please select your account from the list.'); return; }
+  try {
+    const res = await fetch(`${BASE}/applicants/${applicantId}`);
+    if (!res.ok) { setErr('Account not found.'); return; }
+    const data = await res.json();
+    localStorage.setItem('lrmis_role',         'citizen');
+    localStorage.setItem('lrmis_applicant_id', data.applicant_id);
+    localStorage.setItem('lrmis_name',         data.full_name || applicantId);
+    window.location.href = 'portal.html';
+  } catch { setErr('Cannot reach server — is it running on port 8000?'); }
+}
+
+async function staffSignIn() {
+  setErr('');
+  const staffId = document.getElementById('staff-select').value;
+  if (!staffId) { setErr('Please select your account from the list.'); return; }
+  try {
+    const res = await fetch(`${BASE}/staff/${staffId}`);
+    if (!res.ok) { setErr('Account not found.'); return; }
+    const data = await res.json();
+    localStorage.setItem('lrmis_role',     data.role || _currentRole);
+    localStorage.setItem('lrmis_staff_id', data.staff_id);
+    localStorage.setItem('lrmis_name',     data.full_name || staffId);
+    if ((data.role || _currentRole) === 'surveyor') window.location.href = 'surveyor.html';
+    else window.location.href = 'lrmis-registrar-center.html';
+  } catch { setErr('Cannot reach server — is it running on port 8000?'); }
+}
+
+// ── Wire events ───────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('citizen-select').addEventListener('change', onCitizenChange);
+  document.getElementById('staff-select').addEventListener('change', onStaffChange);
+  document.getElementById('citizen-btn').addEventListener('click', citizenSignIn);
+  document.getElementById('staff-btn').addEventListener('click', staffSignIn);
+});
+</script>
+</body></html>

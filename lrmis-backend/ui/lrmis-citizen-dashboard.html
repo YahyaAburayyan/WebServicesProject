@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LRMIS - Citizen Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#6f7a6f",
+                        "secondary-container": "#e12531",
+                        "on-background": "#191c18",
+                        "on-secondary-fixed": "#410004",
+                        "on-error": "#ffffff",
+                        "background": "#f8faf3",
+                        "inverse-primary": "#78db92",
+                        "surface-container-high": "#e7e9e2",
+                        "surface-bright": "#f8faf3",
+                        "on-primary-fixed-variant": "#005227",
+                        "on-tertiary-container": "#eae7ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c18",
+                        "on-secondary-fixed-variant": "#930015",
+                        "primary-container": "#007a3d",
+                        "on-primary-container": "#a1ffb7",
+                        "primary-fixed": "#94f8ad",
+                        "tertiary-fixed": "#e2e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#68677f",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf3",
+                        "tertiary": "#504f66",
+                        "surface-tint": "#006d36",
+                        "outline-variant": "#becabc",
+                        "surface-container-highest": "#e1e3dc",
+                        "secondary": "#bb001e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-fixed-dim": "#78db92",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "secondary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "surface-dim": "#d9dbd4",
+                        "surface-variant": "#e1e3dc",
+                        "surface-container": "#edefe8",
+                        "on-primary-fixed": "#00210c",
+                        "primary": "#005f2e",
+                        "inverse-surface": "#2e312d",
+                        "surface-container-low": "#f2f4ed",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans", "sans-serif"],
+                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-md": ["Work Sans", "sans-serif"],
+                        "headline-xl": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-lg": ["Work Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f8faf3; color: #191c18; }
+        .olive-watermark {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path d="M50 10 Q60 30 80 40 Q60 50 50 80 Q40 50 20 40 Q40 30 50 10 Z" fill="%23ffffff"/></svg>');
+            background-repeat: no-repeat;
+            background-position: bottom right;
+            background-size: 150px;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen font-body-md text-body-md">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col bg-inverse-surface dark:bg-surface-container-lowest text-primary-fixed dark:text-primary docked left-0 h-full w-64 shadow-md fixed left-0 top-0 py-6 z-40 olive-watermark transition-all duration-200 ease-in-out">
+<div class="px-6 mb-8 flex items-center gap-4">
+<img alt="Ministry of Local Government Logo" class="w-10 h-10 rounded-full bg-surface-container-low object-cover" data-alt="A dignified, official seal or logo representing a governmental ministry, featuring high-contrast details against a clean background, conveying authority, stability, and heritage in a modern digital flat style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjr1wcQLiFxG0nC1lIpfeqilRl-NQI_RC2ZmBzUD6PR8uZLlNv5lbPH2LreTHBQ7iEhC5MuqGCTc-o0OKfVhPz0IBob77bGL7Wc00uPZzaWymQXeOIflgI2ZC5MClNSxD8Db9tzwebqnnvOnJ-40WfqJqVdjHqpynG-YcQb3pC21D2boN-OS8Tmwi9ROlTqcHHtJLES78XorocjKNc7ubl5EzfkQs3TLKYT8kDyZse22CDZWp0vz8nzZ1NxPGtnVWD5xd0OP3zkHU"/>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary-fixed dark:text-primary">LRMIS</h1>
+<p class="font-label-md text-label-md text-surface-variant opacity-80">Palestine Land Registry</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                New Application
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container border-l-4 border-primary px-4 py-3 rounded-r-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-weight="fill" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                        Dashboard
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out rounded-r-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">description</span>
+                        Applications
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out rounded-r-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">map</span>
+                        Survey Tasks
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out rounded-r-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+                        Land Records
+                    </a>
+</li>
+</ul>
+</div>
+<div class="mt-auto px-4 border-t border-surface-variant/20 pt-4">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out rounded-r-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">help</span>
+                        Help Center
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out rounded-r-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 bg-background min-h-screen flex flex-col">
+<!-- TopNavBar (Mobile Only) -->
+<header class="md:hidden bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed docked full-width top-0 border-b border-outline-variant dark:border-outline flat no shadows flex justify-between items-center w-full px-margin-mobile h-16 z-50 sticky">
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">LRMIS</h1>
+<div class="flex items-center gap-4">
+<button class="hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors rounded-full p-2">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full object-cover" data-alt="A small, professional headshot avatar of a citizen user, sharply lit against a neutral grey background, representing identity in a trusted governmental digital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMxYOac_rjgB_efAn7PS8aRaMbEQT7n1bru25KVIhNY__ly3YgF47JKeIDa75yw5P3ppUktMLlnfMAbPYK049BwaT-PKaAHTn7jp75UadRadfVzYGhr5Rg0SpaLH40WwSVl7v7Xc_UvVYMeFYWMu1gP3dIs3Iwk_AJ90I7E30L2p-XEfnFMYw717GtnD7ix_oozJAQ03yHaJvnYLRBjK6D0d1MKsCnJ9H-KK-TKNGPgS23IALgsPa5lJzrW_MBzoLZYcDDIoqBO60"/>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-margin-mobile md:p-margin-desktop flex-1 max-w-container-max mx-auto w-full">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface flex items-center gap-3">
+                        Welcome, Ahmad
+                        <span class="material-symbols-outlined text-primary text-[28px]">flag</span>
+</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Here is an overview of your land registry activities.</p>
+</div>
+<button class="hidden md:flex bg-primary-container text-on-primary-container font-label-md text-label-md py-3 px-6 rounded-lg items-center gap-2 hover:opacity-90 transition-opacity shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Application
+                </button>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-on-surface-variant">Total Applications</span>
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">folder_open</span>
+</div>
+</div>
+<span class="font-headline-xl text-headline-xl text-on-surface">12</span>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col hover:shadow-md transition-shadow border-t-4 border-t-tertiary">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-on-surface-variant">Pending Review</span>
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+</div>
+<span class="font-headline-xl text-headline-xl text-on-surface">4</span>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm flex flex-col hover:shadow-md transition-shadow border-t-4 border-t-primary-container">
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-on-surface-variant">Approved</span>
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined">verified</span>
+</div>
+</div>
+<span class="font-headline-xl text-headline-xl text-primary-container">8</span>
+</div>
+</div>
+<!-- Applications Table Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+<h3 class="font-headline-md text-headline-md text-on-surface">My Applications</h3>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 border border-outline-variant rounded-lg bg-surface focus:ring-2 focus:ring-primary focus:border-primary font-body-md text-body-md w-full md:w-64 placeholder-on-surface-variant/50" placeholder="Search ID or Parcel..." type="text"/>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+<th class="px-6 py-4">App ID</th>
+<th class="px-6 py-4">Type</th>
+<th class="px-6 py-4">Parcel #</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Date Submitted</th>
+<th class="px-6 py-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface divide-y divide-outline-variant/50">
+<!-- Row 1: Approved -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4 font-semibold text-primary">APP-2024-0891</td>
+<td class="px-6 py-4">Title Transfer</td>
+<td class="px-6 py-4">P-459-B</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-fixed text-on-primary-fixed-variant border border-primary-fixed-dim">
+                                        Approved
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Oct 12, 2024</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-primary-fixed-dim font-label-md text-label-md transition-colors flex items-center justify-end gap-1 ml-auto">
+                                        View <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Legal Review -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4 font-semibold text-primary">APP-2024-0942</td>
+<td class="px-6 py-4">Boundary Dispute</td>
+<td class="px-6 py-4">P-112-A</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-tertiary-fixed text-on-tertiary-fixed-variant border border-tertiary-fixed-dim">
+                                        Legal Review
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Nov 05, 2024</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-primary-fixed-dim font-label-md text-label-md transition-colors flex items-center justify-end gap-1 ml-auto">
+                                        View <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Survey Required -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4 font-semibold text-primary">APP-2024-0988</td>
+<td class="px-6 py-4">Subdivision</td>
+<td class="px-6 py-4">P-882-C</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary-fixed text-on-secondary-fixed-variant border border-secondary-fixed-dim">
+                                        Survey Required
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Nov 18, 2024</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-primary-fixed-dim font-label-md text-label-md transition-colors flex items-center justify-end gap-1 ml-auto">
+                                        View <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Submitted -->
+<tr class="hover:bg-primary/5 transition-colors">
+<td class="px-6 py-4 font-semibold text-primary">APP-2024-1002</td>
+<td class="px-6 py-4">New Registration</td>
+<td class="px-6 py-4">P-901-D</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-variant text-on-surface-variant border border-outline-variant">
+                                        Submitted
+                                    </span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">Nov 22, 2024</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-primary-fixed-dim font-label-md text-label-md transition-colors flex items-center justify-end gap-1 ml-auto">
+                                        View <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination / Footer -->
+<div class="p-4 border-t border-outline-variant bg-surface flex justify-between items-center text-on-surface-variant font-label-md text-label-md">
+<span>Showing 1 to 4 of 12 entries</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high disabled:opacity-50" disabled="">Prev</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high bg-primary-container text-on-primary-container border-primary">1</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high">2</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high">3</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-high">Next</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-container-lowest text-outline dark:text-outline-variant font-body-md text-body-md border-t border-outline-variant dark:border-outline flat no shadows w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto mt-auto">
+<div class="font-label-md text-label-md font-bold text-on-surface dark:text-on-surface-variant mb-4 md:mb-0">
+                Â© 2024 State of Palestine - Land Registry Management Information System. All Rights Reserved.
+            </div>
+<div class="flex gap-6 font-label-md text-label-md">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Ministry Portal</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Contact Support</a>
+</div>
+</footer>
+</main>
+<script>
+const BASE='http://127.0.0.1:8000';
+const appId=localStorage.getItem('lrmis_applicant_id');
+const name=localStorage.getItem('lrmis_name')||'Citizen';
+if(!appId){window.location.href='lrmis.html';}
+
+async function load(){
+  // Update greeting
+  document.querySelectorAll('h2').forEach(h=>{if(h.textContent.includes('Ahmad'))h.innerHTML=h.innerHTML.replace('Ahmad',name);});
+  // Fetch stats
+  const r=await fetch(`${BASE}/applicants/${appId}`).then(x=>x.json()).catch(()=>null);
+  if(r&&r.stats){
+    const nums=document.querySelectorAll('.text-headline-xl');
+    if(nums[0])nums[0].textContent=r.stats.total_applications;
+    if(nums[1])nums[1].textContent=r.stats.pending_applications;
+    if(nums[2])nums[2].textContent=r.stats.approved_applications;
+  }
+  // Fetch applications
+  const ar=await fetch(`${BASE}/applicants/${appId}/applications?limit=20`).then(x=>x.json()).catch(()=>null);
+  if(ar&&ar.data){
+    const tbody=document.querySelector('tbody');
+    if(tbody){
+      tbody.innerHTML=ar.data.map(a=>`
+        <tr class="hover:bg-primary/5 transition-colors cursor-pointer" onclick="viewApp('${a.application_id}')">
+          <td class="px-6 py-4 font-semibold text-primary">${a.application_id}</td>
+          <td class="px-6 py-4">${(a.application_type||'').replace(/_/g,' ')}</td>
+          <td class="px-6 py-4">${(a.parcel_ref||{}).parcel_number||'—'}</td>
+          <td class="px-6 py-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-variant text-on-surface-variant border border-outline-variant">${a.status||'—'}</span></td>
+          <td class="px-6 py-4 text-on-surface-variant">${a.timestamps&&a.timestamps.submitted_at?new Date(a.timestamps.submitted_at).toLocaleDateString():'—'}</td>
+          <td class="px-6 py-4 text-right"><button class="text-primary font-semibold text-sm">View →</button></td>
+        </tr>`).join('');
+    }
+  }
+}
+function viewApp(id){localStorage.setItem('lrmis_app_id',id);window.location.href='lrmis-app-detail.html';}
+document.querySelectorAll('button').forEach(b=>{if(b.textContent.includes('New Application'))b.onclick=()=>window.location.href='lrmis-new-application.html';});
+document.querySelectorAll('nav a').forEach(a=>{if(a.textContent.includes('Logout'))a.href='lrmis.html';});
+load();
+</script>
+</body></html>

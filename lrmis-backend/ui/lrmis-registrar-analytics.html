@@ -1,0 +1,350 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LRMIS - Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#6f7a6f",
+                        "secondary-container": "#e12531",
+                        "on-background": "#191c18",
+                        "on-secondary-fixed": "#410004",
+                        "on-error": "#ffffff",
+                        "background": "#f8faf3",
+                        "inverse-primary": "#78db92",
+                        "surface-container-high": "#e7e9e2",
+                        "surface-bright": "#f8faf3",
+                        "on-primary-fixed-variant": "#005227",
+                        "on-tertiary-container": "#eae7ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c18",
+                        "on-secondary-fixed-variant": "#930015",
+                        "primary-container": "#007a3d",
+                        "on-primary-container": "#a1ffb7",
+                        "primary-fixed": "#94f8ad",
+                        "tertiary-fixed": "#e2e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#68677f",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf3",
+                        "tertiary": "#504f66",
+                        "surface-tint": "#006d36",
+                        "outline-variant": "#becabc",
+                        "surface-container-highest": "#e1e3dc",
+                        "secondary": "#bb001e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-fixed-dim": "#78db92",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "secondary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "surface-dim": "#d9dbd4",
+                        "surface-variant": "#e1e3dc",
+                        "surface-container": "#edefe8",
+                        "on-primary-fixed": "#00210c",
+                        "primary": "#005f2e",
+                        "inverse-surface": "#2e312d",
+                        "surface-container-low": "#f2f4ed",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .chart-placeholder {
+            background-image: repeating-linear-gradient(45deg, #e1e3dc 25%, transparent 25%, transparent 75%, #e1e3dc 75%, #e1e3dc), repeating-linear-gradient(45deg, #e1e3dc 25%, #f8faf3 25%, #f8faf3 75%, #e1e3dc 75%, #e1e3dc);
+            background-position: 0 0, 10px 10px;
+            background-size: 20px 20px;
+            opacity: 0.5;
+        }
+        .keffiyeh-pattern{background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,95,46,.03) 10px,rgba(0,95,46,.03) 20px)}
+        .nav-item{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;color:#d4e6d4;font-size:14px;font-weight:600;border-radius:0 8px 8px 0;margin-right:8px}
+        .nav-item:hover{background:rgba(255,255,255,.08)}
+        .nav-item.active{background:#007a3d;color:#a1ffb7;border-left:3px solid #78db92;padding-left:13px}
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased">
+<script>
+  if(localStorage.getItem('lrmis_role')!=='registrar'||!localStorage.getItem('lrmis_staff_id')){window.location.replace('lrmis.html');}
+</script>
+
+<!-- Top Nav -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-8 h-14 z-50 fixed top-0 left-0 right-0">
+  <span class="font-bold text-primary text-lg">LRMIS</span>
+  <div class="relative w-80">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+    <input class="w-full bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Search application ID…" type="text"/>
+  </div>
+  <div class="flex items-center gap-3">
+    <span class="text-sm font-semibold text-on-surface-variant" id="header-name">Registrar</span>
+    <div id="header-avatar" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary text-sm font-bold">R</div>
+  </div>
+</header>
+
+<div class="flex flex-1 pt-14">
+  <!-- Sidebar -->
+  <nav class="w-60 bg-inverse-surface fixed left-0 top-14 bottom-0 flex flex-col py-5 z-40 overflow-y-auto">
+    <div class="px-5 mb-6">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="material-symbols-outlined text-primary-fixed text-lg">account_balance</span>
+        <span class="text-primary-fixed font-bold text-sm">Palestine Land Registry</span>
+      </div>
+    </div>
+    <div class="flex-1 space-y-0.5 px-2">
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">description</span>Applications
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]">map</span>Survey Tasks
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]">gavel</span>Legal Review
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]">account_balance</span>Land Records
+      </div>
+      <div class="nav-item active" onclick="window.location.href='lrmis-registrar-analytics.html'">
+        <span class="material-symbols-outlined text-[18px]">analytics</span>Analytics
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-certificate.html'">
+        <span class="material-symbols-outlined text-[18px]">verified</span>Certificates
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-create-staff.html'">
+        <span class="material-symbols-outlined text-[18px]">person_add</span>Create Staff
+      </div>
+    </div>
+    <div class="px-2 pt-4 border-t border-white/10 mt-2">
+      <div class="nav-item" onclick="doLogout()">
+        <span class="material-symbols-outlined text-[18px]">logout</span>Logout
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 ml-60 bg-surface-bright keffiyeh-pattern min-h-screen">
+    <div class="p-8 max-w-7xl mx-auto">
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-on-surface">Analytics Dashboard</h1>
+        <p class="text-sm text-on-surface-variant mt-0.5">Registrar Performance Overview</p>
+      </div>
+      <div class="space-y-6"><!-- KPI Row — 8 cards, 4 per row on large screens -->
+<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-gutter" id="kpi-row">
+<!-- KPI cards injected by JS --></div>
+
+<!-- Charts Row 1 -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+  <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm col-span-1 flex flex-col">
+    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Applications by Status</h3>
+    <canvas id="status-chart" height="260"></canvas>
+  </div>
+  <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm col-span-1 lg:col-span-2 flex flex-col">
+    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Applications by Zone</h3>
+    <canvas id="zone-chart" height="180"></canvas>
+  </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+  <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col">
+    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Monthly Application Trend</h3>
+    <canvas id="trend-chart" height="200"></canvas>
+  </div>
+  <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col">
+    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Certificates Issued per Month</h3>
+    <canvas id="certs-chart" height="200"></canvas>
+  </div>
+</div>
+
+<!-- Charts Row 3 -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+  <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col">
+    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Surveyor Workload</h3>
+    <canvas id="staff-chart" height="200"></canvas>
+  </div>
+  <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col">
+    <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Registrar Review Performance</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="text-left text-on-surface-variant border-b border-outline-variant">
+          <th class="py-2 pr-4">Name</th><th class="py-2 pr-4">Reviewed</th>
+          <th class="py-2 pr-4">Approved</th><th class="py-2 pr-4">Rejected</th><th class="py-2">Rate</th>
+        </tr></thead>
+        <tbody id="reg-tbody"><tr><td colspan="5" class="py-4 text-center text-on-surface-variant">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+      </div>
+    </div>
+  </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const BASE='http://127.0.0.1:8000';
+
+function doLogout(){localStorage.clear();window.location.href='lrmis.html';}
+
+(function(){
+  const name=localStorage.getItem('lrmis_name')||'Registrar';
+  const el=document.getElementById('header-name');if(el)el.textContent=name;
+  const av=document.getElementById('header-avatar');if(av)av.textContent=(name[0]||'R').toUpperCase();
+})();
+
+const charts={};
+const P=['#005f2e','#007a3d','#00a050','#38d9a9','#bb001e','#e12531','#ffa94d','#4f8ef7'];
+
+function mkChart(id,type,labels,data,colors){
+  const el=document.getElementById(id); if(!el)return;
+  if(charts[id])charts[id].destroy();
+  const isMulti=Array.isArray(colors);
+  charts[id]=new Chart(el,{
+    type,
+    data:{labels,datasets:[{data,
+      backgroundColor:isMulti?colors:colors+'99',
+      borderColor:isMulti?colors:colors,
+      borderWidth:type==='line'?2:0,
+      fill:type==='line',tension:.35,
+      borderRadius:type==='bar'?4:0,
+    }]},
+    options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'right',
+      labels:{color:'#3f493f',font:{size:11}}}},
+      scales:type==='doughnut'?{}:{
+        x:{ticks:{color:'#3f493f',font:{size:10}},grid:{color:'#becabc40'}},
+        y:{ticks:{color:'#3f493f',font:{size:10}},grid:{color:'#becabc40'},beginAtZero:true},
+      }
+    },
+  });
+}
+
+function kpiCard(icon,label,value,sub,accent){
+  return `<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-1 bg-${accent||'primary'}"></div>
+    <div class="flex justify-between items-start mb-3">
+      <h3 class="font-label-md text-label-md text-on-surface-variant">${label}</h3>
+      <div class="p-2 bg-${accent||'primary'}/10 rounded-lg text-${accent||'primary'}">
+        <span class="material-symbols-outlined text-[20px]">${icon}</span>
+      </div>
+    </div>
+    <span class="text-3xl font-bold text-on-surface">${value}</span>
+    <span class="text-xs text-on-surface-variant mt-1">${sub}</span>
+  </div>`;
+}
+
+async function load(){
+  const [kpi,zone,trend,sv,reg,certs]=await Promise.all([
+    fetch(`${BASE}/analytics/kpis`).then(r=>r.json()).catch(()=>null),
+    fetch(`${BASE}/analytics/applications-by-zone`).then(r=>r.json()).catch(()=>null),
+    fetch(`${BASE}/analytics/application-trends?period=monthly&limit=12`).then(r=>r.json()).catch(()=>null),
+    fetch(`${BASE}/analytics/surveyors`).then(r=>r.json()).catch(()=>null),
+    fetch(`${BASE}/analytics/registrars`).then(r=>r.json()).catch(()=>null),
+    fetch(`${BASE}/analytics/certificates-by-month`).then(r=>r.json()).catch(()=>null),
+  ]);
+
+  // KPI cards
+  if(kpi){
+    document.getElementById('kpi-row').innerHTML=[
+      kpiCard('description','Total Applications',kpi.total_applications??'—','All time','primary'),
+      kpiCard('hourglass_empty','Pending Review',kpi.pending_review??'—','Awaiting action','secondary'),
+      kpiCard('check_circle','Approved',kpi.approved??'—','Fully approved','primary'),
+      kpiCard('cancel','Rejected',kpi.rejected??'—','Rejected applications','secondary'),
+      kpiCard('gavel','Under Objection',kpi.under_objection??'—','Active objections','secondary'),
+      kpiCard('schedule','Delayed (>14d)',kpi.delayed_applications??'—','Overdue pending','secondary'),
+      kpiCard('verified','Certs This Month',kpi.certificates_this_month??'—','Issued this month','primary'),
+      kpiCard('timer','Avg Processing',kpi.avg_processing_days!=null?kpi.avg_processing_days+'d':'—','Submitted → approved','primary'),
+    ].join('');
+  }
+
+  // Status donut — use applications-by-status
+  const sb=await fetch(`${BASE}/analytics/applications-by-status`).then(r=>r.json()).catch(()=>null);
+  if(sb?.by_status?.length){
+    mkChart('status-chart','doughnut',sb.by_status.map(d=>d.status.replace(/_/g,' ')),sb.by_status.map(d=>d.count),P.slice(0,sb.by_status.length));
+  }
+
+  // Zone bar
+  if(zone?.by_zone?.length){
+    mkChart('zone-chart','bar',zone.by_zone.map(d=>d.zone_id),zone.by_zone.map(d=>d.count),'#007a3d');
+  }
+
+  // Monthly trend line
+  if(trend?.data?.length){
+    mkChart('trend-chart','line',trend.data.map(d=>d.period),trend.data.map(d=>d.count),'#005f2e');
+  }
+
+  // Certificates per month line
+  if(certs?.data?.length){
+    mkChart('certs-chart','line',certs.data.map(d=>d.month),certs.data.map(d=>d.count),'#007a3d');
+  } else {
+    const el=document.getElementById('certs-chart');
+    if(el)el.parentElement.innerHTML+='<p class="text-xs text-on-surface-variant mt-4 text-center">No certificates issued yet</p>';
+  }
+
+  // Surveyor workload bar
+  if(sv?.data?.length){
+    mkChart('staff-chart','bar',sv.data.map(d=>d.full_name||d.staff_id),sv.data.map(d=>d.active_tasks),'#007a3d');
+  }
+
+  // Registrar table
+  const tbody=document.getElementById('reg-tbody');
+  if(reg?.data?.length){
+    tbody.innerHTML=reg.data.map(r=>`<tr class="border-b border-outline-variant/30">
+      <td class="py-2 pr-4 font-medium text-on-surface">${r.full_name||r.staff_id}</td>
+      <td class="py-2 pr-4 text-on-surface-variant">${r.total_reviewed}</td>
+      <td class="py-2 pr-4 text-primary">${r.approved_count}</td>
+      <td class="py-2 pr-4 text-secondary">${r.rejected_count}</td>
+      <td class="py-2">${r.approval_rate!=null?r.approval_rate+'%':'—'}</td>
+    </tr>`).join('');
+  } else {
+    tbody.innerHTML='<tr><td colspan="5" class="py-4 text-center text-on-surface-variant text-sm">No registrar data yet</td></tr>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded',load);
+</script>
+</body></html>

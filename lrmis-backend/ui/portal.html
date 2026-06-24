@@ -4,32 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LRMIS — Applicant Portal</title>
+  <script>
+    // Redirect immediately if no valid citizen session — runs before any HTML renders
+    if (localStorage.getItem('lrmis_role') !== 'citizen' || !localStorage.getItem('lrmis_applicant_id')) {
+      window.location.replace('lrmis.html');
+    }
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --blue:       #1d4ed8;
-      --blue-dark:  #1e40af;
-      --blue-light: #eff6ff;
-      --blue-mid:   #bfdbfe;
-      --green:      #16a34a;
-      --red:        #dc2626;
+      /* Design system — LRMIS brand palette (DESIGN.md) */
+      --blue:       #005f2e;   /* primary — buttons, links, active states */
+      --blue-dark:  #2e312d;   /* inverse-surface — topbar, navigation */
+      --blue-light: #f2f4ed;   /* surface-container-low — subtle backgrounds */
+      --blue-mid:   #becabc;   /* outline-variant — dividers, focus rings */
+      --green:      #007a3d;   /* primary-container */
+      --red:        #ba1a1a;   /* error */
       --orange:     #d97706;
-      --gray-50:    #f8fafc;
-      --gray-100:   #f1f5f9;
-      --gray-200:   #e2e8f0;
-      --gray-400:   #94a3b8;
-      --gray-500:   #64748b;
-      --gray-700:   #334155;
-      --gray-900:   #0f172a;
-      --text:       #1e293b;
-      --radius:     10px;
-      --shadow:     0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-      --shadow-md:  0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+      --gray-50:    #f2f4ed;   /* surface-container-low */
+      --gray-100:   #edefe8;   /* surface-container */
+      --gray-200:   #becabc;   /* outline-variant */
+      --gray-400:   #6f7a6f;   /* outline */
+      --gray-500:   #3f493f;   /* on-surface-variant */
+      --gray-700:   #191c18;   /* on-surface */
+      --gray-900:   #191c18;   /* on-surface */
+      --text:       #191c18;   /* on-surface */
+      --radius:     8px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:  0 4px 6px rgba(0,0,0,.06), 0 2px 4px rgba(0,0,0,.04);
     }
 
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Work Sans', 'Plus Jakarta Sans', system-ui, sans-serif;
       background: var(--gray-100);
       color: var(--text);
       min-height: 100vh;
@@ -83,7 +90,7 @@
       flex: 1;
       display: flex; align-items: center; justify-content: center;
       padding: 40px 16px;
-      background: linear-gradient(135deg, var(--blue-dark) 0%, #1d4ed8 50%, #2563eb 100%);
+      background: linear-gradient(135deg, #005f2e 0%, #007a3d 50%, #00a050 100%);
     }
     .welcome-card {
       background: #fff;
@@ -142,7 +149,7 @@
     }
     input:focus, select:focus, textarea:focus {
       border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(29,78,216,.1);
+      box-shadow: 0 0 0 3px rgba(0,95,46,.1);
     }
     textarea { resize: vertical; min-height: 80px; }
 
@@ -209,8 +216,8 @@
       padding: 3px 10px; border-radius: 999px;
     }
     .badge::before { content:''; width:6px; height:6px; border-radius:50%; margin-right:5px; background: currentColor; }
-    .badge.submitted          { background:#dbeafe; color:#1e40af; }
-    .badge.pre_checked        { background:#e0e7ff; color:#3730a3; }
+    .badge.submitted          { background:#e7e9e2; color:#3f493f; }
+    .badge.pre_checked        { background:#dcfce7; color:#005f2e; }
     .badge.survey_required    { background:#fef9c3; color:#854d0e; }
     .badge.surveyed           { background:#fde68a; color:#92400e; }
     .badge.legal_review       { background:#fed7aa; color:#9a3412; }
@@ -282,7 +289,7 @@
       transition: all .2s;
     }
     .tracker-step.done .tracker-dot   { background: var(--blue); border-color: var(--blue); color: #fff; }
-    .tracker-step.active .tracker-dot { background: #fff; border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 3px var(--blue-mid); }
+    .tracker-step.active .tracker-dot { background: #fff; border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 3px rgba(0,95,46,.18); }
     .tracker-step.rejected .tracker-dot { background: var(--red); border-color: var(--red); color: #fff; }
     .tracker-label {
       margin-top: 6px; font-size: 10px; font-weight: 600;
@@ -398,62 +405,20 @@
       .topbar h1 { font-size: 13px; }
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+  <!-- Leaflet for parcel location picker -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════════
-     PAGE 1 — WELCOME / LOGIN
-════════════════════════════════════════════ -->
-<div id="page-welcome" class="page active">
-  <div class="welcome-wrap">
-    <div class="welcome-card">
-      <div class="welcome-icon">🏛️</div>
-      <h2>Applicant Portal</h2>
-      <p>Land Registration Management Information System — apply for land registration, track your applications, and receive your certificate online.</p>
-
-      <div class="tabs-welcome">
-        <button class="tab-welcome active" onclick="switchWelcomeTab('login', this)">Track Application</button>
-        <button class="tab-welcome"        onclick="switchWelcomeTab('register', this)">New Registration</button>
-      </div>
-
-      <!-- Login tab -->
-      <div id="wtab-login">
-        <div id="login-alert"></div>
-        <label>Your Applicant ID</label>
-        <input id="login-id" placeholder="e.g. APP-001" />
-        <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="doLogin()">
-          View My Applications
-        </button>
-      </div>
-
-      <!-- Register tab -->
-      <div id="wtab-register" style="display:none">
-        <div id="register-alert"></div>
-        <label>Full Name</label>
-        <input id="reg-name" placeholder="e.g. Ahmed Al-Rashid" />
-        <label>Applicant ID <small style="font-weight:400;color:var(--gray-400)">(choose a unique ID)</small></label>
-        <input id="reg-id" placeholder="e.g. APP-001" />
-        <label>Applicant Type</label>
-        <select id="reg-type">
-          <option value="citizen">Citizen</option>
-          <option value="lawyer">Lawyer</option>
-          <option value="company">Company</option>
-          <option value="representative">Representative</option>
-        </select>
-        <label>National ID</label>
-        <input id="reg-national" placeholder="e.g. 1234567890" />
-        <button class="btn btn-primary btn-full" style="margin-top:14px" onclick="doRegister()">
-          Create Account
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Hidden placeholder so old references to page-welcome don't break -->
+<div id="page-welcome" class="page" style="display:none"></div>
 
 <!-- ════════════════════════════════════════════
      PAGE 2 — DASHBOARD
 ════════════════════════════════════════════ -->
-<div id="page-dashboard" class="page">
+<div id="page-dashboard" class="page active">
   <div class="topbar">
     <div class="topbar-brand">
       <div class="topbar-logo">LR</div>
@@ -573,7 +538,7 @@
       <div class="card-title">Application Details</div>
 
       <label>Application Type</label>
-      <select id="a-type">
+      <select id="a-type" onchange="onAppTypeChange()">
         <option value="first_registration">First Registration</option>
         <option value="ownership_transfer" selected>Ownership Transfer</option>
         <option value="parcel_subdivision">Parcel Subdivision</option>
@@ -594,26 +559,79 @@
 
     <div class="card" style="margin-top:16px">
       <div class="card-title">Parcel Information</div>
-      <div class="section-hint">
-        Enter the details of the land parcel you are registering. The parcel must already exist in the system database.
+
+      <!-- ── SEARCH MODE (all types except first_registration) ── -->
+      <div id="parcel-search-mode">
+        <div class="section-hint">Search for the existing parcel by number, zone, or area name.</div>
+        <div style="position:relative;margin-bottom:10px">
+          <input id="parcel-search-input"
+                 placeholder="🔍  Search parcel number, zone, or location…"
+                 oninput="filterParcels()" autocomplete="off"
+                 style="width:100%;padding:10px 14px;border:1.5px solid #d1d5db;border-radius:8px;font-size:14px;outline:none;box-sizing:border-box" />
+          <div id="parcel-suggestions"
+               style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:200;
+                      background:#fff;border:1px solid #d1d5db;border-radius:8px;
+                      box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:220px;overflow-y:auto"></div>
+        </div>
+        <div id="selected-parcel-info"
+             style="display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:12px;margin-bottom:4px">
+          <div style="font-size:11px;font-weight:700;color:#15803d;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">✓ Parcel Selected</div>
+          <div id="selected-parcel-text" style="font-size:13px;color:#166534;line-height:1.6"></div>
+        </div>
       </div>
 
-      <div class="field-grid">
-        <div>
-          <label>Parcel Number</label>
-          <input id="a-parcel-num" value="PARCEL-001" />
+      <!-- ── MANUAL MODE (first_registration only) ── -->
+      <div id="parcel-manual-mode" style="display:none">
+        <div class="section-hint">This is new unregistered land. Assign a parcel number and enter its details.</div>
+      </div>
+
+      <!-- Data inputs — hidden in search mode (filled by selectParcel), visible in manual mode -->
+      <div id="parcel-fields-grid" style="display:none">
+        <div class="field-grid" style="margin-top:8px">
+          <div>
+            <label>Parcel Number <small style="font-weight:400;color:#6b7280">(auto-suggested, you can edit)</small></label>
+            <input id="a-parcel-num" placeholder="e.g. PARC-2026-0001" />
+          </div>
+          <div>
+            <label>Zone</label>
+            <select id="a-zone" style="width:100%;padding:9px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;background:#fff">
+              <option value="">-- Select Zone --</option>
+              <option value="ZONE-A">Zone A — Urban / Residential</option>
+              <option value="ZONE-B">Zone B — Partially Developed</option>
+              <option value="ZONE-C">Zone C — Rural / Agricultural</option>
+            </select>
+          </div>
+          <div>
+            <label>Block Number <small style="font-weight:400;color:#6b7280">(optional)</small></label>
+            <input id="a-block" placeholder="e.g. 12" />
+          </div>
+          <div>
+            <label>Basin Number <small style="font-weight:400;color:#6b7280">(optional)</small></label>
+            <input id="a-basin" placeholder="e.g. 3" />
+          </div>
         </div>
-        <div>
-          <label>Zone ID</label>
-          <input id="a-zone" value="ZONE-A" />
-        </div>
-        <div>
-          <label>Block Number</label>
-          <input id="a-block" value="12" />
-        </div>
-        <div>
-          <label>Basin Number</label>
-          <input id="a-basin" value="3" />
+      </div>
+      <!-- Hidden inputs for search mode (filled programmatically) -->
+      <input id="a-parcel-num-h" type="hidden" />
+      <input id="a-zone-h"       type="hidden" />
+      <input id="a-block-h"      type="hidden" />
+      <input id="a-basin-h"      type="hidden" />
+
+      <!-- Map location picker (always shown) -->
+      <div style="margin-top:16px">
+        <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px">
+          📍 Parcel Location on Map <span style="font-weight:400;color:#6b7280">(click to pin · auto-set when parcel selected)</span>
+        </label>
+        <div id="parcel-picker-map" style="height:280px;border-radius:10px;border:1px solid #d1d5db;z-index:1"></div>
+        <div style="display:flex;gap:16px;margin-top:8px">
+          <div style="flex:1">
+            <label style="font-size:12px;color:#6b7280">Latitude</label>
+            <input id="a-lat" readonly placeholder="Auto-set when parcel selected" style="background:#f3f4f6;cursor:default" />
+          </div>
+          <div style="flex:1">
+            <label style="font-size:12px;color:#6b7280">Longitude</label>
+            <input id="a-lng" readonly placeholder="Auto-set when parcel selected" style="background:#f3f4f6;cursor:default" />
+          </div>
         </div>
       </div>
     </div>
@@ -628,7 +646,73 @@
 </div>
 
 <!-- ════════════════════════════════════════════
-     PAGE 4 — APPLICATION DETAIL
+     PAGE 4 — APPLICATION CONFIRMATION
+════════════════════════════════════════════ -->
+<div id="page-confirm" class="page">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">LR</div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:#fff">LRMIS Applicant Portal</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.7)">Application Submitted</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-secondary btn-sm" onclick="goTo('dashboard')">My Applications</button>
+    </div>
+  </div>
+  <div class="content" style="max-width:700px;margin:0 auto;padding:32px 16px">
+
+    <!-- Success banner -->
+    <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:14px;padding:24px 28px;text-align:center;margin-bottom:28px">
+      <div style="font-size:48px;margin-bottom:8px">✅</div>
+      <h2 style="color:#15803d;margin:0 0 4px">Application Submitted Successfully</h2>
+      <p style="color:#166534;margin:0;font-size:14px">Your application has been received and is being processed.</p>
+    </div>
+
+    <!-- Application details card -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Application Details</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px 24px">
+        <div>
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Application ID</div>
+          <div id="conf-app-id" style="font-weight:700;font-size:18px;color:var(--primary);margin-top:2px">—</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Current Status</div>
+          <div id="conf-status" style="margin-top:4px"><span class="badge submitted">submitted</span></div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Submitted Date</div>
+          <div id="conf-date" style="font-size:14px;margin-top:2px">—</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Application Type</div>
+          <div id="conf-type" style="font-size:14px;margin-top:2px">—</div>
+        </div>
+        <div style="grid-column:1/-1">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Required Next Step</div>
+          <div id="conf-next" style="font-size:14px;margin-top:2px;padding:8px 12px;background:#f0fdf4;border-radius:8px;border-left:3px solid #005f2e">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parcel location map -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Parcel Location</div>
+      <div id="conf-map" style="height:240px;border-radius:10px;border:1px solid #e5e7eb;z-index:1"></div>
+      <div id="conf-coords" style="font-size:12px;color:var(--muted);margin-top:8px;text-align:center"></div>
+    </div>
+
+    <div style="display:flex;gap:12px">
+      <button class="btn btn-secondary" style="flex:1" onclick="goTo('apply')">Submit Another</button>
+      <button class="btn btn-primary" style="flex:1" onclick="goTo('dashboard')">View My Applications</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 5 — APPLICATION DETAIL
 ════════════════════════════════════════════ -->
 <div id="page-detail" class="page">
   <div class="topbar">
@@ -815,6 +899,7 @@
   // ── State ─────────────────────────────────────────────────────
   const state = { applicantId: null, currentApp: null };
 
+
   // ── API ───────────────────────────────────────────────────────
   async function api(method, path, body) {
     const opts = { method, headers: { "Content-Type": "application/json" } };
@@ -828,17 +913,192 @@
     }
   }
 
+  // ── Parcel picker ─────────────────────────────────────────────
+  let _allParcels = [];
+
+  async function loadParcels() {
+    if (_allParcels.length) return;
+    const { ok, data } = await api("GET", "/parcels/");
+    if (ok) _allParcels = data.items || [];
+  }
+
+  function _getParcelField(name) {
+    // In manual mode read the visible input; in search mode read the hidden one
+    const isManual = document.getElementById("parcel-fields-grid").style.display !== "none";
+    const id = isManual ? `a-${name}` : `a-${name}-h`;
+    return (document.getElementById(id)?.value || "").trim();
+  }
+
+  function onAppTypeChange() {
+    const isNew = document.getElementById("a-type").value === "first_registration";
+    document.getElementById("parcel-search-mode").style.display  = isNew ? "none"  : "block";
+    document.getElementById("parcel-manual-mode").style.display  = isNew ? "block" : "none";
+    document.getElementById("parcel-fields-grid").style.display  = isNew ? "block" : "none";
+    if (isNew) {
+      // Auto-suggest a unique parcel number
+      const year = new Date().getFullYear();
+      const seq  = String(Math.floor(Date.now() / 1000) % 10000).padStart(4, "0");
+      const el   = document.getElementById("a-parcel-num");
+      if (!el.value) el.value = `PARC-${year}-${seq}`;
+    } else {
+      document.getElementById("parcel-search-input").value = "";
+      document.getElementById("parcel-suggestions").style.display = "none";
+      document.getElementById("selected-parcel-info").style.display = "none";
+      ["a-parcel-num-h","a-zone-h","a-block-h","a-basin-h"].forEach(id =>
+        document.getElementById(id).value = "");
+      document.getElementById("a-lat").value = "";
+      document.getElementById("a-lng").value = "";
+      if (_pickerMarker && _pickerMap) { _pickerMarker.remove(); _pickerMarker = null; }
+    }
+  }
+
+  function filterParcels() {
+    const q = document.getElementById("parcel-search-input").value.toLowerCase().trim();
+    const box = document.getElementById("parcel-suggestions");
+    if (!q) { box.style.display = "none"; return; }
+    const matches = _allParcels.filter(p =>
+      (p.parcel_number || "").toLowerCase().includes(q) ||
+      (p.zone_id       || "").toLowerCase().includes(q) ||
+      (p.address_hint  || "").toLowerCase().includes(q) ||
+      (p.land_use      || "").toLowerCase().includes(q)
+    ).slice(0, 8);
+    box.innerHTML = "";
+    if (!matches.length) {
+      box.innerHTML = `<div style="padding:12px;color:#9ca3af;font-size:13px;text-align:center">No parcels found</div>`;
+      box.style.display = "block";
+      return;
+    }
+    matches.forEach(p => {
+      const div = document.createElement("div");
+      div.style.cssText = "padding:10px 14px;cursor:pointer;border-bottom:1px solid #f3f4f6;font-size:13px";
+      div.innerHTML = `
+        <div style="font-weight:600;color:#111827">${p.parcel_number}
+          <span style="font-weight:400;color:#6b7280;margin-left:6px">${p.zone_id}</span>
+        </div>
+        <div style="font-size:11px;color:#9ca3af;margin-top:2px">
+          ${p.address_hint || ""} &nbsp;·&nbsp; ${p.land_use} &nbsp;·&nbsp; ${p.area_sqm} m²
+          &nbsp;·&nbsp; Block ${p.block_number || "—"} / Basin ${p.basin_number || "—"}
+        </div>`;
+      div.addEventListener("mouseover", () => div.style.background = "#f0fdf4");
+      div.addEventListener("mouseout",  () => div.style.background = "");
+      div.addEventListener("click",     () => selectParcel(p));
+      box.appendChild(div);
+    });
+    box.style.display = "block";
+  }
+
+  function selectParcel(p) {
+    // Fill hidden data inputs
+    document.getElementById("a-parcel-num-h").value = p.parcel_number || p.parcel_code || "";
+    document.getElementById("a-zone-h").value       = p.zone_id       || "";
+    document.getElementById("a-block-h").value      = p.block_number  || "";
+    document.getElementById("a-basin-h").value      = p.basin_number  || "";
+    // Update search input + show confirmation card
+    document.getElementById("parcel-search-input").value = p.parcel_number;
+    document.getElementById("parcel-suggestions").style.display = "none";
+    document.getElementById("selected-parcel-info").style.display = "block";
+    document.getElementById("selected-parcel-text").innerHTML =
+      `<b>${p.parcel_number}</b> &nbsp;·&nbsp; ${p.zone_id}
+       &nbsp;·&nbsp; Block ${p.block_number || "—"}, Basin ${p.basin_number || "—"}
+       &nbsp;·&nbsp; ${p.area_sqm} m² &nbsp;·&nbsp; ${p.land_use}
+       ${p.address_hint ? "<br><span style='color:#15803d'>📍 " + p.address_hint + "</span>" : ""}`;
+    // Pan map to parcel centroid and auto-set lat/lng
+    if (p.centroid && _pickerMap) {
+      const { lat, lng } = p.centroid;
+      _pickerMap.setView([lat, lng], 16);
+      document.getElementById("a-lat").value = lat.toFixed(6);
+      document.getElementById("a-lng").value = lng.toFixed(6);
+      if (_pickerMarker) _pickerMarker.setLatLng([lat, lng]);
+      else _pickerMarker = L.marker([lat, lng], { draggable: true }).addTo(_pickerMap)
+        .on("dragend", ev => {
+          const pt = ev.target.getLatLng();
+          document.getElementById("a-lat").value = pt.lat.toFixed(6);
+          document.getElementById("a-lng").value = pt.lng.toFixed(6);
+        });
+    }
+  }
+
+  // Close suggestions when clicking outside
+  document.addEventListener("click", e => {
+    const box = document.getElementById("parcel-suggestions");
+    if (box && !box.contains(e.target) && e.target.id !== "parcel-search-input") {
+      box.style.display = "none";
+    }
+  });
+
   // ── Navigation ────────────────────────────────────────────────
+  let _pickerMap = null, _pickerMarker = null;
   function goTo(pageId) {
     document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
     document.getElementById("page-" + pageId).classList.add("active");
     if (pageId === "dashboard") loadDashboard();
+    if (pageId === "apply") {
+      loadParcels();
+      onAppTypeChange();
+      setTimeout(() => {
+        const el = document.getElementById("parcel-picker-map");
+        if (!el || _pickerMap) { if (_pickerMap) _pickerMap.invalidateSize(); return; }
+        _pickerMap = L.map("parcel-picker-map").setView([31.9, 35.2], 10);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap contributors", maxZoom: 18,
+        }).addTo(_pickerMap);
+        _pickerMap.on("click", function(e) {
+          const { lat, lng } = e.latlng;
+          document.getElementById("a-lat").value = lat.toFixed(6);
+          document.getElementById("a-lng").value = lng.toFixed(6);
+          if (_pickerMarker) _pickerMarker.setLatLng(e.latlng);
+          else _pickerMarker = L.marker(e.latlng, { draggable: true }).addTo(_pickerMap)
+            .on("dragend", ev => {
+              const p = ev.target.getLatLng();
+              document.getElementById("a-lat").value = p.lat.toFixed(6);
+              document.getElementById("a-lng").value = p.lng.toFixed(6);
+            });
+        });
+      }, 100);
+    }
+  }
+
+  // ── Application Confirmation ──────────────────────────────────
+  let _confMap = null;
+  function showConfirmation(data) {
+    goTo("confirm");
+    document.getElementById("conf-app-id").textContent = data.application_id || "—";
+    const statusEl = document.getElementById("conf-status");
+    statusEl.innerHTML = `<span class="badge submitted">${data.status || "submitted"}</span>`;
+    const ts = data.timestamps?.submitted_at || data.created_at;
+    document.getElementById("conf-date").textContent = ts ? new Date(ts).toLocaleString() : new Date().toLocaleString();
+    document.getElementById("conf-type").textContent = (data.application_type || "").replace(/_/g," ");
+    document.getElementById("conf-next").textContent =
+      "A land authority staff member will review your application. You will be notified of the status change.";
+
+    // Confirmation map — show submitted lat/lng pin
+    const lat = parseFloat(document.getElementById("a-lat")?.value) || 31.9;
+    const lng = parseFloat(document.getElementById("a-lng")?.value) || 35.2;
+    setTimeout(() => {
+      const el = document.getElementById("conf-map");
+      if (!el) return;
+      if (_confMap) { _confMap.remove(); _confMap = null; }
+      _confMap = L.map("conf-map").setView([lat, lng], lat === 31.9 ? 10 : 15);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors", maxZoom: 18,
+      }).addTo(_confMap);
+      if (lat !== 31.9 || lng !== 35.2) {
+        L.marker([lat, lng]).addTo(_confMap)
+          .bindPopup(`<b>${data.application_id}</b><br>Submitted location`).openPopup();
+        document.getElementById("conf-coords").textContent = `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
+      } else {
+        document.getElementById("conf-coords").textContent = "No location pin was set";
+      }
+    }, 150);
   }
 
   function logout() {
+    localStorage.removeItem('lrmis_role');
+    localStorage.removeItem('lrmis_applicant_id');
+    localStorage.removeItem('lrmis_name');
     state.applicantId = null;
     state.currentApp  = null;
-    goTo("welcome");
+    window.location.href = 'lrmis.html';
   }
 
   function setUserUI(id) {
@@ -958,10 +1218,16 @@
         applicant_type: "citizen",
       },
       parcel_ref: {
-        parcel_number: document.getElementById("a-parcel-num").value.trim(),
-        zone_id:       document.getElementById("a-zone").value.trim(),
-        block_number:  document.getElementById("a-block").value.trim(),
-        basin_number:  document.getElementById("a-basin").value.trim(),
+        parcel_number: _getParcelField("parcel-num"),
+        zone_id:       _getParcelField("zone"),
+        block_number:  _getParcelField("block"),
+        basin_number:  _getParcelField("basin"),
+      },
+      location: {
+        city: document.getElementById("a-zone").value.trim(),
+        zone_id: document.getElementById("a-zone").value.trim(),
+        lat: parseFloat(document.getElementById("a-lat").value)||null,
+        lng: parseFloat(document.getElementById("a-lng").value)||null,
       },
       description: document.getElementById("a-desc").value.trim() || null,
       priority:    document.getElementById("a-priority").value,
@@ -971,9 +1237,7 @@
     btn.disabled  = false;
 
     if (status === 201 && data.application_id) {
-      showAlert("apply-alert", "success",
-        `Application <strong>${data.application_id}</strong> submitted successfully! Redirecting to your dashboard...`);
-      setTimeout(() => goTo("dashboard"), 1800);
+      showConfirmation(data);
     } else {
       const msg = data?.detail || JSON.stringify(data);
       showAlert("apply-alert", "error", `Submission failed: ${msg}`);
@@ -1004,6 +1268,8 @@
     state.currentApp = data;
     renderDetail(data);
     loadTimeline(appId);
+    loadDocuments(appId);
+    loadComments(appId);
   }
 
   function renderDetail(a) {
@@ -1075,37 +1341,134 @@
   }
 
   // ── Timeline ──────────────────────────────────────────────────
+  const TL_CONFIG = {
+    submitted:               { label: "Application Submitted",      icon: "📋", color: "#005f2e", bg: "#f0fdf4" },
+    pre_checked:             { label: "Pre-Check Completed",        icon: "🔍", color: "#007a3d", bg: "#dcfce7" },
+    status_changed:          { label: "Status Updated",             icon: "🔄", color: "#3f493f", bg: "#edefe8" },
+    document_uploaded:       { label: "Document Uploaded",          icon: "📎", color: "#005f2e", bg: "#f0fdf4" },
+    document_verified:       { label: "Document Verified",          icon: "✅", color: "#16a34a", bg: "#f0fdf4" },
+    document_rejected:       { label: "Document Rejected",          icon: "❌", color: "#ba1a1a", bg: "#fef2f2" },
+    comment_added:           { label: "Comment Added",              icon: "💬", color: "#3f493f", bg: "#f2f4ed" },
+    objection_raised:        { label: "Objection Raised",           icon: "⚠️", color: "#d97706", bg: "#fffbeb" },
+    objection_resolved:      { label: "Objection Resolved",         icon: "✔️", color: "#16a34a", bg: "#f0fdf4" },
+    surveyor_assigned:       { label: "Surveyor Assigned",          icon: "👷", color: "#007a3d", bg: "#dcfce7" },
+    survey_report_uploaded:  { label: "Survey Report Uploaded",     icon: "📐", color: "#007a3d", bg: "#dcfce7" },
+    certificate_issued:      { label: "Certificate Issued",         icon: "🏅", color: "#16a34a", bg: "#f0fdf4" },
+    default:                 { label: null,                         icon: "🔔", color: "#3f493f", bg: "#f2f4ed" },
+  };
+
+  const ACTOR_BADGE = {
+    citizen:   { label: "Citizen",   color: "#005f2e", bg: "#dcfce7" },
+    applicant: { label: "Citizen",   color: "#005f2e", bg: "#dcfce7" },
+    registrar: { label: "Registrar", color: "#2e312d", bg: "#e7e9e2" },
+    surveyor:  { label: "Surveyor",  color: "#007a3d", bg: "#f0fdf4" },
+    system:    { label: "System",    color: "#191c18", bg: "#f2f4ed" },
+  };
+
+  function _tlDescription(ev) {
+    const m = ev.meta || {};
+    const t = ev.event_type || "";
+    if (t === "document_uploaded")  return m.document_type ? `Type: ${m.document_type.replace(/_/g," ")}` + (m.document_id ? ` · ${m.document_id}` : "") : "";
+    if (t === "document_verified" || t === "document_rejected") return m.document_id ? `Document: ${m.document_id}` + (m.notes ? ` — ${m.notes}` : "") : "";
+    if (t === "comment_added")      return m.snippet ? `"${m.snippet}…"` : "";
+    if (t === "objection_raised")   return m.reason_snippet ? `"${m.reason_snippet}…"` : "";
+    if (t === "status_changed")     return (m.from && m.to) ? `${m.from.replace(/_/g," ")} → ${m.to.replace(/_/g," ")}` : "";
+    if (t.startsWith("survey_milestone_")) {
+      const milestone = t.replace("survey_milestone_", "").replace(/_/g, " ");
+      return `Milestone: ${milestone}`;
+    }
+    if (t === "surveyor_assigned")  return m.surveyor_id ? `Assigned to ${m.surveyor_id}` : "";
+    return Object.keys(m).length ? Object.entries(m).slice(0,2).map(([k,v]) => `${k.replace(/_/g," ")}: ${v}`).join(" · ") : "";
+  }
+
   async function loadTimeline(appId) {
     const { ok, data } = await api("GET", `/applications/${appId}/timeline`);
     const list = document.getElementById("timeline-list");
 
-    // Handle stub (returns empty envelope)
-    if (ok && Array.isArray(data.data)) {
-      if (!data.data.length) {
-        list.innerHTML = `<div class="coming-soon">
-          <div class="cs-icon">📋</div>
-          <h4>No events yet</h4>
-          <p>Timeline will populate as your application progresses.</p>
-        </div>`;
-      } else {
-        list.innerHTML = data.data.map(ev => {
-          const icon = TIMELINE_ICONS[ev.event_type] || TIMELINE_ICONS.default;
-          return `<div class="timeline-item">
-            <div class="timeline-dot">${icon}</div>
-            <div class="timeline-content">
-              <div class="timeline-event">${ev.event_type?.replace(/_/g," ") || "Event"}</div>
-              <div class="timeline-meta">${ev.actor_type || ""} · ${ev.actor_id || ""}</div>
-            </div>
-          </div>`;
-        }).join("");
-      }
-    } else {
+    if (!ok || !Array.isArray(data.data) || !data.data.length) {
       list.innerHTML = `<div class="coming-soon">
-        <div class="cs-icon">🚧</div>
-        <h4>Timeline module coming soon</h4>
-        <p>This feature is being built by the team.</p>
+        <div class="cs-icon">📋</div>
+        <h4>No events yet</h4>
+        <p>Timeline will populate as your application progresses.</p>
       </div>`;
+      return;
     }
+
+    const events = data.data;
+    list.innerHTML = `<div style="position:relative;padding-left:36px">
+      <div style="position:absolute;left:15px;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,#e5e7eb,#e5e7eb);border-radius:2px"></div>
+      ${events.map((ev, idx) => {
+        const cfg   = TL_CONFIG[ev.event_type] || TL_CONFIG.default;
+        const label = cfg.label || ev.event_type?.replace(/_/g," ") || "Event";
+        const actor = ACTOR_BADGE[ev.actor_type] || ACTOR_BADGE.system;
+        const desc  = _tlDescription(ev);
+        const ts    = ev.timestamp ? new Date(ev.timestamp).toLocaleString("en-GB", {
+          day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"
+        }) : `Event ${idx + 1}`;
+        const isLast = idx === events.length - 1;
+        return `
+        <div style="position:relative;margin-bottom:${isLast ? 0 : 20}px;display:flex;align-items:flex-start;gap:0">
+          <div style="position:absolute;left:-28px;top:2px;width:26px;height:26px;border-radius:50%;
+                      background:${cfg.bg};border:2px solid ${cfg.color};
+                      display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">
+            ${cfg.icon}
+          </div>
+          <div style="flex:1;background:${cfg.bg};border:1px solid ${cfg.color}22;border-radius:10px;padding:10px 14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-bottom:4px">
+              <span style="font-weight:700;font-size:13px;color:${cfg.color}">${label}</span>
+              <span style="font-size:11px;color:#9ca3af">${ts}</span>
+            </div>
+            ${desc ? `<div style="font-size:12px;color:#374151;margin-bottom:6px;font-style:italic">${desc}</div>` : ""}
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;
+                           background:${actor.bg};color:${actor.color}">${actor.label}</span>
+              <span style="font-size:11px;color:#9ca3af">${ev.actor_id || ""}</span>
+            </div>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`;
+  }
+
+  // ── Load documents ────────────────────────────────────────────
+  async function loadDocuments(appId) {
+    const el = document.getElementById("docs-list");
+    el.innerHTML = "<p style='padding:8px;color:#888'>Loading...</p>";
+    const { ok, data } = await api("GET", `/applications/${appId}/documents`);
+    const docs = ok ? (data.data || data.items || data || []) : [];
+    if (!docs.length) {
+      el.innerHTML = `<div class="coming-soon"><div class="cs-icon">📂</div><h4>No documents yet</h4><p>Upload your supporting documents below.</p></div>`;
+      return;
+    }
+    el.innerHTML = docs.map(d => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee">
+        <div>
+          <div style="font-weight:600;font-size:13px">${d.document_name || d.document_type}</div>
+          <div style="font-size:11px;color:#888">${d.document_id} &nbsp;·&nbsp; ${d.document_type}</div>
+        </div>
+        <span class="badge ${d.status === 'verified' ? 'approved' : d.status === 'rejected' ? 'rejected' : 'submitted'}" style="font-size:11px">${d.status?.replace(/_/g,' ')}</span>
+      </div>`).join("");
+  }
+
+  // ── Load comments ─────────────────────────────────────────────
+  async function loadComments(appId) {
+    const el = document.getElementById("comments-list");
+    el.innerHTML = "<p style='padding:8px;color:#888'>Loading...</p>";
+    const { ok, data } = await api("GET", `/applications/${appId}`);
+    const comments = ok ? (data.comments || []) : [];
+    if (!comments.length) {
+      el.innerHTML = `<div class="coming-soon"><div class="cs-icon">💬</div><h4>No comments yet</h4><p>Add a comment or question below.</p></div>`;
+      return;
+    }
+    const fmt = v => v ? new Date(v).toLocaleString() : "";
+    el.innerHTML = comments.map(c => `
+      <div style="padding:10px 0;border-bottom:1px solid #eee">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:11px;color:#888">${c.actor_type || 'applicant'} · ${c.applicant_id || ''}</span>
+          <span style="font-size:11px;color:#aaa">${fmt(c.posted_at)}</span>
+        </div>
+        <div style="font-size:13px">${c.comment}</div>
+      </div>`).join("");
   }
 
   // ── Upload document ───────────────────────────────────────────
@@ -1123,6 +1486,7 @@
     if (ok) {
       showAlert("doc-upload-alert", "success", `Document <strong>${data.document_id}</strong> uploaded. Status: pending review.`);
       document.getElementById("doc-name").value = "";
+      loadDocuments(appId);
     } else {
       showAlert("doc-upload-alert", "error", data?.detail || "Submission failed.");
     }
@@ -1140,11 +1504,13 @@
     const { ok, data } = await api("POST", `/applications/${appId}/comments`, {
       applicant_id: state.applicantId,
       comment:      text,
+      actor_type:   "applicant",
     });
 
     if (ok) {
       showAlert("comment-alert", "success", "Comment posted.");
       document.getElementById("comment-text").value = "";
+      loadComments(appId);
     } else {
       showAlert("comment-alert", "error", data?.detail || "Failed to post comment.");
     }
@@ -1183,10 +1549,19 @@
     document.getElementById("tab-" + tab).classList.add("active");
   }
 
-  // ── Enter on login input ──────────────────────────────────────
-  document.getElementById("login-id").addEventListener("keydown", e => {
-    if (e.key === "Enter") doLogin();
-  });
+  // ── Session guard ─────────────────────────────────────────────
+  (function() {
+    const role = localStorage.getItem('lrmis_role');
+    const aid  = localStorage.getItem('lrmis_applicant_id');
+    const name = localStorage.getItem('lrmis_name');
+    if (role === 'citizen' && aid) {
+      state.applicantId = aid;
+      setUserUI(name || aid);
+      loadDashboard();
+    } else {
+      window.location.href = 'lrmis.html';
+    }
+  })();
 </script>
 </body>
 </html>

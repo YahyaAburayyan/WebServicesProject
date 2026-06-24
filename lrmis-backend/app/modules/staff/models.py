@@ -46,3 +46,8 @@ class RegistrarReviewRequest(BaseModel):
     registrar_id: str
     decision: str = Field(pattern="^(approved|rejected|needs_revision)$")
     notes: Optional[str] = None
+
+
+class ReassignRequest(BaseModel):
+    surveyor_id: str
+    reason: Optional[str] = None

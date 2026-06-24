@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from app.database import get_db
 
 
@@ -18,6 +20,7 @@ def log_event(
                     "actor_type": actor_type,
                     "actor_id": actor_id,
                     "meta": meta or {},
+                    "timestamp": datetime.now(timezone.utc),
                 }
             }
         },

@@ -1,0 +1,490 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Application Detail - LRMIS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#6f7a6f",
+                        "secondary-container": "#e12531",
+                        "on-background": "#191c18",
+                        "on-secondary-fixed": "#410004",
+                        "on-error": "#ffffff",
+                        "background": "#f8faf3",
+                        "inverse-primary": "#78db92",
+                        "surface-container-high": "#e7e9e2",
+                        "surface-bright": "#f8faf3",
+                        "on-primary-fixed-variant": "#005227",
+                        "on-tertiary-container": "#eae7ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c18",
+                        "on-secondary-fixed-variant": "#930015",
+                        "primary-container": "#007a3d",
+                        "on-primary-container": "#a1ffb7",
+                        "primary-fixed": "#94f8ad",
+                        "tertiary-fixed": "#e2e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#68677f",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf3",
+                        "tertiary": "#504f66",
+                        "surface-tint": "#006d36",
+                        "outline-variant": "#becabc",
+                        "surface-container-highest": "#e1e3dc",
+                        "secondary": "#bb001e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-fixed-dim": "#78db92",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "secondary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "surface-dim": "#d9dbd4",
+                        "surface-variant": "#e1e3dc",
+                        "surface-container": "#edefe8",
+                        "on-primary-fixed": "#00210c",
+                        "primary": "#005f2e",
+                        "inverse-surface": "#2e312d",
+                        "surface-container-low": "#f2f4ed",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans", "sans-serif"],
+                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-md": ["Work Sans", "sans-serif"],
+                        "headline-xl": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-lg": ["Work Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom scrollbar for timeline */
+        .timeline-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .timeline-scroll::-webkit-scrollbar-track {
+            background: #f8faf3;
+        }
+        .timeline-scroll::-webkit-scrollbar-thumb {
+            background: #becabc;
+            border-radius: 4px;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 122, 61, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 122, 61, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 122, 61, 0); }
+        }
+        .pulse-active {
+            animation: pulse-ring 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<header class="bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed docked full-width top-0 border-b border-outline-variant dark:border-outline flat no shadows flex justify-between items-center w-full px-margin-desktop h-16 z-50">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">LRMIS</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-6">
+<!-- Navigation is suppressed due to focused application view, only showing active state for context if needed, but per rules, suppress shell navigation intent for focused journeys. Kept generic top bar based on json. -->
+<span class="material-symbols-outlined hover:bg-surface-container-high transition-colors p-2 rounded-full cursor-pointer text-on-surface-variant">notifications</span>
+<span class="material-symbols-outlined hover:bg-surface-container-high transition-colors p-2 rounded-full cursor-pointer text-on-surface-variant">help</span>
+</div>
+<button class="font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high px-4 py-2 rounded-lg transition-colors">Login</button>
+</div>
+</header>
+<main class="flex-grow w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-8 flex flex-col gap-8">
+<!-- Header Section: App ID, Badges -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface p-6 rounded-lg border border-surface-container-highest shadow-sm">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">APP-2024-8921</h1>
+<span class="bg-surface-container text-on-surface px-3 py-1 rounded-full font-label-md text-label-md border border-outline-variant">First Registration</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Ramallah District, Parcel 452, Block 12</p>
+</div>
+<div class="flex items-center gap-2 bg-primary-container/10 px-4 py-2 rounded-full border border-primary/20">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
+<span class="font-label-md text-label-md text-primary">In Progress - Legal Review</span>
+</div>
+</div>
+<!-- Horizontal Progress Stepper -->
+<div class="bg-surface p-8 rounded-lg border border-surface-container-highest shadow-sm overflow-x-auto">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-8">Application Status</h2>
+<div class="flex items-center justify-between min-w-[800px] relative">
+<!-- Connecting Line Base -->
+<div class="absolute top-1/2 left-0 w-full h-1 bg-surface-container-highest -z-10 -translate-y-1/2"></div>
+<!-- Connecting Line Progress -->
+<div class="absolute top-1/2 left-0 w-[57%] h-1 bg-primary -z-10 -translate-y-1/2 transition-all duration-500"></div>
+<!-- Steps -->
+<div class="flex flex-col items-center gap-2 relative z-10 w-24">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center text-xs">Submitted</span>
+</div>
+<div class="flex flex-col items-center gap-2 relative z-10 w-24">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center text-xs">Pre-Checked</span>
+</div>
+<div class="flex flex-col items-center gap-2 relative z-10 w-24">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center text-xs">Survey Required</span>
+</div>
+<div class="flex flex-col items-center gap-2 relative z-10 w-24">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-sm">check</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface text-center text-xs">Surveyed</span>
+</div>
+<div class="flex flex-col items-center gap-2 relative z-10 w-24">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-primary flex items-center justify-center pulse-active">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+</div>
+<span class="font-label-md text-label-md text-primary font-bold text-center text-xs">Legal Review</span>
+</div>
+<div class="flex flex-col items-center gap-2 relative z-10 w-24 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant flex items-center justify-center">
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant text-center text-xs">Approved</span>
+</div>
+<div class="flex flex-col items-center gap-2 relative z-10 w-24 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant flex items-center justify-center">
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant text-center text-xs">Certificate Issued</span>
+</div>
+<div class="flex flex-col items-center gap-2 relative z-10 w-24 opacity-50">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-outline-variant flex items-center justify-center">
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant text-center text-xs">Closed</span>
+</div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Info & Documents -->
+<div class="lg:col-span-7 flex flex-col gap-8">
+<!-- Application Info Card -->
+<div class="bg-surface rounded-lg border border-surface-container-highest shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+<div class="p-6">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">description</span>
+                            Application Details
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-4">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Applicant Name</p>
+<p class="font-body-md text-body-md text-on-surface">Ahmad Al-Masri</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">ID Number</p>
+<p class="font-body-md text-body-md text-on-surface">987654321</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Submission Date</p>
+<p class="font-body-md text-body-md text-on-surface">12 Oct 2024</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Estimated Completion</p>
+<p class="font-body-md text-body-md text-on-surface">30 Nov 2024</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Upload Documents Section -->
+<div class="bg-surface rounded-lg border border-surface-container-highest shadow-sm p-6">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">folder_open</span>
+                        Required Documents
+                    </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Upload missing or updated documents required for the Legal Review phase.</p>
+<div class="flex flex-col sm:flex-row gap-4 mb-6">
+<div class="flex-grow">
+<label class="sr-only">Document Type</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors">
+<option>Select Document Type...</option>
+<option>Property Deed</option>
+<option>Survey Map</option>
+<option>Inheritance Certificate</option>
+</select>
+</div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-lg hover:bg-surface-tint transition-colors flex items-center justify-center gap-2 whitespace-nowrap shadow-sm hover:shadow-md">
+<span class="material-symbols-outlined">upload</span>
+                            Upload File
+                        </button>
+</div>
+<!-- Document List -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg border border-surface-container">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">picture_as_pdf</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Initial Application Form.pdf</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">1.2 MB â€¢ Uploaded 12 Oct</p>
+</div>
+</div>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded font-label-md text-xs">Verified</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-lg border border-surface-container">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">picture_as_pdf</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Surveyor_Report_V2.pdf</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">3.4 MB â€¢ Uploaded 20 Oct</p>
+</div>
+</div>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded font-label-md text-xs">Verified</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-error-container/20 rounded-lg border border-error/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">error</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Heir_Signatures.pdf</p>
+<p class="font-body-md text-body-md text-on-error-container text-sm">Signature missing on page 2. Please re-upload.</p>
+</div>
+</div>
+<span class="bg-error/10 text-error px-2 py-1 rounded font-label-md text-xs">Action Required</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Actions & Timeline -->
+<div class="lg:col-span-5 flex flex-col gap-8">
+<!-- Action Card (Comment & Object) -->
+<div class="bg-surface rounded-lg border border-surface-container-highest shadow-sm p-6">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Actions</h3>
+<div class="mb-6">
+<label class="font-label-md text-label-md text-on-surface mb-2 block">Add a Comment</label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors resize-none placeholder:text-outline-variant" placeholder="Message the registration officer..." rows="3"></textarea>
+<div class="flex justify-end mt-2">
+<button class="border border-primary text-primary font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-primary/5 transition-colors">Submit Comment</button>
+</div>
+</div>
+<hr class="border-surface-container-highest my-6"/>
+<div>
+<label class="font-label-md text-label-md text-error mb-2 block flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-sm">warning</span>
+                            Raise Objection
+                        </label>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm mb-3">Only use this if you suspect fraudulent activity or incorrect parcel boundaries during public display.</p>
+<textarea class="w-full bg-surface border border-error/30 rounded-lg px-4 py-2 font-body-md text-on-surface focus:border-error focus:ring-1 focus:ring-error outline-none transition-colors resize-none placeholder:text-outline-variant" placeholder="Describe the reason for objection..." rows="3"></textarea>
+<div class="flex justify-end mt-3">
+<button class="bg-error text-on-error font-label-md text-label-md px-4 py-2 rounded-lg hover:bg-on-error-container transition-colors shadow-sm">File Formal Objection</button>
+</div>
+</div>
+</div>
+<!-- Timeline -->
+<div class="bg-surface rounded-lg border border-surface-container-highest shadow-sm flex flex-col h-[400px]">
+<div class="p-6 border-b border-surface-container-highest">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">history</span>
+                            Application Timeline
+                        </h3>
+</div>
+<div class="p-6 flex-grow overflow-y-auto timeline-scroll">
+<div class="relative border-l-2 border-surface-container-highest ml-3 space-y-6">
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-primary border-2 border-surface"></div>
+<div class="mb-1">
+<span class="font-label-md text-label-md text-on-surface">Legal Review Started</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm ml-2">Today, 09:00 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Assigned to Officer M. Tariq for documentation verification.</p>
+</div>
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface-container-highest border-2 border-surface"></div>
+<div class="mb-1">
+<span class="font-label-md text-label-md text-on-surface">Survey Completed</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm ml-2">24 Oct, 02:30 PM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Field team updated parcel boundaries in the GIS system.</p>
+</div>
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface-container-highest border-2 border-surface"></div>
+<div class="mb-1">
+<span class="font-label-md text-label-md text-on-surface">Survey Scheduled</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm ml-2">18 Oct, 11:15 AM</span>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface-container-highest border-2 border-surface"></div>
+<div class="mb-1">
+<span class="font-label-md text-label-md text-on-surface">Document Request</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm ml-2">15 Oct, 10:00 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Requested clear copy of ID card.</p>
+</div>
+<!-- Timeline Item -->
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface-container-highest border-2 border-surface"></div>
+<div class="mb-1">
+<span class="font-label-md text-label-md text-on-surface">Application Submitted</span>
+<span class="font-body-md text-body-md text-on-surface-variant text-sm ml-2">12 Oct, 08:45 AM</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Initial application lodged via citizen portal.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container-low dark:bg-surface-container-lowest text-outline dark:text-outline-variant font-label-md text-label-md full-width bottom-0 border-t border-outline-variant dark:border-outline flat no shadows w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto mt-auto">
+<span class="font-label-md text-label-md font-bold text-on-surface dark:text-on-surface-variant mb-4 md:mb-0">Â© 2024 State of Palestine - Land Registry Management Information System. All Rights Reserved.</span>
+<div class="flex flex-wrap gap-6 justify-center">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Terms of Service</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Ministry Portal</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Contact Support</a>
+</div>
+</footer>
+<script>
+const BASE='http://127.0.0.1:8000';
+let appId=localStorage.getItem('lrmis_app_id');
+const role=localStorage.getItem('lrmis_role')||'citizen';
+
+// Back link
+const backLink=document.querySelector('button.flex.items-center.gap-2');
+if(backLink)backLink.onclick=()=>window.location.href=role==='citizen'?'lrmis-citizen-dashboard.html':'lrmis-registrar-center.html';
+
+// ── Search by Application ID ─────────────────────────────────────────────────
+(function injectSearch(){
+  const main=document.querySelector('main');
+  if(!main)return;
+  const banner=document.createElement('div');
+  banner.id='search-banner';
+  banner.style.cssText='background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:16px 20px;display:flex;gap:10px;align-items:center;margin-bottom:16px;';
+  banner.innerHTML=`
+    <span style="font-size:13px;color:#166534;font-weight:600;white-space:nowrap">Track Application:</span>
+    <input id="search-id" type="text" placeholder="Enter Application ID  (e.g. LRMIS-2026-0001)"
+      style="flex:1;padding:8px 12px;border:1px solid #bbf7d0;border-radius:8px;font-size:13px;outline:none;color:#166534;background:#fff;"
+      value="${appId||''}" onkeydown="if(event.key==='Enter')searchApp()"/>
+    <button onclick="searchApp()" style="padding:8px 16px;background:#005f2e;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Search</button>`;
+  main.insertBefore(banner, main.firstChild);
+})();
+
+function searchApp(){
+  const val=document.getElementById('search-id').value.trim();
+  if(!val)return;
+  appId=val;
+  localStorage.setItem('lrmis_app_id',val);
+  load();
+}
+
+// If no app in localStorage, show empty state instead of redirect
+if(!appId){
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('h1').forEach(h=>{if(h.textContent.includes('APP-'))h.textContent='— Enter ID above —';});
+  });
+}
+
+async function load(){
+  if(!appId)return;
+  const r=await fetch(`${BASE}/applications/${appId}`).then(x=>x.json()).catch(()=>null);
+  if(!r)return;
+  // Fill application ID everywhere it appears
+  document.querySelectorAll('p,h1,h2,h3,span').forEach(el=>{
+    if(el.childElementCount===0&&el.textContent.includes('APP-'))el.textContent=appId;
+  });
+  // Status badge(s)
+  document.querySelectorAll('[class*="rounded-full"]').forEach(el=>{
+    if(el.textContent.trim().length>0&&el.textContent.trim().length<30)el.textContent=r.status||el.textContent;
+  });
+  // Timeline
+  const tRes=await fetch(`${BASE}/applications/${appId}/timeline`).then(x=>x.json()).catch(()=>null);
+  if(tRes&&tRes.events){
+    const tlEl=document.querySelector('ol,ul');
+    if(tlEl&&tRes.events.length){
+      tlEl.innerHTML=tRes.events.slice().reverse().map(ev=>`
+        <li class="flex gap-4 items-start mb-4">
+          <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+          </div>
+          <div>
+            <p class="font-label-md text-label-md text-on-surface">${ev.event_type||ev.action||''}</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">${new Date(ev.timestamp).toLocaleString()}</p>
+            ${ev.notes?`<p class="text-sm text-on-surface-variant mt-1">${ev.notes}</p>`:''}
+          </div>
+        </li>`).join('');
+    }
+  }
+}
+
+// Comment form
+document.addEventListener('DOMContentLoaded',()=>{
+  load();
+  // Wire comment submit button if present
+  const commentBtns=document.querySelectorAll('button');
+  commentBtns.forEach(btn=>{
+    if(btn.textContent.includes('Comment')||btn.textContent.includes('comment')){
+      btn.onclick=async()=>{
+        const ta=btn.closest('div')?.querySelector('textarea');
+        const text=ta?.value?.trim();
+        if(!text)return;
+        const sid=localStorage.getItem('lrmis_staff_id')||localStorage.getItem('lrmis_applicant_id')||'unknown';
+        await fetch(`${BASE}/applications/${appId}/comments`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({author_id:sid,author_role:role,text})});
+        if(ta)ta.value='';
+        alert('Comment added!');
+      };
+    }
+  });
+});
+</script>
+</body></html>

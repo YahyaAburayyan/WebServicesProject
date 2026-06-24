@@ -4,98 +4,801 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LRMIS — Surveyor & Analytics Console</title>
-
-  <!-- Leaflet CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Chart.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0f1117;
-      --surface: #1a1d27;
-      --card: #22263a;
-      --border: #2e3248;
-      --accent: #4f8ef7;
-      --accent2: #38d9a9;
-      --warn: #ffa94d;
-      --danger: #ff6b6b;
-      --text: #e8eaf0;
-      --muted: #8890aa;
-      --radius: 10px;
+      --bg: #f8faf3; --surface: #ffffff; --card: #ffffff; --border: #becabc;
+      --accent: #005f2e; --accent2: #007a3d; --warn: #d97706; --danger: #ba1a1a;
+      --text: #191c18; --muted: #3f493f; --radius: 8px;
     }
-    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+    body { background: var(--bg); color: var(--text); font-family: 'Work Sans', 'Plus Jakarta Sans', system-ui, sans-serif; min-height: 100vh; }
 
-    /* ── NAV ── */
-    nav {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: sticky; top: 0; z-index: 100;
-    }
-    nav .logo { font-weight: 700; font-size: 1.1rem; color: var(--accent); letter-spacing: .5px; }
-    nav .logo span { color: var(--text); }
+    /* NAV — uses inverse-surface (#2e312d) to match all other LRMIS pages */
+    nav { background: #2e312d; border-bottom: 1px solid #454844; padding: 0 24px; height: 56px;
+      display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+    nav .logo { font-weight: 700; font-size: 1.1rem; color: #a1ffb7; letter-spacing: .5px; }
+    nav .logo span { color: #e7e9e2; }
     nav .tabs { display: flex; gap: 4px; margin-left: 32px; }
-    nav .tab {
-      padding: 6px 16px; border-radius: 6px; font-size: .9rem; cursor: pointer;
-      border: none; background: transparent; color: var(--muted); transition: all .15s;
-    }
-    nav .tab:hover { background: var(--card); color: var(--text); }
+    nav .tab { padding: 6px 16px; border-radius: 6px; font-size: .9rem; cursor: pointer;
+      border: none; background: transparent; color: rgba(255,255,255,.6); transition: all .15s; }
+    nav .tab:hover { background: rgba(255,255,255,.08); color: #e7e9e2; }
     nav .tab.active { background: var(--accent); color: #fff; }
-    nav .user-badge {
-      margin-left: auto; background: var(--card); border: 1px solid var(--border);
-      border-radius: 20px; padding: 4px 14px; font-size: .85rem; display: flex;
-      align-items: center; gap: 8px;
-    }
-    nav .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); }
+    nav .user-badge { margin-left: auto; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+      border-radius: 20px; padding: 4px 14px; font-size: .85rem; display: flex; align-items: center; gap: 8px; color: #e7e9e2; }
+    nav .dot { width: 8px; height: 8px; border-radius: 50%; background: #a1ffb7; }
+    .logout-btn { background: none; border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.7);
+      padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: .82rem; margin-left: 8px; }
+    .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
 
-    /* ── PAGES ── */
+    /* PAGES */
     .page { display: none; padding: 28px 32px; max-width: 1280px; margin: 0 auto; }
     .page.active { display: block; }
 
-    /* ── LOGIN ── */
-    #login-page {
-      display: flex; align-items: center; justify-content: center;
-      min-height: calc(100vh - 56px);
-    }
-    .login-box {
-      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 48px; width: 360px; text-align: center;
-    }
-    .login-box h2 { font-size: 1.4rem; margin-bottom: 8px; }
-    .login-box p { color: var(--muted); font-size: .9rem; margin-bottom: 28px; }
-    .login-box input {
-      width: 100%; padding: 10px 14px; border-radius: 8px; background: var(--card);
-      border: 1px solid var(--border); color: var(--text); font-size: .95rem; margin-bottom: 16px;
-    }
-    .login-box button {
-      width: 100%; padding: 11px; background: var(--accent); color: #fff; border: none;
-      border-radius: 8px; font-size: .95rem; cursor: pointer; font-weight: 600;
-    }
-    .login-box button:hover { opacity: .9; }
+    .err-msg { color: var(--danger); font-size: .85rem; margin-bottom: 10px; min-height: 18px; }
 
-    /* ── CARDS / GRIDS ── */
-    .page-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
-    .subtitle { color: var(--muted); font-size: .9rem; margin-top: -14px; margin-bottom: 20px; }
+    /* CARDS */
+    .page-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    @media (max-width: 900px) {
-      .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px;
-    }
+    @media (max-width: 900px) { .grid2, .grid3, .grid4 { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
     .kpi-card { text-align: center; }
     .kpi-card .val { font-size: 2rem; font-weight: 700; color: var(--accent); margin: 8px 0; }
     .kpi-card .lbl { font-size: .85rem; color: var(--muted); }
-... (969 lines left)
+
+    /* TABLE */
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th { text-align: left; padding: 10px 14px; color: var(--muted); font-weight: 600;
+      border-bottom: 1px solid var(--border); font-size: .82rem; text-transform: uppercase; letter-spacing: .4px;
+      background: #f2f4ed; }
+    td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: rgba(0,95,46,.04); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .78rem; font-weight: 600; }
+    .badge-blue { background: rgba(0,95,46,.12); color: #005f2e; }
+    .badge-green { background: rgba(0,122,61,.12); color: #007a3d; }
+    .badge-warn { background: rgba(217,119,6,.15); color: #92400e; }
+    .badge-red { background: rgba(186,26,26,.12); color: #ba1a1a; }
+    .badge-muted { background: rgba(63,73,63,.1); color: #3f493f; }
+
+    /* BUTTONS */
+    .btn { padding: 7px 16px; border-radius: 7px; border: none; cursor: pointer; font-size: .88rem; font-weight: 600; transition: opacity .15s; }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-success { background: var(--accent2); color: #fff; }
+    .btn-warn { background: var(--warn); color: #fff; }
+    .btn-ghost { background: var(--border); color: var(--text); }
+    .btn-sm { padding: 4px 10px; font-size: .82rem; }
+
+    /* FORM */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: .85rem; color: var(--muted); margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 9px 12px; background: #fff; border: 1px solid var(--border);
+      border-radius: 7px; color: var(--text); font-size: .9rem; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,95,46,.1); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* MILESTONE STEPS */
+    .milestone-steps { display: flex; gap: 0; margin-bottom: 24px; overflow-x: auto; }
+    .ms { padding: 8px 14px; font-size: .78rem; background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer; transition: all .15s; white-space: nowrap; }
+    .ms:first-child { border-radius: 8px 0 0 8px; }
+    .ms:last-child { border-radius: 0 8px 8px 0; }
+    .ms.done { background: rgba(0,95,46,.1); color: var(--accent); border-color: var(--accent); }
+    .ms.current { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .ms.future { opacity: .45; cursor: default; }
+    .ms:hover:not(.future) { opacity: .8; }
+
+    /* MAP */
+    #parcel-map { height: 500px; border-radius: var(--radius); border: 1px solid var(--border); }
+
+    /* LOADING */
+    .loading { color: var(--muted); font-size: .9rem; padding: 20px; text-align: center; }
+
+    /* SECTION HEADER */
+    .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .section-hdr h3 { font-size: 1rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .detail-panel { display: none; }
+    .detail-panel.open { display: block; }
+
+    /* Keffiyeh pattern accent — used on section headers to match design system */
+    .keffiyeh-accent { background-image: repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,95,46,.03) 10px,rgba(0,95,46,.03) 20px); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">LR<span>MIS</span></div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('tasks')">My Tasks</button>
+    <button class="tab" onclick="showTab('task-exec')">Task Execution</button>
+    <button class="tab" onclick="showTab('map')">Live Map</button>
+    <button class="tab" onclick="showTab('analytics')">Analytics</button>
+  </div>
+  <div class="user-badge">
+    <div class="dot"></div>
+    <span id="badge-name">Surveyor</span>
+  </div>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</nav>
+
+<!-- ═══════════════════ TASKS PAGE ═══════════════════ -->
+<div class="page" id="tasks-page">
+  <div class="section-hdr">
+    <div>
+      <div class="page-title">My Survey Tasks</div>
+      <div class="subtitle">Click a task row to open the execution panel</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <select id="task-filter" onchange="loadTasks()" style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:7px;font-size:.88rem">
+        <option value="">All Tasks</option>
+        <option value="active">Active Only</option>
+        <option value="completed">Completed</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="loadTasks()">Refresh</button>
+    </div>
+  </div>
+
+  <div class="grid4" id="task-kpis" style="margin-bottom:20px">
+    <div class="card kpi-card"><div class="lbl">Total Tasks</div><div class="val" id="kpi-total">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Active</div><div class="val" id="kpi-active" style="color:var(--warn)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Completed</div><div class="val" id="kpi-done" style="color:var(--accent2)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Overdue</div><div class="val" id="kpi-overdue" style="color:var(--danger)">—</div></div>
+  </div>
+
+  <div class="card">
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Task ID</th><th>Application ID</th><th>Milestone</th>
+            <th>Assigned</th><th>Zone</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tasks-tbody"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TASK EXECUTION PAGE ═══════════════════ -->
+<div class="page" id="task-exec-page">
+  <div class="section-hdr">
+    <div>
+      <div class="page-title">Survey Task Execution</div>
+      <div class="subtitle" id="exec-app-id">No task selected — pick one from My Tasks</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="showTab('tasks')">← Back to Tasks</button>
+  </div>
+
+  <div id="exec-no-task" style="text-align:center;padding:60px;color:var(--muted)">
+    <p style="font-size:1.1rem">Select a task from the Tasks tab to begin</p>
+  </div>
+
+  <div id="exec-panel" style="display:none">
+    <!-- Milestone Progress -->
+    <div class="card" style="margin-bottom:20px">
+      <h3 style="font-size:.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">Milestone Progress</h3>
+      <div class="milestone-steps" id="milestone-steps"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="milestone-btns"></div>
+    </div>
+
+    <!-- Upload Survey Report -->
+    <div class="card">
+      <h3 style="font-size:.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px">Field Survey Report</h3>
+      <div id="report-saved-banner" style="display:none;padding:10px 14px;background:rgba(56,217,169,.15);border:1px solid var(--accent2);border-radius:8px;color:var(--accent2);margin-bottom:16px;font-size:.9rem">
+        Report already submitted for this task.
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Parcel Area Measured (m²)</label>
+          <input type="number" id="rep-area" placeholder="e.g. 500" />
+        </div>
+        <div class="form-group">
+          <label>Boundary Confirmed?</label>
+          <select id="rep-boundary">
+            <option value="true">Yes — boundaries confirmed</option>
+            <option value="false">No — discrepancy found</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Survey Findings</label>
+        <textarea id="rep-findings" placeholder="Describe what was found in the field…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Field Notes</label>
+        <textarea id="rep-notes" placeholder="Additional observations, anomalies, access issues…"></textarea>
+      </div>
+      <div class="err-msg" id="rep-err"></div>
+      <button class="btn btn-success" onclick="submitReport()">Submit Report</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MAP PAGE ═══════════════════ -->
+<div class="page" id="map-page">
+  <div class="section-hdr" style="margin-bottom:16px">
+    <div>
+      <div class="page-title">Live Parcel Map</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="map-zone-filter" onchange="applyMapFilter()"
+        style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:7px;font-size:.88rem">
+        <option value="">All Zones</option>
+        <option value="ZONE-A">Zone A</option>
+        <option value="ZONE-B">Zone B</option>
+        <option value="ZONE-C">Zone C</option>
+      </select>
+      <select id="map-status-filter" onchange="applyMapFilter()"
+        style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:7px;font-size:.88rem">
+        <option value="">All Statuses</option>
+        <option value="registered">Registered</option>
+        <option value="pending">Pending</option>
+        <option value="dispute">Under Objection</option>
+      </select>
+      <select id="map-type-filter" onchange="applyMapFilter()"
+        style="background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:7px;font-size:.88rem">
+        <option value="">All Types</option>
+        <option value="first_registration">First Registration</option>
+        <option value="ownership_transfer">Ownership Transfer</option>
+        <option value="parcel_subdivision">Subdivision</option>
+        <option value="parcel_merge">Merge</option>
+        <option value="boundary_correction">Boundary Correction</option>
+        <option value="certificate_request">Certificate Request</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="loadMap()">Refresh</button>
+    </div>
+  </div>
+  <div id="parcel-map"></div>
+
+  <!-- Map legend -->
+  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+              background:var(--card);border:1px solid var(--border);border-radius:10px;
+              padding:10px 18px;margin-top:12px;font-size:.85rem">
+    <span style="color:var(--muted);font-weight:600;letter-spacing:.4px;text-transform:uppercase;font-size:.78rem">Legend</span>
+    <span style="display:flex;align-items:center;gap:7px">
+      <span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:#007a3d24;border:2px solid #007a3d;flex-shrink:0"></span>
+      <span style="color:var(--text)">Registered parcels (land records)</span>
+    </span>
+    <span style="display:flex;align-items:center;gap:7px">
+      <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#ff6b6b99;border:2px solid #ff6b6b;flex-shrink:0"></span>
+      <span style="color:var(--text)">Pending applications (hotspot)</span>
+    </span>
+    <span style="display:flex;align-items:center;gap:7px">
+      <span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:#ffa94d4d;border:2px solid #ffa94d;flex-shrink:0"></span>
+      <span style="color:var(--text)">Under objection / dispute</span>
+    </span>
+  </div>
+
+  <div class="grid3" style="margin-top:16px">
+    <div class="card kpi-card"><div class="lbl">Total Parcels</div><div class="val" id="map-total">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Pending Apps</div><div class="val" id="map-pending" style="color:var(--danger)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Under Objection</div><div class="val" id="map-dispute" style="color:var(--warn)">—</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ ANALYTICS PAGE ═══════════════════ -->
+<div class="page" id="analytics-page">
+  <div class="section-hdr" style="margin-bottom:4px">
+    <div>
+      <div class="page-title">Analytics Dashboard</div>
+      <div class="subtitle">Land registration system performance overview</div>
+    </div>
+    <a href="http://127.0.0.1:8000/analytics/export/csv" download
+       class="btn btn-success btn-sm" style="text-decoration:none;display:flex;align-items:center;gap:6px">
+      ⬇ Export CSV
+    </a>
+  </div>
+
+  <!-- KPI row — all 8 required metrics -->
+  <div class="grid4" style="margin-bottom:24px">
+    <div class="card kpi-card"><div class="lbl">Total</div><div class="val" id="ana-total">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Pending</div><div class="val" id="ana-pending" style="color:var(--warn)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Approved</div><div class="val" id="ana-approved" style="color:var(--accent2)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Rejected</div><div class="val" id="ana-rejected" style="color:var(--danger)">—</div></div>
+  </div>
+  <div class="grid4" style="margin-bottom:24px">
+    <div class="card kpi-card"><div class="lbl">Under Objection</div><div class="val" id="ana-objection" style="color:var(--warn)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Delayed (&gt;14d)</div><div class="val" id="ana-delayed" style="color:var(--danger)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Certs This Month</div><div class="val" id="ana-certs" style="color:var(--accent2)">—</div></div>
+    <div class="card kpi-card"><div class="lbl">Avg Days</div><div class="val" id="ana-avgdays">—</div></div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="grid2" style="margin-bottom:20px">
+    <div class="card">
+      <h3 style="font-size:.9rem;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Status Breakdown</h3>
+      <canvas id="status-chart" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h3 style="font-size:.9rem;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Applications by Zone</h3>
+      <canvas id="zone-chart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="grid2" style="margin-bottom:20px">
+    <div class="card">
+      <h3 style="font-size:.9rem;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Monthly Trend</h3>
+      <canvas id="trend-chart" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h3 style="font-size:.9rem;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Certificates per Month</h3>
+      <canvas id="certs-chart" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Charts row 3 -->
+  <div class="grid2" style="margin-bottom:20px">
+    <div class="card">
+      <h3 style="font-size:.9rem;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Surveyor Workload</h3>
+      <canvas id="staff-chart" height="220"></canvas>
+    </div>
+    <div class="card">
+      <h3 style="font-size:.9rem;color:var(--muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px">Registrar Performance</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Reviewed</th><th>Approved</th><th>Rejected</th><th>Rate</th></tr></thead>
+          <tbody id="reg-tbody"><tr><td colspan="5" class="loading">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE = 'http://127.0.0.1:8000';
+let staffId = null, staffRole = null, staffName = '';
+let currentTaskId = null, currentAppId = null;
+let mapInstance = null, parcelLayer = null, heatLayer = null;
+let allParcels = [], allPending = [];
+const charts = {};
+
+// ── Milestone order ──────────────────────────────────────────────────────────
+const MILESTONES = [
+  'assigned','visit_scheduled','arrived_on_site','survey_started',
+  'survey_completed','report_uploaded','registrar_reviewed'
+];
+const MS_LABELS = {
+  assigned: 'Assigned', visit_scheduled: 'Visit Scheduled', arrived_on_site: 'On Site',
+  survey_started: 'Survey Started', survey_completed: 'Survey Done',
+  report_uploaded: 'Report Uploaded', registrar_reviewed: 'Reviewed'
+};
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+function logout() {
+  ['lrmis_staff_id','lrmis_role','lrmis_name'].forEach(k => localStorage.removeItem(k));
+  window.location.href = 'lrmis.html';
+}
+
+// ── Tab routing ───────────────────────────────────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const pages = { tasks:'tasks-page', 'task-exec':'task-exec-page', map:'map-page', analytics:'analytics-page' };
+  const tabs = ['tasks','task-exec','map','analytics'];
+  const idx = tabs.indexOf(name);
+  document.getElementById(pages[name]).classList.add('active');
+  document.querySelectorAll('.tab')[idx]?.classList.add('active');
+  if (name === 'map' && !mapInstance) initMap();
+  if (name === 'map') setTimeout(loadMap, 100);
+  if (name === 'analytics') loadAnalytics();
+}
+
+// ── Tasks ─────────────────────────────────────────────────────────────────────
+async function loadTasks() {
+  const filter = document.getElementById('task-filter').value;
+  const url = `${BASE}/staff/${staffId}/tasks` + (filter ? `?status=${filter}` : '');
+  const tbody = document.getElementById('tasks-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" class="loading">Loading…</td></tr>';
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const tasks = data.data || [];
+    // KPIs
+    const active = tasks.filter(t => t.milestone !== 'registrar_reviewed').length;
+    const done = tasks.filter(t => t.milestone === 'registrar_reviewed').length;
+    document.getElementById('kpi-total').textContent = tasks.length;
+    document.getElementById('kpi-active').textContent = active;
+    document.getElementById('kpi-done').textContent = done;
+    document.getElementById('kpi-overdue').textContent = 0;
+    if (!tasks.length) { tbody.innerHTML = '<tr><td colspan="6" class="loading">No tasks found</td></tr>'; return; }
+    tbody.innerHTML = tasks.map(t => `
+      <tr style="cursor:pointer" onclick="openTask('${t.application_id}','${t.task_id || t.id}','${t.milestone || 'assigned'}')">
+        <td style="font-family:monospace;font-size:.82rem">${t.task_id || t.id || '—'}</td>
+        <td style="font-family:monospace;font-size:.82rem">${t.application_id || '—'}</td>
+        <td>${milestoneBadge(t.milestone)}</td>
+        <td style="color:var(--muted);font-size:.85rem">${formatDate(t.created_at)}</td>
+        <td>${t.zone_id || t.coverage_zone || '—'}</td>
+        <td><button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openTask('${t.application_id}','${t.task_id||t.id}','${t.milestone||'assigned'}')">Open</button></td>
+      </tr>`).join('');
+  } catch {
+    tbody.innerHTML = '<tr><td colspan="6" class="loading" style="color:var(--danger)">Error loading tasks</td></tr>';
+  }
+}
+
+function milestoneBadge(m) {
+  if (m === 'registrar_reviewed') return `<span class="badge badge-green">${MS_LABELS[m]||m}</span>`;
+  if (m === 'assigned') return `<span class="badge badge-muted">${MS_LABELS[m]||m}</span>`;
+  return `<span class="badge badge-blue">${MS_LABELS[m]||m}</span>`;
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}); }
+  catch { return iso; }
+}
+
+// ── Task Execution ─────────────────────────────────────────────────────────────
+async function openTask(appId, taskId, milestone) {
+  currentAppId = appId; currentTaskId = taskId;
+  showTab('task-exec');
+  document.getElementById('exec-no-task').style.display = 'none';
+  document.getElementById('exec-panel').style.display = 'block';
+  document.getElementById('exec-app-id').textContent = `Application: ${appId} · Task: ${taskId}`;
+  document.getElementById('rep-err').textContent = '';
+  document.getElementById('report-saved-banner').style.display = 'none';
+  renderMilestones(milestone || 'assigned');
+  // check if report exists
+  try {
+    const rRes = await fetch(`${BASE}/applications/${appId}/survey-report`);
+    if (rRes.ok) {
+      document.getElementById('report-saved-banner').style.display = 'block';
+      renderMilestones('report_uploaded');
+    }
+  } catch {}
+}
+
+function renderMilestones(currentMs) {
+  const curIdx = MILESTONES.indexOf(currentMs);
+  const stepsEl = document.getElementById('milestone-steps');
+  const btnsEl = document.getElementById('milestone-btns');
+  stepsEl.innerHTML = MILESTONES.map((m, i) => {
+    let cls = i < curIdx ? 'ms done' : i === curIdx ? 'ms current' : 'ms future';
+    return `<div class="${cls}" title="${MS_LABELS[m]}">${MS_LABELS[m]}</div>`;
+  }).join('');
+  // Next milestone button
+  const nextIdx = curIdx + 1;
+  if (nextIdx < MILESTONES.length) {
+    const nextMs = MILESTONES[nextIdx];
+    const dateInput = nextMs === 'visit_scheduled'
+      ? `<input type="date" id="ms-date" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:7px;margin-right:8px;" />`
+      : '';
+    btnsEl.innerHTML = `
+      ${dateInput}
+      <button class="btn btn-primary" onclick="advanceMilestone('${nextMs}')">
+        Advance → ${MS_LABELS[nextMs]}
+      </button>`;
+  } else {
+    btnsEl.innerHTML = `<span style="color:var(--accent2);font-size:.9rem">✓ Survey process complete</span>`;
+  }
+}
+
+async function advanceMilestone(newMs) {
+  if (!currentAppId) return;
+  const payload = {milestone: newMs, surveyor_id: staffId};
+  if (newMs === 'visit_scheduled') {
+    const dateEl = document.getElementById('ms-date');
+    if (dateEl && dateEl.value) payload.scheduled_date = dateEl.value;
+  }
+  try {
+    const res = await fetch(`${BASE}/applications/${currentAppId}/survey-milestone`, {
+      method: 'PATCH',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      renderMilestones(newMs);
+    } else {
+      const d = await res.json();
+      alert('Error: ' + (d.detail || 'Could not advance milestone'));
+    }
+  } catch {
+    alert('Server unreachable');
+  }
+}
+
+async function submitReport() {
+  if (!currentAppId) return;
+  const err = document.getElementById('rep-err');
+  err.textContent = '';
+  const body = {
+    surveyor_id: staffId,
+    findings: document.getElementById('rep-findings').value.trim(),
+    parcel_area_sqm: parseFloat(document.getElementById('rep-area').value) || null,
+    boundary_confirmed: document.getElementById('rep-boundary').value === 'true',
+    field_notes: document.getElementById('rep-notes').value.trim() || null,
+  };
+  if (!body.findings) { err.textContent = 'Findings are required.'; return; }
+  try {
+    const res = await fetch(`${BASE}/applications/${currentAppId}/survey-report`, {
+      method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      document.getElementById('report-saved-banner').style.display = 'block';
+      document.getElementById('rep-findings').value = '';
+      document.getElementById('rep-notes').value = '';
+      renderMilestones('report_uploaded');
+      alert('Report submitted successfully! The registrar can now transition the application to Surveyed.');
+    } else {
+      const d = await res.json();
+      err.textContent = d.detail || 'Could not submit report.';
+    }
+  } catch {
+    err.textContent = 'Server unreachable.';
+  }
+}
+
+// ── Map ───────────────────────────────────────────────────────────────────────
+function initMap() {
+  mapInstance = L.map('parcel-map').setView([31.9, 35.2], 9);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 18,
+  }).addTo(mapInstance);
+}
+
+let allDispute = [];
+
+async function loadMap() {
+  if (!mapInstance) return;
+  if (parcelLayer) { mapInstance.removeLayer(parcelLayer); parcelLayer = null; }
+  if (heatLayer)   { mapInstance.removeLayer(heatLayer); heatLayer = null; }
+  try {
+    // fetch all apps to get dispute (under_objection) parcels client-side
+    const [pRes, hRes, appRes] = await Promise.all([
+      fetch(`${BASE}/analytics/geofeeds/parcels`),
+      fetch(`${BASE}/analytics/geofeeds/pending-heatmap`),
+      fetch(`${BASE}/applications/?status=under_objection&limit=200`),
+    ]);
+    const pData  = pRes.ok  ? await pRes.json()  : {features:[]};
+    const hData  = hRes.ok  ? await hRes.json()  : {features:[]};
+    const appData = appRes.ok ? await appRes.json() : {items:[]};
+    allParcels = pData.features || [];
+    allPending = hData.features || [];
+    // build dispute set from application parcel_numbers
+    const disputeNums = new Set((appData.items||[]).map(a => (a.parcel_ref||{}).parcel_number).filter(Boolean));
+    allDispute = allParcels.filter(f => disputeNums.has(f.properties.parcel_number));
+    applyMapFilter();
+  } catch {
+    console.error('Map load failed');
+  }
+}
+
+function applyMapFilter() {
+  renderMapLayers(
+    document.getElementById('map-zone-filter').value,
+    document.getElementById('map-status-filter').value,
+    document.getElementById('map-type-filter').value,
+  );
+}
+
+function renderMapLayers(zoneFilter, statusFilter, typeFilter) {
+  if (!mapInstance) return;
+  if (parcelLayer) { mapInstance.removeLayer(parcelLayer); parcelLayer = null; }
+  if (heatLayer)   { mapInstance.removeLayer(heatLayer); heatLayer = null; }
+
+  let parcels = allParcels;
+  let pending = allPending;
+
+  if (zoneFilter) {
+    parcels = parcels.filter(f => f.properties.zone_id === zoneFilter);
+    pending = pending.filter(f => f.properties.zone_id === zoneFilter);
+  }
+  // status filter: 'registered' = show only parcels, 'pending' = show only pending dots, 'dispute' = only objection
+  const showParcels = !statusFilter || statusFilter === 'registered';
+  const showPending = !statusFilter || statusFilter === 'pending';
+  const showDispute = !statusFilter || statusFilter === 'dispute';
+
+  // type filter: filter pending dots by application_type stored in properties (if available)
+  if (typeFilter) {
+    pending = pending.filter(f => !f.properties.application_type || f.properties.application_type === typeFilter);
+  }
+
+  if (showParcels && parcels.length) {
+    parcelLayer = L.geoJSON({type:'FeatureCollection', features: parcels}, {
+      style: { color: '#007a3d', weight: 2, fillOpacity: 0.15 },
+      onEachFeature(feature, layer) {
+        const p = feature.properties;
+        layer.bindPopup(`<b>${p.parcel_number}</b><br>Zone: ${p.zone_id}<br>Status: ${p.status||'—'}<br>Area: ${p.area_sqm ?? '—'} m²`);
+      },
+    }).addTo(mapInstance);
+  }
+
+  if (showDispute && allDispute.length) {
+    const disputeFeatures = zoneFilter ? allDispute.filter(f => f.properties.zone_id === zoneFilter) : allDispute;
+    if (disputeFeatures.length) {
+      L.geoJSON({type:'FeatureCollection', features: disputeFeatures}, {
+        style: { color: '#ffa94d', weight: 3, fillOpacity: 0.3 },
+        onEachFeature(feature, layer) {
+          const p = feature.properties;
+          layer.bindPopup(`<b>${p.parcel_number}</b><br>⚠ Under Objection`);
+        },
+      }).addTo(mapInstance);
+    }
+  }
+
+  if (showPending && pending.length) {
+    const clusterGroup = L.markerClusterGroup({ maxClusterRadius: 60 });
+    L.geoJSON({type:'FeatureCollection', features: pending}, {
+      pointToLayer(feature, latlng) {
+        return L.circleMarker(latlng, {
+          radius: 8, color: '#ff6b6b', fillColor: '#ff6b6b', fillOpacity: 0.6, weight: 1,
+        });
+      },
+      onEachFeature(feature, layer) {
+        const p = feature.properties;
+        layer.bindPopup(`<b>${p.parcel_number}</b><br>${p.application_count} pending app(s)`);
+      },
+    }).eachLayer(layer => clusterGroup.addLayer(layer));
+    clusterGroup.addTo(mapInstance);
+    heatLayer = clusterGroup;
+  }
+
+  document.getElementById('map-total').textContent   = parcels.length;
+  document.getElementById('map-pending').textContent = pending.length;
+  document.getElementById('map-dispute').textContent = allDispute.length;
+}
+
+// ── Analytics ─────────────────────────────────────────────────────────────────
+async function loadAnalytics() {
+  try {
+    const [kpiRes, statusRes, zoneRes, trendRes, surveyorRes, regRes, certsRes] = await Promise.all([
+      fetch(`${BASE}/analytics/kpis`),
+      fetch(`${BASE}/analytics/applications-by-status`),
+      fetch(`${BASE}/analytics/applications-by-zone`),
+      fetch(`${BASE}/analytics/application-trends`),
+      fetch(`${BASE}/analytics/surveyors`),
+      fetch(`${BASE}/analytics/registrars`),
+      fetch(`${BASE}/analytics/certificates-by-month`),
+    ]);
+    if (kpiRes.ok) {
+      const k = await kpiRes.json();
+      document.getElementById('ana-total').textContent = k.total_applications ?? '—';
+      document.getElementById('ana-pending').textContent = k.pending_review ?? '—';
+      document.getElementById('ana-approved').textContent = k.approved ?? '—';
+      document.getElementById('ana-rejected').textContent = k.rejected ?? '—';
+      document.getElementById('ana-objection').textContent = k.under_objection ?? '—';
+      document.getElementById('ana-delayed').textContent = k.delayed_applications ?? '—';
+      document.getElementById('ana-certs').textContent = k.certificates_this_month ?? '—';
+      document.getElementById('ana-avgdays').textContent = k.avg_processing_days != null ? k.avg_processing_days + 'd' : '—';
+    }
+    if (statusRes.ok) {
+      const s = await statusRes.json();
+      drawPie('status-chart', s.by_status.map(x => x.status), s.by_status.map(x => x.count));
+    }
+    if (zoneRes.ok) {
+      const z = await zoneRes.json();
+      const zones = z.by_zone || [];
+      drawBar('zone-chart', zones.map(x => x.zone_id), zones.map(x => x.count), '#005f2e');
+    }
+    if (trendRes.ok) {
+      const t = await trendRes.json();
+      drawLine('trend-chart', (t.data||[]).map(x => x.period), (t.data||[]).map(x => x.count));
+    }
+    if (certsRes.ok) {
+      const c = await certsRes.json();
+      if ((c.data||[]).length) {
+        drawLine('certs-chart', c.data.map(x => x.month), c.data.map(x => x.count));
+      } else {
+        const el = document.getElementById('certs-chart');
+        if (el) el.parentElement.innerHTML += '<p style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:12px">No certificates issued yet</p>';
+      }
+    }
+    if (surveyorRes.ok) {
+      const sv = await surveyorRes.json();
+      const surveyors = sv.data || [];
+      drawBar('staff-chart', surveyors.map(x => x.full_name || x.staff_id), surveyors.map(x => x.active_tasks), '#d97706');
+    }
+    if (regRes.ok) {
+      const rData = await regRes.json();
+      const regs = rData.data || [];
+      const tbody = document.getElementById('reg-tbody');
+      if (!regs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">No registrar data</td></tr>';
+      } else {
+        tbody.innerHTML = regs.map(r => `
+          <tr>
+            <td>${r.full_name || r.staff_id}</td>
+            <td>${r.total_reviewed}</td>
+            <td style="color:var(--accent2)">${r.approved_count}</td>
+            <td style="color:var(--danger)">${r.rejected_count}</td>
+            <td>${r.approval_rate != null ? r.approval_rate + '%' : '—'}</td>
+          </tr>`).join('');
+      }
+    }
+  } catch (e) {
+    console.error('Analytics load failed', e);
+  }
+}
+
+// Chart helpers
+const PALETTE = ['#005f2e','#d97706','#ba1a1a','#007a3d','#504f66','#6f7a6f','#00a050','#2e312d'];
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function drawPie(id, labels, data) {
+  destroyChart(id);
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: PALETTE, borderWidth: 0 }] },
+    options: { plugins: { legend: { position: 'right', labels: { color: '#3f493f', font: {size:11} } } } },
+  });
+}
+function drawBar(id, labels, data, color='#005f2e') {
+  destroyChart(id);
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: color + 'cc', borderRadius: 5 }] },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#3f493f', font: {size:10} }, grid: { color: '#becabc' } },
+        y: { beginAtZero: true, ticks: { color: '#3f493f', font: {size:10} }, grid: { color: '#becabc' } },
+      },
+    },
+  });
+}
+function drawLine(id, labels, data) {
+  destroyChart(id);
+  const ctx = document.getElementById(id).getContext('2d');
+  // single data point looks like an empty line — use a bar chart instead
+  if (data.length <= 1) {
+    charts[id] = new Chart(ctx, {
+      type: 'bar',
+      data: { labels, datasets: [{ data, backgroundColor: '#005f2ecc', borderRadius: 5 }] },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#3f493f', font: {size:10} }, grid: { color: '#becabc' } },
+          y: { beginAtZero: true, ticks: { color: '#3f493f', font: {size:10} }, grid: { color: '#becabc' } },
+        },
+      },
+    });
+    return;
+  }
+  charts[id] = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ data, borderColor: '#005f2e', backgroundColor: 'rgba(0,95,46,.1)',
+      fill: true, tension: 0.3, pointRadius: 5, pointHoverRadius: 7 }] },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#3f493f', font: {size:10} }, grid: { color: '#becabc' } },
+        y: { beginAtZero: true, ticks: { color: '#3f493f', font: {size:10} }, grid: { color: '#becabc' } },
+      },
+    },
+  });
+}
+
+// ── Session guard ─────────────────────────────────────────────────────────────
+(function init() {
+  const sid = localStorage.getItem('lrmis_staff_id');
+  const role = localStorage.getItem('lrmis_role');
+  const name = localStorage.getItem('lrmis_name');
+  if (!sid || role !== 'surveyor') {
+    window.location.href = 'lrmis.html';
+    return;
+  }
+  staffId = sid; staffRole = role; staffName = name || sid;
+  document.getElementById('badge-name').textContent = staffName;
+  showTab('tasks');
+  loadTasks();
+})();
+</script>
+</body>
+</html>

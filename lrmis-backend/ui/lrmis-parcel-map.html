@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LRMIS - Survey Tasks Map</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#6f7a6f",
+                        "secondary-container": "#e12531",
+                        "on-background": "#191c18",
+                        "on-secondary-fixed": "#410004",
+                        "on-error": "#ffffff",
+                        "background": "#f8faf3",
+                        "inverse-primary": "#78db92",
+                        "surface-container-high": "#e7e9e2",
+                        "surface-bright": "#f8faf3",
+                        "on-primary-fixed-variant": "#005227",
+                        "on-tertiary-container": "#eae7ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c18",
+                        "on-secondary-fixed-variant": "#930015",
+                        "primary-container": "#007a3d",
+                        "on-primary-container": "#a1ffb7",
+                        "primary-fixed": "#94f8ad",
+                        "tertiary-fixed": "#e2e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#68677f",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf3",
+                        "tertiary": "#504f66",
+                        "surface-tint": "#006d36",
+                        "outline-variant": "#becabc",
+                        "surface-container-highest": "#e1e3dc",
+                        "secondary": "#bb001e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-fixed-dim": "#78db92",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "secondary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "surface-dim": "#d9dbd4",
+                        "surface-variant": "#e1e3dc",
+                        "surface-container": "#edefe8",
+                        "on-primary-fixed": "#00210c",
+                        "primary": "#005f2e",
+                        "inverse-surface": "#2e312d",
+                        "surface-container-low": "#f2f4ed",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .map-marker {
+            transition: transform 0.2s ease, z-index 0.2s;
+        }
+        .map-marker:hover {
+            transform: scale(1.1);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md m-0 p-0 h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full flex flex-col py-6 z-40 bg-inverse-surface shadow-md docked w-64 text-primary-fixed">
+<div class="px-6 mb-8 flex flex-col items-center">
+<img alt="Ministry of Local Government Logo" class="w-16 h-16 rounded-full mb-4 object-cover" data-alt="A highly detailed, professional, and minimalist logo design for the Ministry of Local Government of Palestine. The logo should feature subtle heritage-inspired elements, perhaps stylized olive branches or geometric patterns, rendered in a modern corporate style suitable for an official digital interface. White background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-9LvDF9tSXhGyehhEoCxo8X-VQ3JGCDcn79nxw_Nj0IQEbHhZrrpjLpTAGADrcTVqe88WB8L1kh2C0SMNSEfAmzCosytszA20QGfaSOLT8OmLDONxrECRpwf7udg-y6ibSXyE2gTwsitrJAfzVW911eaHG3lli3-BuwvjIdbGC0j6p4OnC1FmOYQy4wgwY1tiy0U5T_JIjQhiim6OhmGvgpg4AKrLSU7iveBOPI8pR-pOconfs-EKyUAoTOBsKxbWZkwD1OPS16M"/>
+<div class="text-center">
+<h1 class="font-headline-md text-headline-md font-bold">LRMIS</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-80 mt-1">Palestine Land Registry</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary text-on-primary py-2 px-4 rounded-lg font-label-md text-label-md hover:bg-surface-tint transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                New Application
+            </button>
+</div>
+<ul class="flex-1 px-2 space-y-1 overflow-y-auto">
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">description</span>
+                    Applications
+                </a>
+</li>
+<!-- Active Tab: Survey Tasks -->
+<li>
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container border-l-4 border-primary px-4 py-3 rounded-r-lg font-label-md text-label-md transition-all duration-200 ease-in-out shadow-sm" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">map</span>
+                    Survey Tasks
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+                    Land Records
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">gavel</span>
+                    Legal Review
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">assessment</span>
+                    Reports
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">analytics</span>
+                    Analytics
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<div class="mt-auto px-2 border-t border-outline-variant/20 pt-4">
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">help</span>
+                        Help Center
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:text-primary-fixed transition-all duration-200 ease-in-out font-label-md text-label-md rounded-lg" href="#">
+<span class="material-symbols-outlined text-[24px]">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-64 flex-1 flex flex-col h-full relative">
+<!-- Top Toolbar overlaid on map -->
+<div class="absolute top-0 left-0 right-0 z-30 p-margin-desktop pointer-events-none flex justify-between items-start">
+<!-- Map Controls (Left) -->
+<div class="flex gap-4 pointer-events-auto">
+<div class="bg-surface rounded-lg shadow-md border border-outline-variant p-2 flex flex-col gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded bg-surface hover:bg-surface-container transition-colors text-on-surface" title="Zoom In">
+<span class="material-symbols-outlined">add</span>
+</button>
+<div class="w-full h-[1px] bg-outline-variant/50"></div>
+<button class="w-10 h-10 flex items-center justify-center rounded bg-surface hover:bg-surface-container transition-colors text-on-surface" title="Zoom Out">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<div class="bg-surface rounded-lg shadow-md border border-outline-variant p-2 flex flex-col gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded bg-surface hover:bg-surface-container transition-colors text-on-surface" title="My Location">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+<div class="w-full h-[1px] bg-outline-variant/50"></div>
+<button class="w-10 h-10 flex items-center justify-center rounded bg-surface hover:bg-surface-container transition-colors text-on-surface" title="Refresh Map">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</div>
+<!-- Legend (Right) -->
+<div class="bg-surface rounded-lg shadow-md border border-outline-variant p-4 w-64 pointer-events-auto">
+<h3 class="font-headline-md text-[18px] font-bold mb-3 border-b border-outline-variant pb-2">Parcel Status</h3>
+<ul class="space-y-3 font-label-md text-label-md">
+<li class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-primary shadow-sm"></div>
+<span>Verified</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-tertiary shadow-sm"></div>
+<span>Pending Survey</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="w-4 h-4 rounded-full bg-secondary shadow-sm"></div>
+<span>Disputed Boundary</span>
+</li>
+<li class="flex items-center gap-3 pt-2 border-t border-outline-variant/50">
+<div class="w-4 h-4 border-2 border-primary border-dashed rounded-sm"></div>
+<span>Active Selection</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- The Map Background -->
+<div class="absolute inset-0 z-0 bg-surface-container-high" data-alt="A highly detailed, professional, top-down map view of a region resembling Palestine (e.g., Ramallah or Nablus area), rendered in a clean, modern OpenStreetMap style. The map should feature subtle terrain lines, major roadways in off-white, and clearly demarcated land parcel boundaries. The overall color palette should be light, using the #f8faf3 background tone with muted greens and sandy beiges, suitable for a formal legal land registry interface. Bright daylight lighting, clear visibility." data-location="Palestine" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA018kHqxKxP2v7BWC59U9oJmwIRiX-vhHh8WWRIlCxtz1vaK2_0YQCFkzqm6AuSyIgdyTHz3vzY5dzUp--w1pmezDq0sKXuy0BpMUkPv64HS5KGXV0ok1gkNp8oNOiGF_Z0l-WStMoPfMVg-k2lENQTVdYA2J9WdSkxpLK1PMieaMJFr7V-onyW-NYbm-2ZZ5o4cGPfYHzDhzMec6EWhqUr36w4-ongDIuVigc2-tzSa_L2h7-RaKBGEHnRq3iXpXy5kGXk3rNjek')">
+<!-- Map Markers Overlay -->
+<div class="absolute inset-0 pointer-events-none">
+<!-- Marker 1: Verified -->
+<div class="absolute top-[30%] left-[40%] pointer-events-auto map-marker group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="absolute w-8 h-8 bg-primary/20 rounded-full animate-ping"></div>
+<div class="w-6 h-6 bg-primary rounded-full shadow-md border-2 border-surface z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-surface text-[14px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<!-- Tooltip -->
+<div class="absolute bottom-full mb-2 bg-inverse-surface text-on-primary rounded shadow-lg p-3 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
+<p class="font-label-md text-label-md font-bold mb-1">Parcel ID: 104-A</p>
+<p class="font-body-md text-[12px] text-surface-variant">Owner: Ahmad Khalil</p>
+<p class="font-body-md text-[12px] text-primary-fixed mt-1">Status: Verified</p>
+</div>
+</div>
+</div>
+<!-- Marker 2: Pending -->
+<div class="absolute top-[45%] left-[55%] pointer-events-auto map-marker group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="w-6 h-6 bg-tertiary rounded-full shadow-md border-2 border-surface z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-surface text-[14px]" style="font-variation-settings: 'FILL' 1;">schedule</span>
+</div>
+<!-- Tooltip -->
+<div class="absolute bottom-full mb-2 bg-inverse-surface text-on-primary rounded shadow-lg p-3 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
+<p class="font-label-md text-label-md font-bold mb-1">Parcel ID: 219-B</p>
+<p class="font-body-md text-[12px] text-surface-variant">Assigned Surveyor: D. Naser</p>
+<p class="font-body-md text-[12px] text-tertiary-fixed mt-1">Status: Pending Survey</p>
+</div>
+</div>
+</div>
+<!-- Marker 3: Disputed -->
+<div class="absolute top-[60%] left-[35%] pointer-events-auto map-marker group cursor-pointer">
+<div class="relative flex items-center justify-center">
+<div class="absolute w-8 h-8 bg-secondary/20 rounded-full animate-ping"></div>
+<div class="w-6 h-6 bg-secondary rounded-full shadow-md border-2 border-surface z-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-surface text-[14px]" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<!-- Tooltip -->
+<div class="absolute bottom-full mb-2 bg-inverse-surface text-on-primary rounded shadow-lg p-3 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
+<p class="font-label-md text-label-md font-bold mb-1">Parcel ID: 402-C</p>
+<p class="font-body-md text-[12px] text-surface-variant">Action Required</p>
+<p class="font-body-md text-[12px] text-secondary-fixed mt-1">Status: Disputed Boundary</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Info Panel (Bottom Left) -->
+<div class="absolute bottom-margin-desktop left-margin-desktop z-30 bg-surface rounded-xl shadow-lg border border-outline-variant p-6 w-80 pointer-events-auto">
+<h2 class="font-headline-md text-[20px] font-bold text-on-surface mb-2">Active Survey Session</h2>
+<p class="font-body-md text-[14px] text-on-surface-variant mb-4 pb-4 border-b border-outline-variant">Region: Ramallah District, Zone 4</p>
+<div class="flex justify-between items-center mb-4">
+<span class="font-label-md text-label-md text-outline">Tasks Remaining</span>
+<span class="font-headline-md text-[24px] font-bold text-primary">12</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2 mb-6">
+<div class="bg-primary h-2 rounded-full" style="width: 45%"></div>
+</div>
+<button class="w-full bg-surface text-primary border-2 border-primary py-2 rounded-lg font-label-md text-label-md hover:bg-primary hover:text-on-primary transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">add_task</span>
+                Log New Survey Point
+            </button>
+</div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script>
+const BASE='http://127.0.0.1:8000';
+const role=localStorage.getItem('lrmis_role');
+if(!role){window.location.href='lrmis.html';}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+  // Back nav
+  document.querySelectorAll('button,a').forEach(el=>{
+    if(el.textContent.includes('Back')||el.textContent.includes('Dashboard'))el.onclick=()=>window.location.href=role==='surveyor'?'lrmis-surveyor-dashboard.html':'lrmis-registrar-center.html';
+  });
+
+  // Find or create map container
+  let mapEl=document.getElementById('map');
+  if(!mapEl){
+    const main=document.querySelector('main')||document.body;
+    mapEl=document.createElement('div');
+    mapEl.id='map';
+    mapEl.style='width:100%;height:calc(100vh - 140px);z-index:10;position:relative;';
+    // Replace static map placeholder
+    const existing=main.querySelector('[class*="bg-surface-container"]');
+    if(existing)existing.replaceWith(mapEl);
+    else main.prepend(mapEl);
+  }
+
+  const map=L.map('map').setView([31.9,35.2],10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+
+  // Load parcels
+  const parcels=await fetch(`${BASE}/analytics/geofeeds/parcels`).then(x=>x.json()).catch(()=>null);
+  if(parcels&&parcels.features){
+    L.geoJSON(parcels,{
+      style:{color:'#005f2e',weight:2,fillOpacity:0.15},
+      onEachFeature:(f,layer)=>{
+        const p=f.properties||{};
+        layer.bindPopup(`<b>${p.parcel_number||'Parcel'}</b><br>Zone: ${p.zone_id||'—'}<br>Area: ${p.area_sqm||'—'} m²`);
+      }
+    }).addTo(map);
+  }
+
+  // Load pending heatmap points
+  const heat=await fetch(`${BASE}/analytics/geofeeds/pending-heatmap`).then(x=>x.json()).catch(()=>null);
+  if(heat&&heat.features){
+    heat.features.forEach(f=>{
+      if(f.geometry&&f.geometry.type==='Point'){
+        const [lng,lat]=f.geometry.coordinates;
+        L.circleMarker([lat,lng],{radius:8,color:'#bb001e',fillColor:'#bb001e',fillOpacity:0.6,weight:2})
+          .bindPopup(`<b>Pending: ${(f.properties||{}).application_count||1} application(s)</b>`)
+          .addTo(map);
+      }
+    });
+  }
+});
+</script>
+</body></html>

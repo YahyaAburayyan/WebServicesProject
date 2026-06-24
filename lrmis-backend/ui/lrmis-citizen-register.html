@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LRMIS - Citizen Registration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#6f7a6f",
+                        "secondary-container": "#e12531",
+                        "on-background": "#191c18",
+                        "on-secondary-fixed": "#410004",
+                        "on-error": "#ffffff",
+                        "background": "#f8faf3",
+                        "inverse-primary": "#78db92",
+                        "surface-container-high": "#e7e9e2",
+                        "surface-bright": "#f8faf3",
+                        "on-primary-fixed-variant": "#005227",
+                        "on-tertiary-container": "#eae7ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c18",
+                        "on-secondary-fixed-variant": "#930015",
+                        "primary-container": "#007a3d",
+                        "on-primary-container": "#a1ffb7",
+                        "primary-fixed": "#94f8ad",
+                        "tertiary-fixed": "#e2e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#68677f",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf3",
+                        "tertiary": "#504f66",
+                        "surface-tint": "#006d36",
+                        "outline-variant": "#becabc",
+                        "surface-container-highest": "#e1e3dc",
+                        "secondary": "#bb001e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-fixed-dim": "#78db92",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "secondary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "surface-dim": "#d9dbd4",
+                        "surface-variant": "#e1e3dc",
+                        "surface-container": "#edefe8",
+                        "on-primary-fixed": "#00210c",
+                        "primary": "#005f2e",
+                        "inverse-surface": "#2e312d",
+                        "surface-container-low": "#f2f4ed",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .keffiyeh-pattern {
+            background-color: #f8faf3;
+            background-image: linear-gradient(135deg, #e1e3dc 25%, transparent 25%), linear-gradient(225deg, #e1e3dc 25%, transparent 25%), linear-gradient(45deg, #e1e3dc 25%, transparent 25%), linear-gradient(315deg, #e1e3dc 25%, #f8faf3 25%);
+            background-position: 10px 0, 10px 0, 0 0, 0 0;
+            background-size: 20px 20px;
+            background-repeat: repeat;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col md:flex-row">
+<!-- Left: Illustration Panel (Hidden on Mobile) -->
+<div class="hidden md:flex md:w-1/2 relative bg-surface-container-low overflow-hidden items-center justify-center border-r border-outline-variant">
+<div class="absolute inset-0 z-0">
+<div class="bg-cover bg-center w-full h-full opacity-90" data-alt="A beautifully illustrated digital artwork depicting the rolling hills of the Palestinian landscape under a bright, clear sky. Prominently featuring mature, ancient olive trees with intricate details on their trunks and leaves. The color palette emphasizes natural greens, soft earth tones, and vibrant blues, reflecting a modern, optimistic light-mode aesthetic. The style is clean, modern, and slightly stylized, conveying a sense of heritage and permanence, suitable for a formal government portal." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAySPpDoQ7ZKVlN3EjNmXmUmk8eO-CIV32f8Znr7u-aAK9oioMA3f8dfkZlPRQCLrxXraQrgyXpRVn22XigjaIvsiaVHjijeAY0Jmyixa1LZOvQOKj0wD9imAEBvg-bKWC3LNzD9T1iNELicdOOb3lfWPUDzHRU0VKwDlUx4dhaaX6vsA09T7zK5JauyCjdb1ApG6AI2mi25j8iNZ2snT_1gzph1NRFOMuqatBOso89k_OLntajVVxxWNm9ioEqgb6NQERZpKNbP8E')"></div>
+</div>
+<!-- Overlay Content -->
+<div class="relative z-10 max-w-md p-margin-desktop text-center bg-surface/80 backdrop-blur-sm rounded-xl border border-outline-variant shadow-md">
+<span class="material-symbols-outlined text-primary-container text-[48px] mb-4" style="font-variation-settings: 'FILL' 1;">assured_workload</span>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">LRMIS Portal</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                Welcome to the State of Palestine Land Registry Management Information System. Register to securely manage and view your land records.
+            </p>
+</div>
+</div>
+<!-- Right: Registration Form Panel -->
+<div class="w-full md:w-1/2 flex flex-col min-h-screen bg-surface">
+<!-- Government Header with Pattern -->
+<header class="relative bg-surface-container-low border-b border-outline-variant py-6 px-margin-mobile md:px-margin-desktop flex flex-col items-center justify-center overflow-hidden">
+<div class="keffiyeh-pattern absolute inset-0 z-0"></div>
+<div class="relative z-10 flex items-center gap-3">
+<img alt="Ministry of Local Government Logo" class="w-12 h-12 object-contain" data-alt="A high-quality, sharp rendering of the official Ministry of Local Government crest or logo for the State of Palestine. Designed in a flat, modern vector style suitable for a digital interface. The colors are strictly professional, utilizing dark navy and rich green. The background is completely transparent." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChFr6kheIt0NM-Sq6RNf5MBoRIefbHQg0MlP1Xpeq9vK5vk90NrpENfBygjdWHXiPubn60kRxg98g38pNwOdmtOxiflfZaH4r4wtTK5EAOk7Hfs8fZvxgiN-APLfIv074JqwuA8jY2IMh9cKHg294v_cFN0Cigj62_H-AIvEJ44zQrCpBHk9h-lC3iJqNkdnimFHWipxvj6sifKLFZwKT4OXgsEDJeF-Taiu_6lqEIZ7YdLds-TDGocikiz5cabBlugocK3uw3UNU"/>
+<div class="text-left">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">LRMIS</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Palestine Land Registry</p>
+</div>
+</div>
+</header>
+<!-- Main Form Area -->
+<main class="flex-grow flex items-center justify-center p-margin-mobile md:p-margin-desktop">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 md:p-8">
+<div class="mb-8 text-center">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Citizen Registration</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Create your official registry account.</p>
+</div>
+<form class="space-y-5">
+<!-- Full Name -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="fullName">Full Name</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded p-3 text-on-surface font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="fullName" placeholder="As it appears on your ID" required="" type="text"/>
+</div>
+<!-- National ID -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="nationalId">National ID</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded p-3 text-on-surface font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="nationalId" placeholder="9-digit ID number" required="" type="text"/>
+</div>
+<!-- Location Group -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- City -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="city">City</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded p-3 text-on-surface font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="city" placeholder="e.g., Ramallah" required="" type="text"/>
+</div>
+<!-- Neighborhood -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="neighborhood">Neighborhood</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded p-3 text-on-surface font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="neighborhood" placeholder="e.g., Al-Masyoun" required="" type="text"/>
+</div>
+</div>
+<!-- Zone Dropdown -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="zone">Zone</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded p-3 text-on-surface font-body-md appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="zone" required="">
+<option disabled="" selected="" value="">Select Zone</option>
+<option value="A">Zone A</option>
+<option value="B">Zone B</option>
+<option value="C">Zone C</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-outline">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Contact Group -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<!-- Email -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="email">Email</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded p-3 text-on-surface font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="email" placeholder="name@domain.com" required="" type="email"/>
+</div>
+<!-- Phone -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1" for="phone">Phone Number</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded p-3 text-on-surface font-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="phone" placeholder="+970 5X XXX XXXX" required="" type="tel"/>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full bg-primary-container text-on-primary font-label-md text-label-md rounded-lg py-3 px-4 flex items-center justify-center gap-2 hover:bg-primary transition-colors duration-200 shadow-sm hover:shadow-md" type="submit">
+<span>Create Account</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+<div class="text-center pt-4">
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">
+                            Already have an account? <a class="text-primary hover:underline font-label-md text-label-md" href="lrmis.html">Sign In</a>
+</p>
+</div>
+</form>
+</div>
+</main>
+<footer class="py-4 text-center border-t border-outline-variant bg-surface-container-low">
+<p class="font-label-md text-label-md text-outline text-xs">
+                © 2024 State of Palestine - Land Registry Management Information System.
+             </p>
+</footer>
+</div>
+<script>
+const BASE = 'http://127.0.0.1:8000';
+document.querySelector('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Creating account…';
+  const zone = document.getElementById('zone').value;
+  const body = {
+    full_name: document.getElementById('fullName').value.trim(),
+    applicant_type: 'citizen',
+    identity: { national_id: document.getElementById('nationalId').value.trim() },
+    contacts: { email: document.getElementById('email').value.trim(), phone: document.getElementById('phone').value.trim() },
+    address: { city: document.getElementById('city').value.trim(), neighborhood: document.getElementById('neighborhood').value.trim(), zone_id: zone ? 'ZONE-' + zone : 'ZONE-A' }
+  };
+  try {
+    const res = await fetch(`${BASE}/applicants/`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) { alert(data.detail || 'Registration failed'); btn.disabled=false; btn.textContent='Create Account'; return; }
+    localStorage.setItem('lrmis_role', 'citizen');
+    localStorage.setItem('lrmis_applicant_id', data.applicant_id);
+    localStorage.setItem('lrmis_name', data.full_name);
+    alert('Account created! Your ID is: ' + data.applicant_id + '\nPlease save this ID to log in.');
+    window.location.href = 'lrmis-citizen-dashboard.html';
+  } catch(err) { alert('Cannot reach server. Is it running on port 8000?'); btn.disabled=false; btn.textContent='Create Account'; }
+});
+</script>
+</body></html>

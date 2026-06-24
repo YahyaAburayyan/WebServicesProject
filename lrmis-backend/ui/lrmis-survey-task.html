@@ -1,0 +1,472 @@
+﻿<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Survey Task Detail - LRMIS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "outline": "#6f7a6f",
+                        "secondary-container": "#e12531",
+                        "on-background": "#191c18",
+                        "on-secondary-fixed": "#410004",
+                        "on-error": "#ffffff",
+                        "background": "#f8faf3",
+                        "inverse-primary": "#78db92",
+                        "surface-container-high": "#e7e9e2",
+                        "surface-bright": "#f8faf3",
+                        "on-primary-fixed-variant": "#005227",
+                        "on-tertiary-container": "#eae7ff",
+                        "error": "#ba1a1a",
+                        "on-surface": "#191c18",
+                        "on-secondary-fixed-variant": "#930015",
+                        "primary-container": "#007a3d",
+                        "on-primary-container": "#a1ffb7",
+                        "primary-fixed": "#94f8ad",
+                        "tertiary-fixed": "#e2e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff2eb",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#68677f",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8faf3",
+                        "tertiary": "#504f66",
+                        "surface-tint": "#006d36",
+                        "outline-variant": "#becabc",
+                        "surface-container-highest": "#e1e3dc",
+                        "secondary": "#bb001e",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#c6c4df",
+                        "primary-fixed-dim": "#78db92",
+                        "secondary-fixed-dim": "#ffb3ae",
+                        "secondary-fixed": "#ffdad7",
+                        "on-tertiary-fixed-variant": "#45455b",
+                        "surface-dim": "#d9dbd4",
+                        "surface-variant": "#e1e3dc",
+                        "surface-container": "#edefe8",
+                        "on-primary-fixed": "#00210c",
+                        "primary": "#005f2e",
+                        "inverse-surface": "#2e312d",
+                        "surface-container-low": "#f2f4ed",
+                        "on-tertiary-fixed": "#1a1a2e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Work Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Work Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Work Sans"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col font-body-md text-body-md md:flex-row">
+<!-- SideNavBar (Desktop) -->
+<nav aria-label="Sidebar Navigation" class="hidden md:flex flex-col bg-inverse-surface dark:bg-surface-container-lowest text-primary-fixed dark:text-primary font-label-md text-label-md shadow-md fixed left-0 top-0 h-full w-64 py-6 z-40 transition-all duration-200 ease-in-out">
+<div class="px-4 mb-8">
+<h1 class="font-headline-md text-headline-md font-bold text-primary-fixed dark:text-primary">LRMIS</h1>
+<p class="text-surface-variant text-xs opacity-80 mt-1">Palestine Land Registry</p>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-colors py-2 px-4 rounded-lg flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Application
+            </button>
+</div>
+<ul class="flex flex-col gap-1 flex-grow overflow-y-auto">
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">description</span>
+                    Applications
+                </a>
+</li>
+<li>
+<a aria-current="page" class="flex items-center gap-3 bg-primary-container text-on-primary-container border-l-4 border-primary px-4 py-3 rounded-r-lg hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">map</span>
+                    Survey Tasks
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+                    Land Records
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">gavel</span>
+                    Legal Review
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">assessment</span>
+                    Reports
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                    Analytics
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-3 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+</li>
+</ul>
+<div class="mt-auto px-4 pt-4 border-t border-surface-container-lowest/20">
+<ul class="flex flex-col gap-1">
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+                        Help Center
+                    </a>
+</li>
+<li>
+<a class="flex items-center gap-3 text-surface-variant dark:text-on-surface-variant px-4 py-2 hover:bg-surface-container-highest/10 hover:bg-primary/10 dark:hover:bg-primary/5 transition-all duration-200 ease-in-out text-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+                        Logout
+                    </a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- TopNavBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile h-16 z-50 bg-surface dark:bg-surface-dim border-b border-outline-variant dark:border-outline flat no shadows">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">
+            LRMIS
+        </div>
+<div class="flex items-center gap-4 text-primary dark:text-primary-fixed">
+<button class="hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full opacity-80 duration-150">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full opacity-80 duration-150">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow md:ml-64 flex flex-col relative w-full overflow-x-hidden pt-6 px-margin-mobile md:px-margin-desktop pb-12">
+<!-- Header -->
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<a class="text-primary hover:underline flex items-center text-sm font-label-md" href="#"><span class="material-symbols-outlined text-sm mr-1">arrow_back</span> Back to Tasks</a>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Survey Task: ST-2023-0891</h2>
+<p class="text-on-surface-variant mt-1">Parcel #45-A, Ramallah District</p>
+</div>
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-label-md bg-secondary-container/10 text-secondary-container border border-secondary-container/20">
+                    High Priority
+                </span>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-label-md bg-surface-variant text-on-surface border border-outline-variant">
+                    Assigned
+                </span>
+</div>
+</div>
+<!-- Split Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left Column: Milestones -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6 border-b border-surface-container-high pb-4">Task Milestones</h3>
+<div class="relative pl-8 space-y-8">
+<!-- Vertical Line -->
+<div class="absolute left-[11px] top-2 bottom-2 w-[2px] bg-surface-container-high z-0"></div>
+<!-- Milestone 1: Completed -->
+<div class="relative z-10 flex items-start group">
+<div class="absolute -left-8 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-on-primary ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Assigned</span>
+<span class="text-sm text-on-surface-variant">Oct 24, 2023 by Chief Surveyor</span>
+</div>
+</div>
+<!-- Milestone 2: Current -->
+<div class="relative z-10 flex items-start">
+<div class="absolute -left-8 flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-lowest border-2 border-primary text-primary ring-4 ring-surface-container-lowest">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="flex flex-col w-full">
+<span class="font-label-md text-label-md text-primary font-bold">Visit Scheduled</span>
+<span class="text-sm text-on-surface-variant mb-3">Pending action</span>
+<div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/50 w-full">
+<label class="block text-sm font-label-md text-on-surface mb-1" for="visit-date">Scheduled Date</label>
+<input class="w-full rounded-md border-outline-variant bg-surface-container-lowest text-on-surface shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50 text-sm mb-3" id="visit-date" type="date"/>
+<label class="block text-sm font-label-md text-on-surface mb-1" for="milestone-notes">Internal Notes</label>
+<textarea class="w-full rounded-md border-outline-variant bg-surface-container-lowest text-on-surface shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50 text-sm placeholder-on-surface-variant/50" id="milestone-notes" placeholder="Add scheduling notes..." rows="2"></textarea>
+<button class="mt-3 w-full bg-surface-container-high hover:bg-surface-container-highest text-on-surface py-2 px-4 rounded-md transition-colors text-sm font-label-md border border-outline-variant flex justify-center items-center gap-2">
+                                        Update Milestone
+                                    </button>
+</div>
+</div>
+</div>
+<!-- Milestone 3: Upcoming -->
+<div class="relative z-10 flex items-start opacity-60">
+<div class="absolute -left-8 flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-[14px]">circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Field Survey Completed</span>
+<span class="text-sm text-on-surface-variant">Awaiting action</span>
+</div>
+</div>
+<!-- Milestone 4: Upcoming -->
+<div class="relative z-10 flex items-start opacity-60">
+<div class="absolute -left-8 flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-[14px]">circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Report Drafted</span>
+<span class="text-sm text-on-surface-variant">Awaiting action</span>
+</div>
+</div>
+<!-- Milestone 5: Upcoming -->
+<div class="relative z-10 flex items-start opacity-60">
+<div class="absolute -left-8 flex items-center justify-center w-6 h-6 rounded-full bg-surface-container-highest text-on-surface-variant ring-4 ring-surface-container-lowest">
+<span class="material-symbols-outlined text-[14px]">circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Registrar Reviewed</span>
+<span class="text-sm text-on-surface-variant">Final step</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Survey Report Form -->
+<div class="lg:col-span-8">
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-6 shadow-sm relative overflow-hidden">
+<!-- Accent Bar -->
+<div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+<!-- Background Watermark -->
+<span class="material-symbols-outlined absolute -bottom-10 -right-10 text-[160px] text-primary/5 rotate-[-15deg] pointer-events-none select-none" style="font-variation-settings: 'FILL' 1;">spa</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-2 border-b border-surface-container-high pb-4">
+<span class="material-symbols-outlined text-primary">edit_document</span>
+                        Submit Survey Report
+                    </h3>
+<form class="space-y-6 relative z-10">
+<!-- Findings -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="findings">Primary Findings</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface-bright text-on-surface shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50" id="findings" placeholder="Detail the topographical and boundary findings..." rows="4"></textarea>
+</div>
+<!-- Data Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-surface-container-low rounded-lg border border-outline-variant/30">
+<!-- Area -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="area">Calculated Area (mÂ²)</label>
+<div class="relative rounded-md shadow-sm">
+<input class="w-full rounded-md border-outline-variant bg-surface-bright text-on-surface focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50 pr-12" id="area" placeholder="0.00" type="number"/>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+<span class="text-on-surface-variant sm:text-sm">mÂ²</span>
+</div>
+</div>
+</div>
+<!-- Toggles -->
+<div class="flex flex-col justify-center space-y-4 pt-2 md:pt-6">
+<label class="flex items-center cursor-pointer group">
+<div class="relative">
+<input class="sr-only" type="checkbox"/>
+<div class="block bg-surface-container-highest w-10 h-6 rounded-full group-hover:bg-outline-variant transition-colors"></div>
+<div class="dot absolute left-1 top-1 bg-surface-container-lowest w-4 h-4 rounded-full transition transform translate-x-0"></div>
+</div>
+<div class="ml-3 font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Boundary Confirmed</div>
+</label>
+<label class="flex items-center cursor-pointer group">
+<div class="relative">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block bg-primary w-10 h-6 rounded-full transition-colors"></div>
+<div class="dot absolute left-1 top-1 bg-surface-container-lowest w-4 h-4 rounded-full transition transform translate-x-4"></div>
+</div>
+<div class="ml-3 font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Coordinates Verified</div>
+</label>
+</div>
+</div>
+<!-- Field Notes & Recommendations -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="field-notes">Field Notes</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface-bright text-on-surface shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50" id="field-notes" placeholder="Observations regarding adjacent properties..." rows="3"></textarea>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="recommendations">Recommendations</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface-bright text-on-surface shadow-sm focus:border-primary focus:ring focus:ring-primary/20 focus:ring-opacity-50" id="recommendations" placeholder="Required actions for the registrar..." rows="3"></textarea>
+</div>
+</div>
+<!-- Attachments (Mock) -->
+<div class="border-2 border-dashed border-outline-variant rounded-lg p-6 text-center bg-surface-bright hover:bg-surface-container-low transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-outline text-3xl mb-2">upload_file</span>
+<p class="font-label-md text-on-surface mb-1">Upload Survey Diagrams &amp; Photos</p>
+<p class="text-sm text-on-surface-variant">PDF, JPG, PNG up to 10MB</p>
+</div>
+<!-- Submit Action -->
+<div class="pt-6 border-t border-surface-container-high flex justify-end gap-4">
+<button class="px-6 py-2 border-2 border-outline-variant text-on-surface rounded-lg font-label-md hover:bg-surface-container-low transition-colors focus:ring-2 focus:ring-primary/20" type="button">
+                                Save Draft
+                            </button>
+<button class="px-6 py-2 bg-primary text-on-primary rounded-lg font-label-md hover:bg-on-primary-fixed-variant transition-colors shadow-sm hover:shadow-md focus:ring-2 focus:ring-primary/50 flex items-center gap-2" type="button">
+<span class="material-symbols-outlined text-sm">send</span>
+                                Submit Report
+                            </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-8 px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto bg-surface-container-low dark:bg-surface-container-lowest border-t border-outline-variant dark:border-outline flat no shadows mt-auto">
+<div class="font-label-md text-label-md font-bold text-on-surface dark:text-on-surface-variant mb-4 md:mb-0 text-center md:text-left">
+            Â© 2024 State of Palestine - Land Registry Management Information System. All Rights Reserved.
+        </div>
+<ul class="flex flex-wrap justify-center gap-4 text-outline dark:text-outline-variant font-label-md text-label-md">
+<li><a class="hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Terms of Service</a></li>
+<li><a class="hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Ministry Portal</a></li>
+<li><a class="hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Contact Support</a></li>
+</ul>
+</footer>
+<style>
+        /* Custom styles for toggle switch to avoid relying on external complex css if JS isn't preferred */
+        input:checked ~ .dot {
+            transform: translateX(100%);
+            background-color: #ffffff;
+        }
+        input:checked ~ .block {
+            background-color: theme('colors.primary');
+        }
+    </style>
+<script>
+const BASE='http://127.0.0.1:8000';
+const applicationId=localStorage.getItem('lrmis_app_id');
+const staffId=localStorage.getItem('lrmis_staff_id');
+if(!applicationId||!staffId){window.location.href='lrmis-surveyor-dashboard.html';}
+
+const MILESTONES=['assigned','visit_scheduled','arrived_on_site','survey_started','survey_completed','report_uploaded','registrar_reviewed'];
+
+// Back
+document.querySelector('button.flex.items-center.gap-2,a[href="#"]')?.addEventListener('click',e=>{if(e.target.textContent.includes('Back'))window.location.href='lrmis-surveyor-dashboard.html';});
+
+async function load(){
+  const r=await fetch(`${BASE}/applications/${applicationId}`).then(x=>x.json()).catch(()=>null);
+  if(!r)return;
+  const curMs=r.survey_milestone||'assigned';
+  const curIdx=MILESTONES.indexOf(curMs);
+  
+  // Update milestone display
+  document.querySelectorAll('[data-milestone]').forEach(el=>{
+    const ms=el.dataset.milestone;
+    const idx=MILESTONES.indexOf(ms);
+    el.classList.toggle('opacity-30',idx<curIdx);
+    el.classList.toggle('text-primary',idx===curIdx);
+  });
+
+  // Wire milestone buttons
+  document.querySelectorAll('button').forEach(btn=>{
+    const ms=MILESTONES.find(m=>btn.textContent.toLowerCase().includes(m.replace(/_/g,' ')));
+    if(ms){
+      const idx=MILESTONES.indexOf(ms);
+      if(idx>curIdx){
+        btn.onclick=()=>advanceMilestone(ms);
+      }
+    }
+  });
+}
+
+async function advanceMilestone(milestone){
+  const res=await fetch(`${BASE}/applications/${applicationId}/survey-milestone`,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({milestone,surveyor_id:staffId,notes:'Updated via portal'})
+  });
+  if(res.ok){alert('Milestone updated to: '+milestone.replace(/_/g,' '));load();}
+  else{const d=await res.json();alert('Error: '+(d.detail||'Failed'));}
+}
+
+// Report form - find submit buttons and wire them
+document.addEventListener('DOMContentLoaded',()=>{
+  load();
+  const reportBtns=Array.from(document.querySelectorAll('button')).filter(b=>b.textContent.includes('Submit Report')||b.textContent.includes('Upload Report'));
+  reportBtns.forEach(btn=>{
+    btn.onclick=async()=>{
+      const textareas=document.querySelectorAll('textarea');
+      const findings=textareas[0]?.value?.trim();
+      if(!findings||findings.length<10){alert('Please enter findings (min 10 characters)');return;}
+      const body={
+        surveyor_id:staffId,
+        findings,
+        boundary_confirmed:!!document.querySelector('input[type="checkbox"]:checked'),
+        coordinates_verified:false,
+        field_notes:textareas[1]?.value?.trim()||''
+      };
+      const areaInput=document.querySelector('input[type="number"]');
+      if(areaInput?.value)body.parcel_area_sqm=parseFloat(areaInput.value);
+      const res=await fetch(`${BASE}/applications/${applicationId}/survey-report`,{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
+      });
+      if(res.ok){
+        const d=await res.json();
+        alert('Survey report submitted! Report ID: '+(d.report_id||'done'));
+        window.location.href='lrmis-surveyor-dashboard.html';
+      }else{const d=await res.json();alert('Error: '+(d.detail||'Failed'));}
+    };
+  });
+  
+  // Nav back links
+  document.querySelectorAll('a[href="#"]').forEach(a=>{
+    if(a.textContent.includes('Back')||a.textContent.includes('Tasks'))a.href='lrmis-surveyor-dashboard.html';
+    if(a.textContent.includes('Logout'))a.href='lrmis.html';
+  });
+});
+</script>
+</body></html>

@@ -1,0 +1,457 @@
+﻿<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create Staff Account - LRMIS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Work+Sans:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "outline": "#6f7a6f",
+                      "secondary-container": "#e12531",
+                      "on-background": "#191c18",
+                      "on-secondary-fixed": "#410004",
+                      "on-error": "#ffffff",
+                      "background": "#f8faf3",
+                      "inverse-primary": "#78db92",
+                      "surface-container-high": "#e7e9e2",
+                      "surface-bright": "#f8faf3",
+                      "on-primary-fixed-variant": "#005227",
+                      "on-tertiary-container": "#eae7ff",
+                      "error": "#ba1a1a",
+                      "on-surface": "#191c18",
+                      "on-secondary-fixed-variant": "#930015",
+                      "primary-container": "#007a3d",
+                      "on-primary-container": "#a1ffb7",
+                      "primary-fixed": "#94f8ad",
+                      "tertiary-fixed": "#e2e0fc",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#fffbff",
+                      "inverse-on-surface": "#eff2eb",
+                      "on-primary": "#ffffff",
+                      "tertiary-container": "#68677f",
+                      "error-container": "#ffdad6",
+                      "on-secondary": "#ffffff",
+                      "surface": "#f8faf3",
+                      "tertiary": "#504f66",
+                      "surface-tint": "#006d36",
+                      "outline-variant": "#becabc",
+                      "surface-container-highest": "#e1e3dc",
+                      "secondary": "#bb001e",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed-dim": "#c6c4df",
+                      "primary-fixed-dim": "#78db92",
+                      "secondary-fixed-dim": "#ffb3ae",
+                      "secondary-fixed": "#ffdad7",
+                      "on-tertiary-fixed-variant": "#45455b",
+                      "surface-dim": "#d9dbd4",
+                      "surface-variant": "#e1e3dc",
+                      "surface-container": "#edefe8",
+                      "on-primary-fixed": "#00210c",
+                      "primary": "#005f2e",
+                      "inverse-surface": "#2e312d",
+                      "surface-container-low": "#f2f4ed",
+                      "on-tertiary-fixed": "#1a1a2e",
+                      "on-surface-variant": "#3f493f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "base": "8px",
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "Work Sans"
+                      ],
+                      "headline-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Work Sans"
+                      ],
+                      "headline-xl": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-lg-mobile": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Work Sans"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-xl": [
+                              "40px",
+                              {
+                                      "lineHeight": "52px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+.keffiyeh-pattern{background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,95,46,.03) 10px,rgba(0,95,46,.03) 20px)}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;color:#d4e6d4;font-size:14px;font-weight:600;border-radius:0 8px 8px 0;margin-right:8px}
+.nav-item:hover{background:rgba(255,255,255,.08)}
+.nav-item.active{background:#007a3d;color:#a1ffb7;border-left:3px solid #78db92;padding-left:13px}
+.no-scrollbar::-webkit-scrollbar{display:none}
+.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen flex flex-col antialiased">
+<!-- Top Nav -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-8 h-14 z-50 fixed top-0 left-0 right-0">
+  <span class="font-bold text-primary text-lg">LRMIS</span>
+  <div class="relative w-80">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+    <input class="w-full bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Search staff ID…" type="text"/>
+  </div>
+  <div class="flex items-center gap-3">
+    <span class="text-sm font-semibold text-on-surface-variant" id="header-name">Registrar</span>
+    <div id="header-avatar" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary text-sm font-bold">R</div>
+  </div>
+</header>
+
+<div class="flex flex-1 pt-14">
+  <!-- Sidebar -->
+  <nav class="w-60 bg-inverse-surface fixed left-0 top-14 bottom-0 flex flex-col py-5 z-40 overflow-y-auto">
+    <div class="px-5 mb-6">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="material-symbols-outlined text-primary-fixed text-lg">account_balance</span>
+        <span class="text-primary-fixed font-bold text-sm">Palestine Land Registry</span>
+      </div>
+    </div>
+    <div class="flex-1 space-y-0.5 px-2">
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">description</span>Applications
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]">map</span>Survey Tasks
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]">gavel</span>Legal Review
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-center.html'">
+        <span class="material-symbols-outlined text-[18px]">account_balance</span>Land Records
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-registrar-analytics.html'">
+        <span class="material-symbols-outlined text-[18px]">analytics</span>Analytics
+      </div>
+      <div class="nav-item" onclick="window.location.href='lrmis-certificate.html'">
+        <span class="material-symbols-outlined text-[18px]">verified</span>Certificates
+      </div>
+      <div class="nav-item active" onclick="window.location.href='lrmis-create-staff.html'">
+        <span class="material-symbols-outlined text-[18px]">person_add</span>Create Staff
+      </div>
+    </div>
+    <div class="px-2 pt-4 border-t border-white/10 mt-2">
+      <div class="nav-item" onclick="doLogout()">
+        <span class="material-symbols-outlined text-[18px]">logout</span>Logout
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Form Content -->
+  <main class="flex-1 ml-60 bg-surface-bright keffiyeh-pattern overflow-y-auto">
+<div class="max-w-[1024px] mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-10">
+<!-- Page Intro Context -->
+<div class="mb-8 max-w-2xl">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Registrar &amp; Surveyor Setup</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter the official details to provision a new staff account within the Land Registry Management Information System. Ensure credentials match verified national records.</p>
+</div>
+<form action="#" class="space-y-8" method="POST">
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Section 1: Personal Information (Spans 8 cols) -->
+<section class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 relative overflow-hidden group">
+<!-- Decorative Olive Branch Watermark -->
+<span class="material-symbols-outlined absolute -bottom-8 -right-8 text-[120px] text-surface-variant opacity-20 pointer-events-none transform rotate-12 group-hover:scale-105 transition-transform duration-700">energy_savings_leaf</span>
+<h3 class="font-label-md text-label-md text-primary tracking-wide uppercase mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+                            Official Identity
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+<!-- Full Name -->
+<div class="space-y-2 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface" for="fullName">Full Name (Arabic/English)</label>
+<input class="w-full px-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="fullName" name="fullName" placeholder="e.g. Ahmad Al-Masri" required="" type="text"/>
+</div>
+<!-- National ID -->
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface" for="nationalId">National ID Number</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-[18px]">pin</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="nationalId" name="nationalId" placeholder="9-digit ID number" required="" type="text"/>
+</div>
+</div>
+<!-- Phone -->
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface" for="phone">Contact Number</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-[18px]">call</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="phone" name="phone" placeholder="+970 5X XXX XXXX" required="" type="tel"/>
+</div>
+</div>
+<!-- Email -->
+<div class="space-y-2 md:col-span-2">
+<label class="block font-label-md text-label-md text-on-surface" for="email">Government Email Address</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline text-[18px]">mail</span>
+</div>
+<input class="w-full pl-10 pr-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="email" name="email" placeholder="name@lrmis.gov.ps" required="" type="email"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column (Spans 4 cols) -->
+<div class="lg:col-span-4 space-y-6">
+<!-- Section 2: Role Assignment -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+<h3 class="font-label-md text-label-md text-primary tracking-wide uppercase mb-5 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                                System Role
+                            </h3>
+<!-- Custom Segmented Control for Role Toggle -->
+<div class="bg-surface-container p-1 rounded-lg border border-outline-variant flex relative isolation-auto">
+<label class="flex-1 text-center relative cursor-pointer group">
+<input checked="" class="peer sr-only" name="role" type="radio" value="registrar"/>
+<div class="py-2.5 px-4 rounded-md font-label-md text-label-md text-on-surface-variant peer-checked:bg-surface-container-lowest peer-checked:text-primary peer-checked:shadow-sm transition-all duration-200 z-10 relative flex items-center justify-center gap-2 group-hover:bg-surface-container-high peer-checked:group-hover:bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">gavel</span>
+                                        Registrar
+                                    </div>
+</label>
+<label class="flex-1 text-center relative cursor-pointer group">
+<input class="peer sr-only" name="role" type="radio" value="surveyor"/>
+<div class="py-2.5 px-4 rounded-md font-label-md text-label-md text-on-surface-variant peer-checked:bg-surface-container-lowest peer-checked:text-primary peer-checked:shadow-sm transition-all duration-200 z-10 relative flex items-center justify-center gap-2 group-hover:bg-surface-container-high peer-checked:group-hover:bg-surface-container-lowest">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">map</span>
+                                        Surveyor
+                                    </div>
+</label>
+</div>
+<p class="mt-3 font-body-md text-[13px] text-on-surface-variant leading-tight">
+                                Registrars authorize land titles. Surveyors record parcel boundaries in the field.
+                            </p>
+</section>
+<!-- Section 3: Capacity -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+<h3 class="font-label-md text-label-md text-primary tracking-wide uppercase mb-5 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">speed</span>
+                                Workload Capacity
+                            </h3>
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface" for="maxTasks">Maximum Concurrent Tasks</label>
+<div class="flex items-center gap-4">
+<input class="flex-1 h-2 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" id="maxTasksRange" max="50" min="1" type="range" value="15"/>
+<div class="w-16">
+<input class="w-full px-2 py-1.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-center text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm" id="maxTasks" max="50" min="1" name="maxTasks" type="number" value="15"/>
+</div>
+</div>
+<div class="flex justify-between text-[12px] text-outline px-1">
+<span>1</span>
+<span>50</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Section 4: Capabilities & Jurisdiction (Spans 12 cols, below) -->
+<section class="lg:col-span-12 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 md:p-8 shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Coverage Zones -->
+<div>
+<h3 class="font-label-md text-label-md text-primary tracking-wide uppercase mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+                                    Coverage Zones
+                                </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-3 text-sm">Assign administrative districts for field work or document review.</p>
+<!-- Custom Tag Input Area -->
+<div class="border border-outline-variant rounded-lg p-2 min-h-[56px] flex flex-wrap gap-2 items-center bg-surface-bright focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all shadow-sm">
+<!-- Pre-filled Tag Chip 1 -->
+<span class="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 text-on-primary-fixed-variant px-2.5 py-1 rounded-md font-label-md text-[13px]">
+                                        Ramallah Center
+                                        <button class="text-primary hover:text-error transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</span>
+<!-- Pre-filled Tag Chip 2 -->
+<span class="inline-flex items-center gap-1.5 bg-primary/10 border border-primary/20 text-on-primary-fixed-variant px-2.5 py-1 rounded-md font-label-md text-[13px]">
+                                        Al-Bireh
+                                        <button class="text-primary hover:text-error transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</span>
+<!-- Input for new tag -->
+<input class="flex-1 min-w-[150px] bg-transparent border-none outline-none font-body-md text-body-md text-on-surface focus:ring-0 p-1 placeholder:text-outline" placeholder="Add district or town..." type="text"/>
+</div>
+</div>
+<!-- Skills / Specializations -->
+<div>
+<h3 class="font-label-md text-label-md text-primary tracking-wide uppercase mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+                                    Verified Skills
+                                </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-3 text-sm">Tag certifications or specializations (e.g., GPS mapping, Dispute Resolution).</p>
+<!-- Custom Tag Input Area -->
+<div class="border border-outline-variant rounded-lg p-2 min-h-[56px] flex flex-wrap gap-2 items-center bg-surface-bright focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all shadow-sm">
+<!-- Pre-filled Tag Chip 1 -->
+<span class="inline-flex items-center gap-1.5 bg-surface-container-high border border-outline-variant text-on-surface px-2.5 py-1 rounded-md font-label-md text-[13px]">
+                                        Topographic Mapping
+                                        <button class="text-on-surface-variant hover:text-error transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</span>
+<!-- Input for new tag -->
+<input class="flex-1 min-w-[150px] bg-transparent border-none outline-none font-body-md text-body-md text-on-surface focus:ring-0 p-1 placeholder:text-outline" placeholder="Type to add skill..." type="text"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Form Actions (Sticky-like at bottom of content) -->
+<div class="mt-10 pt-6 border-t border-outline-variant flex flex-col-reverse sm:flex-row justify-end items-center gap-4">
+<button class="w-full sm:w-auto px-6 py-2.5 font-label-md text-label-md text-on-surface border border-outline-variant rounded-lg hover:bg-surface-container-high hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50" type="button">
+                        Cancel
+                    </button>
+<!-- Primary CTA -->
+<button class="w-full sm:w-auto px-8 py-2.5 font-label-md text-label-md bg-primary text-on-primary rounded-lg hover:bg-on-primary-fixed-variant hover:shadow-md transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background" type="submit">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+                        Create Staff Account
+                    </button>
+</div>
+</form>
+</div>
+</main>
+</div>
+<script>
+        // Simple script to sync range slider and number input for visual feedback
+        const rangeInput = document.getElementById('maxTasksRange');
+        const numberInput = document.getElementById('maxTasks');
+
+        rangeInput.addEventListener('input', function() {
+            numberInput.value = this.value;
+        });
+
+        numberInput.addEventListener('input', function() {
+            // Basic boundary check
+            let val = parseInt(this.value);
+            if (val > 50) this.value = 50;
+            if (val < 1) this.value = 1;
+            rangeInput.value = this.value;
+        });
+    </script>
+<script>
+const BASE='http://127.0.0.1:8000';
+function doLogout(){localStorage.clear();window.location.href='lrmis.html';}
+if(localStorage.getItem('lrmis_role')!=='registrar'||!localStorage.getItem('lrmis_staff_id')){window.location.replace('lrmis.html');}
+(function(){
+  const name=localStorage.getItem('lrmis_name')||'Registrar';
+  const el=document.getElementById('header-name');if(el)el.textContent=name;
+  const av=document.getElementById('header-avatar');if(av)av.textContent=(name[0]||'R').toUpperCase();
+})();
+
+document.querySelector('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=document.querySelector('form button[type="submit"]')||document.querySelector('form button:last-of-type');
+  const origText=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Creating…';}
+
+  const role=document.querySelector('input[name="role"]:checked')?.value||'surveyor';
+  const maxTasks=parseInt(document.getElementById('maxTasksRange')?.value||'3');
+
+  // Gather coverage zones (checkboxes if present)
+  const zones=[];
+  document.querySelectorAll('input[name="zone"]:checked').forEach(c=>zones.push(c.value));
+  if(!zones.length) zones.push('ZONE-A');
+
+  const body={
+    full_name:document.getElementById('fullName').value.trim(),
+    role,
+    national_id:document.getElementById('nationalId').value.trim(),
+    email:document.getElementById('email').value.trim(),
+    phone:document.getElementById('phone').value.trim(),
+    coverage_zones:zones,
+    skills:[],
+    schedule:{working_days:['Mon','Tue','Wed','Thu','Fri'],shift_start:'08:00',shift_end:'16:00',max_concurrent_tasks:maxTasks}
+  };
+
+  try{
+    const res=await fetch(`${BASE}/staff/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json();
+    if(!res.ok){alert(data.detail||'Failed to create staff');if(btn){btn.disabled=false;btn.textContent=origText;}return;}
+    alert(`Staff account created!\nStaff ID: ${data.staff_id}\nShare this ID with the staff member for login.`);
+    window.location.href='lrmis-registrar-center.html';
+  }catch(err){alert('Cannot reach server. Is it running on port 8000?');if(btn){btn.disabled=false;btn.textContent=origText;}}
+});
+</script>
+</body></html>

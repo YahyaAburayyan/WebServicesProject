@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Application - LRMIS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"outline":"#6f7a6f","on-background":"#191c18","background":"#f8faf3","on-surface":"#191c18","primary-container":"#007a3d","on-primary":"#ffffff","primary":"#005f2e","surface":"#f8faf3","surface-container-lowest":"#ffffff","surface-container":"#edefe8","surface-container-high":"#e7e9e2","surface-bright":"#f8faf3","outline-variant":"#becabc","on-surface-variant":"#3f493f","secondary":"#bb001e"},fontFamily:{"label-md":["Work Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Work Sans"],"headline-md":["Plus Jakarta Sans"]},fontSize:{"label-md":["14px",{lineHeight:"20px",fontWeight:"600"}],"headline-lg":["32px",{lineHeight:"40px",fontWeight:"600"}],"headline-md":["24px",{lineHeight:"32px",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}]}}}}
+</script>
+<style>
+.pattern-keffiyeh{background-image:repeating-linear-gradient(45deg,rgba(190,202,188,.3) 25%,transparent 25%,transparent 75%,rgba(190,202,188,.3) 75%),repeating-linear-gradient(45deg,rgba(190,202,188,.3) 25%,transparent 25%,transparent 75%,rgba(190,202,188,.3) 75%);background-position:0 0,10px 10px;background-size:20px 20px;}
+</style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen flex flex-col antialiased">
+
+<!-- Header -->
+<header class="bg-surface border-b border-outline-variant relative overflow-hidden flex-shrink-0">
+<div class="absolute inset-0 pattern-keffiyeh opacity-30 pointer-events-none"></div>
+<div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between relative z-10">
+  <button onclick="window.location.href='portal.html'" class="flex items-center gap-2 text-primary hover:bg-surface-container-high px-2 py-1.5 rounded-lg transition-colors group">
+    <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+    <span class="font-label-md text-label-md">Back to Dashboard</span>
+  </button>
+  <div class="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+    <span class="material-symbols-outlined text-primary text-[24px]" style="font-variation-settings:'FILL' 1;">note_add</span>
+    <h1 class="font-headline-md text-headline-md text-on-surface hidden md:block">New Land Application</h1>
+  </div>
+  <div class="w-[100px]"></div>
+</div>
+</header>
+
+<!-- Main -->
+<main class="flex-1 overflow-y-auto">
+<div class="max-w-5xl mx-auto px-6 py-8">
+  <div class="mb-8">
+    <h2 class="text-2xl font-bold text-on-surface mb-1">Submit a Land Registry Application</h2>
+    <p class="text-on-surface-variant">Fill in the details below to register a new land parcel application with the Ministry.</p>
+  </div>
+
+  <form id="app-form" class="space-y-8">
+
+    <!-- Application Type -->
+    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 relative overflow-hidden">
+      <span class="material-symbols-outlined absolute -bottom-6 -right-6 text-[100px] text-surface-container-high pointer-events-none">real_estate_agent</span>
+      <h3 class="font-label-md text-label-md text-primary uppercase tracking-wide mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">category</span>
+        Application Type
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 relative z-10">
+        <label class="cursor-pointer">
+          <input type="radio" name="app_type" value="first_registration" class="peer sr-only" checked/>
+          <div class="border-2 border-outline-variant rounded-xl p-4 text-center peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+            <span class="material-symbols-outlined text-[32px] text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">map</span>
+            <span class="font-label-md text-label-md text-on-surface">First Registration</span>
+            <p class="text-xs text-on-surface-variant mt-1">Register an unregistered parcel</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="app_type" value="ownership_transfer" class="peer sr-only"/>
+          <div class="border-2 border-outline-variant rounded-xl p-4 text-center peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+            <span class="material-symbols-outlined text-[32px] text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">swap_horiz</span>
+            <span class="font-label-md text-label-md text-on-surface">Ownership Transfer</span>
+            <p class="text-xs text-on-surface-variant mt-1">Transfer parcel to a new owner</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="app_type" value="parcel_subdivision" class="peer sr-only"/>
+          <div class="border-2 border-outline-variant rounded-xl p-4 text-center peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+            <span class="material-symbols-outlined text-[32px] text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">grid_on</span>
+            <span class="font-label-md text-label-md text-on-surface">Parcel Subdivision</span>
+            <p class="text-xs text-on-surface-variant mt-1">Split one parcel into multiple</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="app_type" value="parcel_merge" class="peer sr-only"/>
+          <div class="border-2 border-outline-variant rounded-xl p-4 text-center peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+            <span class="material-symbols-outlined text-[32px] text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">merge</span>
+            <span class="font-label-md text-label-md text-on-surface">Parcel Merge</span>
+            <p class="text-xs text-on-surface-variant mt-1">Combine adjacent parcels into one</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="app_type" value="boundary_correction" class="peer sr-only"/>
+          <div class="border-2 border-outline-variant rounded-xl p-4 text-center peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+            <span class="material-symbols-outlined text-[32px] text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">edit_location</span>
+            <span class="font-label-md text-label-md text-on-surface">Boundary Correction</span>
+            <p class="text-xs text-on-surface-variant mt-1">Correct an existing parcel boundary</p>
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="app_type" value="certificate_request" class="peer sr-only"/>
+          <div class="border-2 border-outline-variant rounded-xl p-4 text-center peer-checked:border-primary peer-checked:bg-primary/5 transition-all">
+            <span class="material-symbols-outlined text-[32px] text-primary mb-2 block" style="font-variation-settings:'FILL' 1;">verified</span>
+            <span class="font-label-md text-label-md text-on-surface">Certificate Request</span>
+            <p class="text-xs text-on-surface-variant mt-1">Request an official land certificate</p>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <!-- Parcel Information -->
+    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <h3 class="font-label-md text-label-md text-primary uppercase tracking-wide mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">pin_drop</span>
+        Parcel Information
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="space-y-2">
+          <label class="block font-label-md text-label-md text-on-surface" for="parcelNum">Parcel Number</label>
+          <input id="parcelNum" name="parcelNum" type="text" placeholder="e.g., PARC-2026-0001" required
+            class="w-full px-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"/>
+        </div>
+        <div class="space-y-2">
+          <label class="block font-label-md text-label-md text-on-surface" for="blockNum">Block Number</label>
+          <input id="blockNum" name="blockNum" type="text" placeholder="e.g., BLK-042"
+            class="w-full px-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"/>
+        </div>
+        <div class="space-y-2">
+          <label class="block font-label-md text-label-md text-on-surface" for="parcelCity">City / Village</label>
+          <input id="parcelCity" name="parcelCity" type="text" placeholder="e.g., Ramallah" required
+            class="w-full px-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"/>
+        </div>
+        <div class="space-y-2">
+          <label class="block font-label-md text-label-md text-on-surface" for="zoneId">Zone</label>
+          <select id="zoneId" name="zoneId" required
+            class="w-full px-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+            <option value="" disabled selected>Select Zone</option>
+            <option value="ZONE-A">Zone A</option>
+            <option value="ZONE-B">Zone B</option>
+            <option value="ZONE-C">Zone C</option>
+          </select>
+        </div>
+        <div class="space-y-2 md:col-span-2">
+          <label class="block font-label-md text-label-md text-on-surface" for="areaSqm">Parcel Area (m²)</label>
+          <input id="areaSqm" name="areaSqm" type="number" placeholder="e.g., 500" min="1"
+            class="w-full px-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"/>
+        </div>
+      </div>
+    </section>
+
+    <!-- Supporting Notes -->
+    <section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+      <h3 class="font-label-md text-label-md text-primary uppercase tracking-wide mb-4 flex items-center gap-2">
+        <span class="material-symbols-outlined text-[18px]">description</span>
+        Application Notes
+      </h3>
+      <textarea id="notes" rows="4" placeholder="Provide any additional context, ownership history, or reason for this application..."
+        class="w-full px-4 py-2.5 bg-surface-bright border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"></textarea>
+    </section>
+
+    <!-- Error message -->
+    <p id="form-error" class="text-red-600 text-sm hidden"></p>
+
+    <!-- Submit -->
+    <div class="flex items-center gap-4 pt-2">
+      <button type="submit" id="submit-btn"
+        class="flex items-center gap-2 bg-primary-container text-on-primary font-label-md text-label-md rounded-lg py-3 px-8 hover:bg-primary transition-colors shadow-sm hover:shadow-md">
+        <span class="material-symbols-outlined text-[20px]">send</span>
+        Submit Application
+      </button>
+      <button type="button" onclick="window.location.href='portal.html'"
+        class="flex items-center gap-2 border border-outline-variant text-on-surface-variant font-label-md text-label-md rounded-lg py-3 px-6 hover:bg-surface-container-high transition-colors">
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
+</main>
+
+<footer class="py-4 text-center border-t border-outline-variant bg-surface-container-lowest">
+  <p class="text-xs text-outline">© 2024 State of Palestine — Land Registry Management Information System</p>
+</footer>
+
+<script>
+const BASE='http://127.0.0.1:8000';
+const appId=localStorage.getItem('lrmis_applicant_id');
+if(!appId){window.location.href='lrmis.html';}
+
+document.getElementById('app-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=document.getElementById('submit-btn');
+  const errEl=document.getElementById('form-error');
+  btn.disabled=true; btn.querySelector('span:last-child').textContent='Submitting…';
+  errEl.classList.add('hidden');
+
+  const zoneId=document.getElementById('zoneId').value;
+  const body={
+    applicant_id:appId,
+    application_type:document.querySelector('input[name="app_type"]:checked').value,
+    parcel_ref:{
+      parcel_number:document.getElementById('parcelNum').value.trim(),
+      block_number:document.getElementById('blockNum').value.trim()||undefined,
+      zone_id:zoneId
+    },
+    location:{
+      city:document.getElementById('parcelCity').value.trim(),
+      zone_id:zoneId
+    },
+    notes:document.getElementById('notes').value.trim()||undefined
+  };
+  const area=parseFloat(document.getElementById('areaSqm').value);
+  if(!isNaN(area)) body.parcel_ref.area_sqm=area;
+
+  try{
+    const res=await fetch(`${BASE}/applications/`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json();
+    if(!res.ok){
+      errEl.textContent=data.detail||'Submission failed. Please check all required fields.';
+      errEl.classList.remove('hidden');
+      btn.disabled=false; btn.querySelector('span:last-child').textContent='Submit Application';
+      return;
+    }
+    localStorage.setItem('lrmis_app_id', data.application_id);
+    window.location.href = 'lrmis-app-detail.html';
+  }catch(err){
+    errEl.textContent='Cannot reach server. Is the backend running on port 8000?';
+    errEl.classList.remove('hidden');
+    btn.disabled=false; btn.querySelector('span:last-child').textContent='Submit Application';
+  }
+});
+</script>
+</body></html>

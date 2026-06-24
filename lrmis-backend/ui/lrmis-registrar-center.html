@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LRMIS — Registrar Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-error-container":"#93000a","outline":"#6f7a6f","on-background":"#191c18","background":"#f8faf3","on-surface":"#191c18","primary-container":"#007a3d","on-primary-container":"#a1ffb7","on-primary":"#ffffff","primary":"#005f2e","surface":"#f8faf3","surface-container-lowest":"#ffffff","surface-container":"#edefe8","surface-container-high":"#e7e9e2","surface-bright":"#f8faf3","outline-variant":"#becabc","on-surface-variant":"#3f493f","secondary":"#bb001e","inverse-surface":"#2e312d","primary-fixed":"#94f8ad","tertiary-fixed":"#e2e0fc","on-tertiary-fixed":"#1a1a2e","tertiary":"#504f66","error":"#ba1a1a","error-container":"#ffdad6","on-error-container":"#93000a"},fontFamily:{"label-md":["Work Sans"],"headline-lg":["Plus Jakarta Sans"],"body-md":["Work Sans"],"headline-md":["Plus Jakarta Sans"]},fontSize:{"label-md":["14px",{lineHeight:"20px",fontWeight:"600"}],"headline-lg":["32px",{lineHeight:"40px",fontWeight:"600"}],"headline-md":["24px",{lineHeight:"32px",fontWeight:"600"}],"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}]}}}}
+</script>
+<style>
+  .keffiyeh-pattern{background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(0,95,46,.03) 10px,rgba(0,95,46,.03) 20px)}
+  .nav-item{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;transition:background .15s;color:#d4e6d4;font-size:14px;font-weight:600;border-radius:0 8px 8px 0;margin-right:8px}
+  .nav-item:hover{background:rgba(255,255,255,.08)}
+  .nav-item.active{background:#007a3d;color:#a1ffb7;border-left:3px solid #78db92;padding-left:13px}
+  .status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;white-space:nowrap}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center}
+  .modal-box{background:#fff;border-radius:16px;padding:28px;width:480px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .state-btn{padding:8px 14px;border:2px solid #d1fae5;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;background:#f0fdf4;color:#065f46;transition:all .15s;text-align:left}
+  .state-btn:hover{background:#d1fae5;border-color:#6ee7b7}
+  .state-btn.danger{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+  .state-btn.danger:hover{background:#fecaca}
+  .state-btn.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+  .state-btn.warn:hover{background:#fde68a}
+</style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased">
+
+<!-- Session guard runs immediately -->
+<script>
+  if(localStorage.getItem('lrmis_role')!=='registrar'||!localStorage.getItem('lrmis_staff_id')){
+    window.location.replace('lrmis.html');
+  }
+</script>
+
+<!-- Top Nav -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-8 h-14 z-50 fixed top-0 left-0 right-0">
+  <span class="font-bold text-primary text-lg">LRMIS</span>
+  <div class="relative w-80">
+    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+    <input id="top-search" class="w-full bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Search application ID…" type="text"/>
+  </div>
+  <div class="flex items-center gap-3">
+    <span class="text-sm font-semibold text-on-surface-variant" id="header-name">Registrar</span>
+    <div id="header-avatar" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary text-sm font-bold">R</div>
+  </div>
+</header>
+
+<div class="flex flex-1 pt-14">
+  <!-- Sidebar -->
+  <nav class="w-60 bg-inverse-surface fixed left-0 top-14 bottom-0 flex flex-col py-5 z-40 overflow-y-auto">
+    <div class="px-5 mb-6">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="material-symbols-outlined text-primary-fixed text-lg">account_balance</span>
+        <span class="text-primary-fixed font-bold text-sm">Palestine Land Registry</span>
+      </div>
+    </div>
+
+    <div class="flex-1 space-y-0.5 px-2">
+      <div class="nav-item active" id="nav-applications" onclick="showSection('applications')">
+        <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' 1">description</span>Applications
+      </div>
+      <div class="nav-item" id="nav-survey" onclick="showSection('survey')">
+        <span class="material-symbols-outlined text-[18px]">map</span>Survey Tasks
+      </div>
+      <div class="nav-item" id="nav-legal" onclick="showSection('legal')">
+        <span class="material-symbols-outlined text-[18px]">gavel</span>Legal Review
+      </div>
+      <div class="nav-item" id="nav-records" onclick="showSection('records')">
+        <span class="material-symbols-outlined text-[18px]">account_balance</span>Land Records
+      </div>
+      <div class="nav-item" id="nav-analytics" onclick="window.location.href='lrmis-registrar-analytics.html'">
+        <span class="material-symbols-outlined text-[18px]">analytics</span>Analytics
+      </div>
+      <div class="nav-item" id="nav-certs" onclick="window.location.href='lrmis-certificate.html'">
+        <span class="material-symbols-outlined text-[18px]">verified</span>Certificates
+      </div>
+      <div class="nav-item" id="nav-staff" onclick="window.location.href='lrmis-create-staff.html'">
+        <span class="material-symbols-outlined text-[18px]">person_add</span>Create Staff
+      </div>
+    </div>
+
+    <div class="px-2 pt-4 border-t border-white/10 mt-2">
+      <div class="nav-item" onclick="doLogout()">
+        <span class="material-symbols-outlined text-[18px]">logout</span>Logout
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 ml-60 bg-surface-bright keffiyeh-pattern min-h-screen">
+    <div class="p-8 max-w-7xl mx-auto">
+
+      <!-- Page Header -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-on-surface" id="section-title">All Applications</h1>
+          <p class="text-sm text-on-surface-variant mt-0.5" id="section-subtitle">Manage and process land registration applications</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="window.location.href='lrmis-registrar-analytics.html'" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-[16px]">analytics</span>Analytics
+          </button>
+          <button onclick="window.location.href='lrmis-create-staff.html'" class="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant text-sm font-semibold hover:bg-surface-container transition-colors">
+            <span class="material-symbols-outlined text-[16px]">person_add</span>Create Staff
+          </button>
+          <button onclick="window.location.href='lrmis-certificate.html'" class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary/90 transition-colors">
+            <span class="material-symbols-outlined text-[16px]">verified</span>Certificates
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="kpi-cards">
+        <div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm">
+          <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mb-1">Total</div>
+          <div class="text-3xl font-bold text-on-surface" id="kpi-total">—</div>
+        </div>
+        <div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm">
+          <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mb-1">Pending Review</div>
+          <div class="text-3xl font-bold text-amber-600" id="kpi-pending">—</div>
+        </div>
+        <div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm">
+          <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mb-1">Approved</div>
+          <div class="text-3xl font-bold text-green-600" id="kpi-approved">—</div>
+        </div>
+        <div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm">
+          <div class="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mb-1">Avg. Days</div>
+          <div class="text-3xl font-bold text-primary" id="kpi-days">—</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm mb-4 flex flex-wrap gap-3 items-center">
+        <span class="text-sm font-semibold text-on-surface-variant">Filter:</span>
+        <select id="filter-status" onchange="applyFilters()" class="text-sm border border-outline-variant rounded-lg px-3 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-primary">
+          <option value="">Status: All</option>
+          <option value="submitted">Submitted</option>
+          <option value="pre_checked">Pre-Checked</option>
+          <option value="survey_required">Survey Required</option>
+          <option value="surveyed">Surveyed</option>
+          <option value="legal_review">Legal Review</option>
+          <option value="approved">Approved</option>
+          <option value="certificate_issued">Certificate Issued</option>
+          <option value="closed">Closed</option>
+          <option value="on_hold">On Hold</option>
+          <option value="rejected">Rejected</option>
+          <option value="missing_documents">Missing Documents</option>
+          <option value="under_objection">Under Objection</option>
+        </select>
+        <select id="filter-type" onchange="applyFilters()" class="text-sm border border-outline-variant rounded-lg px-3 py-2 bg-surface focus:outline-none focus:ring-1 focus:ring-primary">
+          <option value="">Type: All</option>
+          <option value="first_registration">First Registration</option>
+          <option value="ownership_transfer">Ownership Transfer</option>
+          <option value="parcel_subdivision">Parcel Subdivision</option>
+          <option value="parcel_merge">Parcel Merge</option>
+          <option value="boundary_correction">Boundary Correction</option>
+          <option value="certificate_request">Certificate Request</option>
+        </select>
+        <div class="relative ml-auto">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+          <input id="filter-search" onkeydown="if(event.key==='Enter')applyFilters()" oninput="if(!this.value)applyFilters()"
+                 class="pl-9 pr-4 py-2 text-sm border border-outline-variant rounded-lg focus:outline-none focus:ring-1 focus:ring-primary w-56"
+                 placeholder="Search App ID…" type="text"/>
+        </div>
+        <button onclick="applyFilters()" class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold">Search</button>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-surface border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+        <div class="h-1 bg-primary"></div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container border-b border-outline-variant text-xs font-bold text-on-surface-variant uppercase tracking-wide">
+                <th class="py-3 px-4">App ID</th>
+                <th class="py-3 px-4">Applicant</th>
+                <th class="py-3 px-4">Type</th>
+                <th class="py-3 px-4">Zone / Parcel</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Submitted</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="apps-tbody" class="divide-y divide-outline-variant text-sm">
+              <tr><td colspan="7" class="py-8 text-center text-on-surface-variant">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div class="border-t border-outline-variant px-4 py-3 flex items-center justify-between bg-surface-container">
+          <span class="text-sm text-on-surface-variant" id="pagination-info">—</span>
+          <div class="flex gap-2">
+            <button id="btn-prev" onclick="changePage(-1)" class="px-3 py-1.5 border border-outline-variant rounded text-sm text-on-surface-variant hover:bg-surface-container-high disabled:opacity-40">← Prev</button>
+            <button id="btn-next" onclick="changePage(1)"  class="px-3 py-1.5 border border-outline-variant rounded text-sm text-on-surface-variant hover:bg-surface-container-high disabled:opacity-40">Next →</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /max-w -->
+  </main>
+</div>
+
+<!-- ── Status Transition Modal ── -->
+<div id="transition-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="flex justify-between items-start mb-4">
+      <div>
+        <h3 class="text-lg font-bold text-on-surface">Change Application Status</h3>
+        <p class="text-sm text-on-surface-variant mt-0.5" id="modal-app-label">—</p>
+      </div>
+      <button onclick="closeModal()" class="text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="mb-3">
+      <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wide">Current Status</span>
+      <div class="mt-1" id="modal-current-status"></div>
+    </div>
+    <div class="mb-4">
+      <span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wide">Move To</span>
+      <div class="grid grid-cols-2 gap-2 mt-2" id="modal-next-states"></div>
+    </div>
+    <div class="mb-4">
+      <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wide block mb-1">Note <span class="font-normal normal-case">(optional)</span></label>
+      <textarea id="modal-note" rows="2" placeholder="Add a note about this status change…"
+        class="w-full text-sm border border-outline-variant rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary resize-none"></textarea>
+    </div>
+    <div id="modal-alert" class="text-sm text-red-600 mb-3 hidden"></div>
+    <div class="flex gap-3 justify-end">
+      <button onclick="closeModal()" class="px-4 py-2 border border-outline-variant rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container">Cancel</button>
+      <button id="modal-confirm-btn" onclick="confirmTransition()" class="px-4 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold opacity-50 cursor-not-allowed" disabled>Confirm Change</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE = 'http://127.0.0.1:8000';
+const staffId   = localStorage.getItem('lrmis_staff_id');
+const staffName = localStorage.getItem('lrmis_name') || 'Registrar';
+
+// Show name in header
+document.getElementById('header-name').textContent = staffName;
+document.getElementById('header-avatar').textContent = staffName[0]?.toUpperCase() || 'R';
+
+// Top search
+document.getElementById('top-search').addEventListener('keydown', async e => {
+  if (e.key !== 'Enter') return;
+  const q = e.target.value.trim();
+  if (!q) return;
+  const res = await fetch(`${BASE}/applications/${q}`).then(r => r.json()).catch(() => null);
+  if (res?.application_id) {
+    localStorage.setItem('lrmis_app_id', res.application_id);
+    window.location.href = 'lrmis-registrar-review.html';
+  } else {
+    alert('Application not found: ' + q);
+  }
+});
+
+// ── Status config ──────────────────────────────────────────────
+const STATUS_CFG = {
+  submitted:          { label:'Submitted',          cls:'bg-gray-100 text-gray-700',   dot:'bg-gray-400' },
+  pre_checked:        { label:'Pre-Checked',        cls:'bg-blue-100 text-blue-700',   dot:'bg-blue-500' },
+  survey_required:    { label:'Survey Required',    cls:'bg-orange-100 text-orange-700',dot:'bg-orange-500' },
+  surveyed:           { label:'Surveyed',           cls:'bg-sky-100 text-sky-700',     dot:'bg-sky-500' },
+  legal_review:       { label:'Legal Review',       cls:'bg-purple-100 text-purple-700',dot:'bg-purple-500' },
+  approved:           { label:'Approved',           cls:'bg-green-100 text-green-700', dot:'bg-green-500' },
+  certificate_issued: { label:'Certificate Issued', cls:'bg-emerald-100 text-emerald-700',dot:'bg-emerald-600' },
+  closed:             { label:'Closed',             cls:'bg-gray-200 text-gray-600',   dot:'bg-gray-500' },
+  on_hold:            { label:'On Hold',            cls:'bg-yellow-100 text-yellow-700',dot:'bg-yellow-500' },
+  rejected:           { label:'Rejected',           cls:'bg-red-100 text-red-700',     dot:'bg-red-500' },
+  missing_documents:  { label:'Missing Docs',       cls:'bg-orange-100 text-orange-700',dot:'bg-orange-400' },
+  under_objection:    { label:'Under Objection',    cls:'bg-amber-100 text-amber-700', dot:'bg-amber-500' },
+};
+const TYPE_LABELS = {
+  first_registration:'First Registration', ownership_transfer:'Ownership Transfer',
+  parcel_subdivision:'Parcel Subdivision', parcel_merge:'Parcel Merge',
+  boundary_correction:'Boundary Correction', certificate_request:'Certificate Request',
+};
+const ALLOWED_NEXT = {
+  submitted:          ['pre_checked','missing_documents','on_hold','rejected'],
+  pre_checked:        ['survey_required','legal_review','missing_documents','on_hold','rejected'],
+  survey_required:    ['surveyed','on_hold','rejected'],
+  surveyed:           ['legal_review','under_objection','on_hold','rejected'],
+  legal_review:       ['approved','under_objection','on_hold','rejected'],
+  approved:           ['certificate_issued','rejected'],
+  certificate_issued: ['closed'],
+  under_objection:    ['legal_review','on_hold','rejected'],
+  missing_documents:  ['submitted','pre_checked','rejected'],
+  on_hold:            ['submitted','pre_checked','survey_required','legal_review','rejected'],
+  closed:[], rejected:[],
+};
+const DANGER_STATES  = new Set(['rejected','on_hold','missing_documents','under_objection']);
+const WARNING_STATES = new Set(['on_hold','missing_documents']);
+
+function statusBadge(s) {
+  const c = STATUS_CFG[s] || { label: s, cls:'bg-gray-100 text-gray-600', dot:'bg-gray-400' };
+  return `<span class="status-badge ${c.cls}"><span class="w-1.5 h-1.5 rounded-full ${c.dot} inline-block"></span>${c.label}</span>`;
+}
+
+// ── Data loading ───────────────────────────────────────────────
+let _page = 1, _total = 0;
+const PAGE = 15;
+let _activeSection = 'applications';
+let _sectionStatusFilter = '';
+
+async function loadApps() {
+  const tbody = document.getElementById('apps-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-on-surface-variant">Loading…</td></tr>';
+
+  const status = _sectionStatusFilter || document.getElementById('filter-status').value;
+  const type   = document.getElementById('filter-type').value;
+  const search = document.getElementById('filter-search').value.trim();
+
+  let url = `${BASE}/applications/?limit=${PAGE}&page=${_page}`;
+  if (status) url += `&status=${status}`;
+  if (type)   url += `&application_type=${type}`;
+
+  const res = await fetch(url).then(r => r.json()).catch(() => null);
+  if (!res) { tbody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-red-500">Could not reach server.</td></tr>'; return; }
+
+  let apps = res.data || [];
+  _total = res.total || 0;
+
+  // Client-side search by app ID
+  if (search) apps = apps.filter(a => a.application_id?.toLowerCase().includes(search.toLowerCase()));
+
+  if (!apps.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="py-10 text-center text-on-surface-variant">No applications found.</td></tr>';
+    updatePagination(0);
+    return;
+  }
+
+  tbody.innerHTML = apps.map(a => {
+    const zone   = [a.parcel_ref?.zone_id, a.parcel_ref?.parcel_number].filter(Boolean).join(' / ') || '—';
+    const apId   = a.applicant_ref?.applicant_id || '—';
+    const date   = a.timestamps?.submitted_at ? new Date(a.timestamps.submitted_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+    const typeL  = TYPE_LABELS[a.application_type] || a.application_type || '—';
+    return `<tr class="hover:bg-primary/5 transition-colors group">
+      <td class="py-3 px-4 font-semibold text-primary text-sm cursor-pointer" onclick="viewApp('${a.application_id}')">${a.application_id}</td>
+      <td class="py-3 px-4 text-sm text-on-surface">${apId}</td>
+      <td class="py-3 px-4 text-sm text-on-surface-variant">${typeL}</td>
+      <td class="py-3 px-4 text-sm text-on-surface-variant">${zone}</td>
+      <td class="py-3 px-4">${statusBadge(a.status)}</td>
+      <td class="py-3 px-4 text-sm text-on-surface-variant">${date}</td>
+      <td class="py-3 px-4 text-right">
+        <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onclick="viewApp('${a.application_id}')" title="View Details"
+            class="p-1.5 rounded text-outline hover:text-primary hover:bg-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-sm">visibility</span>
+          </button>
+          <button onclick="assignSurveyor('${a.application_id}')" title="Auto-Assign Surveyor"
+            class="p-1.5 rounded text-outline hover:text-primary hover:bg-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-sm">person_add</span>
+          </button>
+          <button onclick="openTransitionModal('${a.application_id}','${a.status}')" title="Change Status"
+            class="p-1.5 rounded text-outline hover:text-primary hover:bg-primary/10 transition-colors">
+            <span class="material-symbols-outlined text-sm">swap_horiz</span>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  updatePagination(_total);
+}
+
+function updatePagination(total) {
+  const start = (_page - 1) * PAGE + 1;
+  const end   = Math.min(_page * PAGE, total);
+  document.getElementById('pagination-info').textContent = total ? `Showing ${start}–${end} of ${total}` : 'No results';
+  document.getElementById('btn-prev').disabled = _page <= 1;
+  document.getElementById('btn-next').disabled = end >= total;
+}
+
+function changePage(dir) {
+  _page += dir;
+  if (_page < 1) _page = 1;
+  loadApps();
+}
+
+function applyFilters() { _page = 1; _sectionStatusFilter = ''; loadApps(); }
+
+// ── KPI Stats ─────────────────────────────────────────────────
+async function loadKPIs() {
+  const kpi = await fetch(`${BASE}/analytics/kpis`).then(r => r.json()).catch(() => null);
+  if (!kpi) return;
+  document.getElementById('kpi-total').textContent   = kpi.total_applications ?? '—';
+  document.getElementById('kpi-pending').textContent  = kpi.pending_review ?? '—';
+  document.getElementById('kpi-approved').textContent = kpi.approved ?? '—';
+  document.getElementById('kpi-days').textContent     = kpi.avg_processing_days != null ? kpi.avg_processing_days.toFixed(1)+'d' : '—';
+}
+
+// ── Navigation sections ────────────────────────────────────────
+function showSection(section) {
+  _activeSection = section;
+  _page = 1;
+  _sectionStatusFilter = '';
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + section);
+  if (navEl) navEl.classList.add('active');
+
+  const titles = {
+    applications: ['All Applications',     'Manage and process land registration applications'],
+    survey:       ['Survey Tasks',          'Applications awaiting or undergoing field survey'],
+    legal:        ['Legal Review',          'Applications in legal review stage'],
+    records:      ['Land Records',          'Registered parcels and land titles'],
+  };
+  const [title, subtitle] = titles[section] || ['Applications',''];
+  document.getElementById('section-title').textContent    = title;
+  document.getElementById('section-subtitle').textContent = subtitle;
+
+  if (section === 'survey') {
+    _sectionStatusFilter = 'survey_required';
+    document.getElementById('filter-status').value = 'survey_required';
+  } else if (section === 'legal') {
+    _sectionStatusFilter = 'legal_review';
+    document.getElementById('filter-status').value = 'legal_review';
+  } else {
+    document.getElementById('filter-status').value = '';
+  }
+
+  if (section === 'records') {
+    loadLandRecords();
+  } else {
+    restoreTableHeaders();
+    loadApps();
+  }
+}
+
+async function loadLandRecords() {
+  const tbody = document.getElementById('apps-tbody');
+  // Show parcels in the same table structure
+  document.querySelector('thead tr').innerHTML = `
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase">Parcel Code</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase">Parcel Number</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase">Zone</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase">Block / Basin</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase">Area (m²)</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase">Land Use</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase">Status</th>`;
+  tbody.innerHTML = '<tr><td colspan="7" class="py-8 text-center text-on-surface-variant">Loading…</td></tr>';
+  const data = await fetch(`${BASE}/parcels/`).then(r => r.json()).catch(() => null);
+  const parcels = data?.items || [];
+  if (!parcels.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="py-10 text-center text-on-surface-variant">No land records found. Run the seed script.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = parcels.map(p => `
+    <tr class="hover:bg-primary/5 transition-colors text-sm">
+      <td class="py-3 px-4 font-semibold text-primary">${p.parcel_code || '—'}</td>
+      <td class="py-3 px-4 text-on-surface">${p.parcel_number || '—'}</td>
+      <td class="py-3 px-4 text-on-surface-variant">${p.zone_id || '—'}</td>
+      <td class="py-3 px-4 text-on-surface-variant">Block ${p.block_number || '—'} / Basin ${p.basin_number || '—'}</td>
+      <td class="py-3 px-4 text-on-surface-variant">${p.area_sqm ?? '—'}</td>
+      <td class="py-3 px-4 text-on-surface-variant capitalize">${(p.land_use || '—').replace(/_/g,' ')}</td>
+      <td class="py-3 px-4"><span class="status-badge ${p.registration_status==='registered'?'bg-green-100 text-green-700':'bg-amber-100 text-amber-700'}">${p.registration_status || '—'}</span></td>
+    </tr>`).join('');
+  document.getElementById('pagination-info').textContent = `${parcels.length} parcels`;
+}
+
+// Restore standard table headers when leaving land records
+function restoreTableHeaders() {
+  document.querySelector('thead tr').innerHTML = `
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-wide">App ID</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-wide">Applicant</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-wide">Type</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-wide">Zone / Parcel</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-wide">Status</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-wide">Submitted</th>
+    <th class="py-3 px-4 text-xs font-bold text-on-surface-variant uppercase tracking-wide text-right">Actions</th>`;
+}
+
+// ── Actions ───────────────────────────────────────────────────
+function viewApp(appId) {
+  localStorage.setItem('lrmis_app_id', appId);
+  window.location.href = 'lrmis-registrar-review.html';
+}
+
+async function assignSurveyor(appId) {
+  const res = await fetch(`${BASE}/applications/${appId}/auto-assign-surveyor`, { method:'POST' }).then(r => r.json()).catch(() => null);
+  if (res?.task_id || res?.surveyor_id) {
+    alert(`✅ Surveyor assigned!\nTask ID: ${res.task_id || '—'}\nAssigned to: ${res.surveyor_id || '—'}`);
+    loadApps();
+  } else {
+    alert('Could not auto-assign: ' + (res?.detail || 'No available surveyors for this zone.'));
+  }
+}
+
+// ── Status Transition Modal ───────────────────────────────────
+let _modalAppId = null, _selectedTarget = null;
+
+function openTransitionModal(appId, currentStatus) {
+  if (_activeSection === 'records') return;
+  _modalAppId = appId;
+  _selectedTarget = null;
+  document.getElementById('modal-app-label').textContent = appId;
+  document.getElementById('modal-current-status').innerHTML = statusBadge(currentStatus);
+  document.getElementById('modal-note').value = '';
+  document.getElementById('modal-alert').classList.add('hidden');
+  document.getElementById('modal-confirm-btn').disabled = true;
+  document.getElementById('modal-confirm-btn').classList.add('opacity-50','cursor-not-allowed');
+
+  const next = ALLOWED_NEXT[currentStatus] || [];
+  const container = document.getElementById('modal-next-states');
+  if (!next.length) {
+    container.innerHTML = '<p class="text-sm text-on-surface-variant col-span-2">No further transitions possible from this state.</p>';
+  } else {
+    container.innerHTML = next.map(s => {
+      const cfg = STATUS_CFG[s] || { label: s };
+      const cls = DANGER_STATES.has(s) && s==='rejected' ? 'danger' : WARNING_STATES.has(s) ? 'warn' : '';
+      return `<button class="state-btn ${cls}" onclick="selectTarget('${s}')" id="state-btn-${s}">${cfg.label}</button>`;
+    }).join('');
+  }
+  document.getElementById('transition-modal').style.display = 'flex';
+}
+
+function selectTarget(state) {
+  _selectedTarget = state;
+  document.querySelectorAll('.state-btn').forEach(b => b.style.outline = '');
+  const btn = document.getElementById('state-btn-' + state);
+  if (btn) btn.style.outline = '2px solid #005f2e';
+  const confirmBtn = document.getElementById('modal-confirm-btn');
+  confirmBtn.disabled = false;
+  confirmBtn.classList.remove('opacity-50','cursor-not-allowed');
+}
+
+async function confirmTransition() {
+  if (!_selectedTarget) return;
+  const note = document.getElementById('modal-note').value.trim();
+  const alertEl = document.getElementById('modal-alert');
+  alertEl.classList.add('hidden');
+
+  const res = await fetch(`${BASE}/applications/${_modalAppId}/transition`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ target_state: _selectedTarget, actor_type: 'registrar', actor_id: staffId, note: note || null }),
+  }).then(r => r.json()).catch(() => null);
+
+  if (res?.application_id) {
+    closeModal();
+    loadApps();
+  } else {
+    alertEl.textContent = res?.detail || 'Transition failed. Check preconditions.';
+    alertEl.classList.remove('hidden');
+  }
+}
+
+function closeModal() {
+  document.getElementById('transition-modal').style.display = 'none';
+  _modalAppId = null; _selectedTarget = null;
+}
+
+document.getElementById('transition-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('transition-modal')) closeModal();
+});
+
+// ── Logout ────────────────────────────────────────────────────
+function doLogout() {
+  ['lrmis_role','lrmis_staff_id','lrmis_name'].forEach(k => localStorage.removeItem(k));
+  window.location.href = 'lrmis.html';
+}
+
+// ── Init ─────────────────────────────────────────────────────
+loadKPIs();
+loadApps();
+</script>
+</body>
+</html>
